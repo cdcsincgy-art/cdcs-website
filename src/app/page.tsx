@@ -65,7 +65,7 @@ export default function HomePage() {
 
           <div className="animate-fade-up delay-200">
             <img
-  src="/cdcs-hero.jpg"
+src="/images/commercial-cleaning.jpg
   alt="CDCS professional cleaning team at work"
   className="w-full rounded-2xl object-cover lg:aspect-[4/3]"
 />
