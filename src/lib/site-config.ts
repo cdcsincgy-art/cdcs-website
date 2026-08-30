@@ -1,0 +1,43 @@
+// Central configuration for CDCS Inc. — update contact details, socials, and
+// copy toggles here and they propagate across the entire site.
+
+export const siteConfig = {
+  companyName: "Capital Detailing & Cleaning Services Inc.",
+  brandName: "CDCS Inc.",
+  brandShort: "CDCS",
+  tagline: "Professional Cleaning. Powerful Results.",
+  description:
+    "CDCS Inc. provides professional commercial cleaning, pressure washing, fleet washing, mobile detailing, and specialized facility-support services for businesses, government agencies, and organizations across Guyana.",
+  url: "https://www.cdcsinc.gy", // TODO: replace with your live domain once connected
+  location: {
+    city: "Georgetown",
+    country: "Guyana",
+    // TODO: add a specific street address here once you have a public office
+    // address to display. Left intentionally general per company instructions.
+    display: "Georgetown, Guyana",
+  },
+  contact: {
+    phoneDisplay: "+592 625-2141",
+    phoneHref: "tel:+5926252141",
+    whatsappNumber: "5926252141",
+    get whatsappHref() {
+      return `https://wa.me/${this.whatsappNumber}`;
+    },
+    whatsappHrefWithMessage: (message: string) =>
+      `https://wa.me/5926252141?text=${encodeURIComponent(message)}`,
+    email: "cdcsincgy@gmail.com",
+    emailHref: "mailto:cdcsincgy@gmail.com",
+  },
+  social: {
+    handle: "@cdcsinc",
+    instagram: "https://instagram.com/cdcsinc",
+    facebook: "https://facebook.com/cdcsinc",
+  },
+  // Configure this to point at a form backend (e.g. Formspree, Web3Forms,
+  // your own API route) to receive quote requests by email. Until it is
+  // configured the form falls back to opening a pre-filled email/WhatsApp
+  // message so no lead is ever lost. See README.md for setup steps.
+  quoteFormEndpoint: process.env.NEXT_PUBLIC_QUOTE_FORM_ENDPOINT || "",
+};
+
+export type SiteConfig = typeof siteConfig;
