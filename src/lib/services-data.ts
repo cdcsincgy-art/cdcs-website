@@ -25,6 +25,8 @@ export interface ServiceDefinition {
   whatsIncluded: string[];
   process?: string[];
   faq?: { q: string; a: string }[];
+  /** Slugs of the most relevant other services, shown in "Related services". */
+  relatedSlugs?: string[];
   keywords: string[];
 }
 
@@ -37,12 +39,31 @@ export const services: ServiceDefinition[] = [
     category: "Commercial Cleaning",
     icon: "building",
     heroPlaceholderLabel: "Photo placeholder — office/janitorial cleaning crew in action",
-    metaTitle: "Commercial & Janitorial Cleaning in Guyana",
+    metaTitle: "Commercial Cleaning & Janitorial Services in Guyana",
     metaDescription:
-      "Recurring commercial and janitorial cleaning for offices, institutions, and organizations across Guyana — trained teams, flexible schedules, consistent quality.",
-    h1: "Commercial & Janitorial Cleaning",
+      "Recurring commercial cleaning and janitorial services for offices, banks, and government buildings in Georgetown and across Guyana — trained, supervised teams.",
+    h1: "Commercial & Janitorial Cleaning in Guyana",
     intro:
-      "CDCS Inc. delivers structured, recurring cleaning programs designed for offices, corporate buildings, institutions, and organizations that depend on a consistently clean and professional environment. We build a service plan around your operating hours, foot traffic, and facility layout so your space stays presentable every day.",
+      "CDCS Inc. is a Georgetown-based commercial cleaning company providing structured, recurring janitorial programs for offices, corporate buildings, banks, government offices, and institutions across Guyana. We build a cleaning plan around your operating hours, foot traffic, and facility layout — from daily office cleaning to restroom and common-area upkeep — so your workplace stays consistently clean and presentable. Programs run daily, weekly, or on a custom schedule, and every team is supervised with regular quality checks.",
+    relatedSlugs: ["deep-cleaning", "post-construction-cleaning", "commercial-facility-cleaning"],
+    faq: [
+      {
+        q: "Do you provide office and janitorial cleaning in Georgetown?",
+        a: "Yes. CDCS Inc. is based in Georgetown and provides recurring janitorial and office cleaning for businesses, institutions, and government offices there and elsewhere in Guyana.",
+      },
+      {
+        q: "Can cleaning be scheduled outside business hours?",
+        a: "Yes. We build the schedule around your operating hours, including early-morning, evening, and off-hours service, so the work does not disrupt your staff or customers.",
+      },
+      {
+        q: "Do you offer one-time cleaning as well as recurring contracts?",
+        a: "Yes. CDCS Inc. handles one-time and deep cleaning projects as well as daily, weekly, or custom-frequency recurring janitorial contracts.",
+      },
+      {
+        q: "What does a commercial cleaning program include?",
+        a: "A typical program covers reception, offices, restrooms, and common areas; floor care; trash removal and liner replacement; and sanitizing of high-touch surfaces, with supervised teams and regular quality checks.",
+      },
+    ],
     idealFor: [
       "Corporate & administrative offices",
       "Government and public-sector buildings",
@@ -77,10 +98,25 @@ export const services: ServiceDefinition[] = [
     heroPlaceholderLabel: "Photo placeholder — pressure washing a commercial walkway or building exterior",
     metaTitle: "Pressure Washing Services in Guyana",
     metaDescription:
-      "Professional pressure washing for commercial entrances, parking areas, concrete, walls, and compounds across Guyana. Restore your property's exterior.",
-    h1: "Pressure Washing",
+      "Commercial pressure washing for entrances, parking areas, concrete, walls, and compounds in Georgetown and across Guyana. Restore your property's exterior.",
+    h1: "Pressure Washing in Guyana",
     intro:
-      "First impressions start outside. CDCS Inc. provides professional pressure washing to remove built-up dirt, algae, oil stains, and grime from the exterior surfaces of commercial and institutional properties — restoring a clean, well-maintained appearance for staff, customers, and visitors.",
+      "First impressions start outside. CDCS Inc. provides professional pressure washing across Guyana to remove built-up dirt, algae, oil stains, and grime from the exterior surfaces of commercial and institutional properties — walkways, facades, parking areas, and compounds — restoring a clean, well-maintained appearance for staff, customers, and visitors.",
+    relatedSlugs: ["commercial-facility-cleaning", "post-construction-cleaning", "fleet-washing"],
+    faq: [
+      {
+        q: "What surfaces can you pressure wash?",
+        a: "Concrete, pavers, block and masonry, building facades, walkways, parking areas, loading docks, and warehouse or industrial yards. Equipment pressure is matched to each surface type.",
+      },
+      {
+        q: "Do you remove oil and grease stains from parking areas?",
+        a: "We treat oil and grease staining on driveways and lots as part of the service, though how much lifts depends on how long the staining has set.",
+      },
+      {
+        q: "Can the work be done without disrupting our business?",
+        a: "Yes. We schedule around your business hours to keep entrances and parking areas usable while the work is carried out.",
+      },
+    ],
     idealFor: [
       "Commercial building entrances and facades",
       "Parking lots and parking structures",
@@ -128,6 +164,7 @@ export const services: ServiceDefinition[] = [
       "Tire, rim, and trim treatment",
       "Optional upholstery/interior extraction (see Upholstery & Fabric Extraction)",
     ],
+    relatedSlugs: ["upholstery-fabric-extraction", "fleet-washing", "deep-cleaning"],
     keywords: ["mobile detailing Guyana"],
   },
   {
@@ -141,9 +178,9 @@ export const services: ServiceDefinition[] = [
     metaTitle: "Fleet Washing for Trucks & Vehicles in Guyana",
     metaDescription:
       "Scheduled and one-time fleet washing for trucks, commercial vehicles, and transportation operators in Guyana. Keep your fleet looking professional with CDCS Inc.",
-    h1: "Fleet Washing",
+    h1: "Fleet Washing in Guyana",
     intro:
-      "A clean fleet reflects a well-run operation. CDCS Inc. provides scheduled and one-time washing programs for trucks, commercial vehicles, and heavy-duty fleets — helping transportation and logistics companies maintain a professional appearance and protect their vehicle investment.",
+      "A clean fleet reflects a well-run operation. CDCS Inc. provides scheduled and one-time washing programs across Guyana for trucks, commercial vehicles, and heavy-duty fleets — helping transportation and logistics companies maintain a professional appearance and protect their vehicle investment.",
     idealFor: [
       "Transportation and logistics companies",
       "Trucking and haulage operators",
@@ -159,6 +196,21 @@ export const services: ServiceDefinition[] = [
       "Flexible scheduling around dispatch and delivery times",
       "Service programs scaled to fleet size",
     ],
+    relatedSlugs: ["mobile-detailing", "pressure-washing", "commercial-facility-cleaning"],
+    faq: [
+      {
+        q: "Do you wash fleets on-site?",
+        a: "Yes. Fleet washing is carried out at your depot or yard, on a scheduled recurring program or as a one-time service.",
+      },
+      {
+        q: "How often can fleet washing be scheduled?",
+        a: "Weekly, bi-weekly, monthly, or as-needed — the program is scaled to your fleet size and dispatch schedule.",
+      },
+      {
+        q: "What vehicles do you handle?",
+        a: "Trucks, commercial and delivery vehicles, construction and equipment fleets, and company vehicle pools.",
+      },
+    ],
     keywords: ["fleet washing Guyana"],
   },
   {
@@ -172,9 +224,9 @@ export const services: ServiceDefinition[] = [
     metaTitle: "Deep Cleaning Services in Guyana",
     metaDescription:
       "Intensive deep cleaning for residential and commercial spaces in Guyana. CDCS Inc. handles the buildup routine cleaning leaves behind.",
-    h1: "Deep Cleaning",
+    h1: "Deep Cleaning in Guyana",
     intro:
-      "Some spaces need more than a routine clean. CDCS Inc.'s deep cleaning service addresses built-up grime, neglected areas, and detailed surfaces — ideal for move-ins/move-outs, seasonal resets, occupied spaces that have gone without service for a while, or facilities preparing for an inspection or event.",
+      "Some spaces need more than a routine clean. CDCS Inc.'s deep cleaning service in Guyana addresses built-up grime, neglected areas, and detailed surfaces — ideal for move-ins and move-outs, seasonal resets, occupied spaces that have gone without service for a while, or facilities preparing for an inspection or event.",
     idealFor: [
       "Residential properties and rentals",
       "Offices returning to service after a period of closure",
@@ -187,6 +239,17 @@ export const services: ServiceDefinition[] = [
       "Baseboards, vents, and fixture detailing",
       "Wall spot-cleaning and door/frame cleaning",
       "Floor detailing and buildup removal",
+    ],
+    relatedSlugs: ["commercial-janitorial-cleaning", "post-construction-cleaning", "upholstery-fabric-extraction"],
+    faq: [
+      {
+        q: "When should we book a deep clean instead of routine cleaning?",
+        a: "Deep cleaning suits move-ins and move-outs, seasonal resets, spaces that have gone without service for a while, or a facility preparing for an inspection or event.",
+      },
+      {
+        q: "Is deep cleaning available for both offices and homes?",
+        a: "Yes. CDCS Inc. carries out deep cleaning for commercial spaces and for residential properties and rentals in Guyana.",
+      },
     ],
     keywords: ["deep cleaning Guyana"],
   },
@@ -218,6 +281,7 @@ export const services: ServiceDefinition[] = [
       "Vehicle interior fabric and seat extraction",
       "Spot and stain treatment where applicable",
     ],
+    relatedSlugs: ["deep-cleaning", "commercial-janitorial-cleaning", "mobile-detailing"],
     keywords: ["extraction cleaning Guyana", "upholstery cleaning Guyana"],
   },
   {
@@ -246,6 +310,17 @@ export const services: ServiceDefinition[] = [
       "Window, frame, and fixture cleaning",
       "Floor cleaning and detailing",
       "Final touch-up clean before occupancy or handover",
+    ],
+    relatedSlugs: ["deep-cleaning", "pressure-washing", "commercial-facility-cleaning"],
+    faq: [
+      {
+        q: "When in the project should post-construction cleaning happen?",
+        a: "It is the final stage before handover or occupancy, once construction and installation work is complete, so dust and debris are removed before the space is used.",
+      },
+      {
+        q: "Do you work with contractors and property developers?",
+        a: "Yes. CDCS Inc. works with construction companies, developers, and property owners handing over completed offices, retail units, and commercial build-outs in Guyana.",
+      },
     ],
     keywords: ["post construction cleaning Guyana"],
   },
@@ -276,6 +351,17 @@ export const services: ServiceDefinition[] = [
       "Equipment and supply planning",
       "On-site supervision and quality standards",
       "Scalable programs as your facility or contract grows",
+    ],
+    relatedSlugs: ["commercial-janitorial-cleaning", "pressure-washing", "post-construction-cleaning"],
+    faq: [
+      {
+        q: "How is facility cleaning different from standard janitorial service?",
+        a: "Facility cleaning is a structured program for larger or multi-floor sites — with a custom scope of work, recurring team assignments, equipment and supply planning, and on-site supervision.",
+      },
+      {
+        q: "Can you service facilities outside normal hours?",
+        a: "Yes. Programs can be built around night shifts and off-hours service so cleaning does not interrupt operations.",
+      },
     ],
     keywords: ["commercial cleaning Guyana", "facility cleaning Guyana"],
   },

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
@@ -6,24 +7,45 @@ import { IconPhone, IconMail, IconMapPin, IconWhatsapp, IconArrowRight } from "@
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Georgetown, Guyana",
+  title: { absolute: "Contact CDCS Inc. — Cleaning Services in Guyana" },
   description:
-    "Contact CDCS Inc. by phone, WhatsApp, or email to request a quote for commercial cleaning, pressure washing, fleet washing, or mobile detailing in Guyana.",
+    "Contact CDCS Inc. in Georgetown, Guyana by phone, WhatsApp, or email for commercial cleaning, janitorial, pressure washing, fleet washing, or mobile detailing.",
   alternates: { canonical: "/contact/" },
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
+    { "@type": "ListItem", position: 2, name: "Contact", item: `${siteConfig.url}/contact/` },
+  ],
 };
 
 export default function ContactPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+
       <section className="bg-navy-950 py-16 sm:py-20">
         <div className="container-page">
+          <nav className="mb-5 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-accent-400">Home</Link>
+            <span className="mx-2">/</span>
+            <span className="text-slate-300">Contact</span>
+          </nav>
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent-400">Contact Us</p>
           <h1 className="max-w-2xl text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-            Let&apos;s Talk About Your Property, Fleet, or Facility
+            Contact CDCS Inc. — Cleaning Services in Georgetown, Guyana
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
-            Reach us by phone, WhatsApp, or email — or send a detailed quote request and we&apos;ll
-            get back to you.
+            CDCS Inc. is based in Georgetown and serves businesses across Guyana. Reach us by phone,
+            WhatsApp, or email, or send a detailed{" "}
+            <Link href="/quote/" className="font-semibold text-accent-400 hover:underline">quote request</Link>{" "}
+            and we&apos;ll get back to you.
           </p>
         </div>
       </section>
@@ -98,15 +120,20 @@ export default function ContactPage() {
           </div>
 
           <div>
+            <SectionHeading eyebrow="Service Area" title="Georgetown &amp; Across Guyana" />
+            <p className="mt-4 text-base leading-relaxed text-slate-700">
+              CDCS Inc. is based in Georgetown, Guyana and provides on-site cleaning, pressure
+              washing, fleet washing, and mobile detailing for clients throughout the country.
+              Tell us where you&apos;re located when you{" "}
+              <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">request a quote</Link>{" "}
+              and we&apos;ll confirm scheduling.
+            </p>
             <PlaceholderMedia
               label="Map placeholder — embed a Google Map of your Georgetown service area here"
               ratio="square"
               light
-              className="lg:aspect-[4/5]"
+              className="mt-6 lg:aspect-[4/5]"
             />
-            <p className="mt-3 text-xs text-slate-500">
-              Add an embedded Google Map once a public office/pickup address is confirmed.
-            </p>
           </div>
         </div>
       </section>

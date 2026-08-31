@@ -6,6 +6,7 @@ import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTABanner } from "@/components/CTABanner";
 import { ServiceCard } from "@/components/ServiceCard";
+import { Faq } from "@/components/Faq";
 import { services, getServiceBySlug } from "@/lib/services-data";
 import { serviceIconMap, IconCheck, IconArrowRight } from "@/components/icons";
 import { siteConfig, ogImage } from "@/lib/site-config";
@@ -45,7 +46,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   if (!service) notFound();
 
   const Icon = serviceIconMap[service.icon];
-  const related = services.filter((s) => s.slug !== service.slug).slice(0, 3);
+  const related = (
+    service.relatedSlugs
+      ?.map((s) => getServiceBySlug(s))
+      .filter((s): s is NonNullable<typeof s> => Boolean(s)) ??
+    services.filter((s) => s.slug !== service.slug)
+  ).slice(0, 3);
 
   const serviceUrl = `${siteConfig.url}/services/${service.slug}/`;
 
@@ -76,6 +82,19 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         { "@type": "ListItem", position: 3, name: service.title, item: serviceUrl },
       ],
     },
+    ...(service.faq
+      ? [
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: service.faq.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -166,17 +185,24 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         <div className="container-page">
           <SectionHeading eyebrow="Recent Work" title={`${service.title} — Before & After`} />
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
-            <PlaceholderMedia label={`${service.title} — before/after photo 1`} ratio="square" />
-            <PlaceholderMedia label={`${service.title} — before/after photo 2`} ratio="square" />
-            <PlaceholderMedia label={`${service.title} — before/after photo 3`} ratio="square" />
+            <PlaceholderMedia label="Before-and-after photo 1" ratio="square" />
+            <PlaceholderMedia label="Before-and-after photo 2" ratio="square" />
+            <PlaceholderMedia label="Before-and-after photo 3" ratio="square" />
           </div>
         </div>
       </section>
 
+      {/* FAQ (optional per-service) */}
+      {service.faq && <Faq items={service.faq} />}
+
       {/* Related services */}
       <section className="bg-slate-50 py-16 sm:py-24">
         <div className="container-page">
-          <SectionHeading eyebrow="Explore More" title="Related Services" />
+          <SectionHeading
+            eyebrow="Explore More"
+            title="Related Cleaning Services"
+            description="Other CDCS Inc. services businesses in Guyana often combine with this one."
+          />
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             {related.map((s) => (
               <ServiceCard key={s.slug} service={s} />

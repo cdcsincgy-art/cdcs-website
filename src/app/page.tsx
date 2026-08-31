@@ -12,10 +12,10 @@ import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Commercial Cleaning & Pressure Washing in Guyana | CDCS Inc.",
+    absolute: "Commercial Cleaning & Janitorial Services in Guyana | CDCS Inc.",
   },
   description:
-    "Professional commercial cleaning, pressure washing, fleet washing, and mobile detailing for businesses and organizations across Guyana. Request a quote today.",
+    "CDCS Inc. is a Georgetown cleaning company — commercial and janitorial cleaning, pressure washing, fleet washing, and mobile detailing for businesses across Guyana.",
   alternates: { canonical: "/" },
 };
 
@@ -34,17 +34,18 @@ export default function HomePage() {
         <div className="container-page relative grid gap-10 py-16 sm:py-20 lg:grid-cols-2 lg:items-center lg:py-28">
           <div className="animate-fade-up">
             <p className="mb-4 inline-flex items-center rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent-400">
-              Commercial Cleaning &amp; Facility Services · Guyana
+              Commercial Cleaning &amp; Facility Services · Georgetown, Guyana
             </p>
-            <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
-              Professional Cleaning.
-              <br />
-              <span className="text-accent-500">Powerful Results.</span>
+            <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.1rem]">
+              Commercial Cleaning &amp; Janitorial Services in Guyana
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
-              CDCS Inc. provides professional commercial cleaning, pressure washing, fleet
-              washing, mobile detailing, and specialized cleaning solutions for businesses,
-              government agencies, organizations, and individuals across Guyana.
+            <p className="mt-4 text-lg font-bold text-accent-500 sm:text-xl">
+              Professional Cleaning. Powerful Results.
+            </p>
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
+              CDCS Inc. is a Georgetown-based cleaning company providing commercial and janitorial
+              cleaning, deep cleaning, pressure washing, fleet washing, and mobile detailing for
+              businesses, government agencies, and organizations across Guyana.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button href="/quote/" variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>
@@ -102,12 +103,41 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* OVERVIEW — crawlable intro with internal links to key service pages */}
+      <section className="bg-white py-14 sm:py-16">
+        <div className="container-page">
+          <div className="mx-auto max-w-3xl text-base leading-relaxed text-slate-700 sm:text-lg">
+            <p>
+              Based in Georgetown, CDCS Inc. provides professional cleaning services to businesses,
+              government agencies, and organizations across Guyana. Our teams handle{" "}
+              <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                commercial and janitorial cleaning
+              </Link>
+              ,{" "}
+              <Link href="/services/deep-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                deep cleaning
+              </Link>
+              ,{" "}
+              <Link href="/services/pressure-washing/" className="font-semibold text-brand-600 hover:underline">
+                pressure washing
+              </Link>
+              ,{" "}
+              <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
+                fleet washing
+              </Link>
+              , post-construction cleaning, and mobile detailing — as one-time projects or recurring
+              contracts built around your schedule.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* SERVICES */}
       <section className="bg-slate-50 py-16 sm:py-24">
         <div className="container-page">
           <SectionHeading
             eyebrow="What We Do"
-            title="Full-Scope Commercial Cleaning & Facility Services"
+            title="Full-Scope Commercial Cleaning & Facility Services in Guyana"
             description="From daily janitorial programs to fleet washing and mobile detailing, CDCS Inc. delivers the service standards commercial clients rely on."
           />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

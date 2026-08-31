@@ -59,7 +59,11 @@ const jsonLd = {
   description: siteConfig.description,
   slogan: siteConfig.tagline,
   url: siteConfig.url,
-  image: `${siteConfig.url}${ogImage.url}`,
+  image: [
+    `${siteConfig.url}${ogImage.url}`,
+    `${siteConfig.url}/images/commercial-cleaning.jpg`,
+    `${siteConfig.url}/images/cdcs-team.jpg`,
+  ],
   telephone: siteConfig.contact.phoneDisplay,
   email: siteConfig.contact.email,
   knowsLanguage: ["en"],

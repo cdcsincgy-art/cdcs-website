@@ -4,9 +4,9 @@ import { IconPhone, IconWhatsapp, IconMail, IconClock, IconCheck } from "@/compo
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Request a Quote",
+  title: "Request a Cleaning Quote in Guyana",
   description:
-    "Request a free quote from CDCS Inc. for commercial cleaning, pressure washing, fleet washing, mobile detailing, or facility-support services in Guyana.",
+    "Request a free quote from CDCS Inc. for commercial cleaning, janitorial, pressure washing, fleet washing, or mobile detailing in Georgetown and across Guyana.",
   alternates: { canonical: "/quote/" },
 };
 
@@ -27,6 +27,7 @@ export default function QuotePage() {
             Tell Us What Needs to Be Cleaned
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-600">
+            Tell us about your property, fleet, or facility in Georgetown or anywhere in Guyana.
             Complete the form below with as much detail as possible and our team will follow up
             with a clear service proposal.
           </p>

@@ -7,7 +7,7 @@ export const siteConfig = {
   brandShort: "CDCS",
   tagline: "Professional Cleaning. Powerful Results.",
   description:
-    "Professional cleaning services in Guyana. CDCS Inc. provides commercial and janitorial cleaning, pressure washing, fleet washing, mobile detailing, and specialized facility cleaning.",
+    "CDCS Inc. provides commercial and janitorial cleaning, pressure washing, fleet washing, mobile detailing, and facility cleaning in Georgetown and across Guyana.",
   // Canonical origin for the site. Must exactly match the primary domain
   // configured in Vercel (www is primary; the bare apex 308-redirects to it).
   // Used for canonical URLs, Open Graph, sitemap, robots, and JSON-LD.

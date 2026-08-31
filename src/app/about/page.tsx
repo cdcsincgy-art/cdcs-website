@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTABanner } from "@/components/CTABanner";
 import { whyChooseUs } from "@/lib/content-data";
@@ -30,16 +31,19 @@ export default function AboutPage() {
             <SectionHeading eyebrow="Who We Are" title="Capital Detailing & Cleaning Services Inc." />
             <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
               <p>
-                {siteConfig.companyName}, operating as {siteConfig.brandName}, provides
-                professional cleaning, detailing, pressure washing, and facility-support services
-                to businesses, organizations, government agencies, commercial properties, fleets,
-                and individual clients throughout Guyana.
+                {siteConfig.companyName}, operating as {siteConfig.brandName}, is a
+                Georgetown-based company providing professional cleaning, detailing, pressure
+                washing, and facility-support services to businesses, organizations, government
+                agencies, commercial properties, fleets, and individual clients throughout Guyana.
               </p>
               <p>
                 We work with corporate offices, property managers, restaurants, retail
                 businesses, warehouses, construction companies, transportation and logistics
-                operators, and organizations that require recurring janitorial services — as well
-                as individual vehicle owners looking for premium mobile detailing.
+                operators, and organizations that require recurring{" "}
+                <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                  janitorial services
+                </Link>{" "}
+                — as well as individual vehicle owners looking for premium mobile detailing.
               </p>
               <p>
                 Our approach is built around organized service delivery: defined scopes of work,
