@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTABanner } from "@/components/CTABanner";
+import { ProjectImage } from "@/components/ProjectImage";
 import { whyChooseUs } from "@/lib/content-data";
+import { aboutImage } from "@/lib/project-images";
 import { iconMap } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 
@@ -54,16 +56,9 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-          {/* Static export — see note in src/app/page.tsx on plain <img> usage. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/cdcs-team.jpg"
-            alt="Two CDCS team members cleaning a large commercial interior in Guyana — one mopping the floor, one cleaning the windows"
-            width={1400}
-            height={788}
-            loading="lazy"
-            decoding="async"
-            className="aspect-[16/10] w-full rounded-2xl object-cover"
+          <ProjectImage
+            image={aboutImage}
+            className="w-full rounded-2xl object-cover shadow-lg shadow-black/10"
           />
         </div>
       </section>

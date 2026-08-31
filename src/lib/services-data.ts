@@ -370,13 +370,3 @@ export const services: ServiceDefinition[] = [
 export function getServiceBySlug(slug: string) {
   return services.find((s) => s.slug === slug);
 }
-
-export const portfolioCategories = [
-  "All",
-  "Pressure Washing",
-  "Commercial Cleaning",
-  "Fleet Washing",
-  "Mobile Detailing",
-  "Deep Cleaning",
-  "Extraction Cleaning",
-] as const;

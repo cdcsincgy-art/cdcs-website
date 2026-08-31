@@ -86,15 +86,3 @@ export const processSteps = [
     icon: "check",
   },
 ];
-
-export const portfolioItems = [
-  { category: "Pressure Washing", label: "Before/after — commercial walkway pressure washing" },
-  { category: "Commercial Cleaning", label: "Office common area cleaning" },
-  { category: "Fleet Washing", label: "Fleet washing at a logistics depot" },
-  { category: "Mobile Detailing", label: "Mobile detailing — vehicle interior" },
-  { category: "Deep Cleaning", label: "Deep cleaning of a commercial kitchen" },
-  { category: "Extraction Cleaning", label: "Office chair upholstery extraction" },
-  { category: "Pressure Washing", label: "Before/after — parking area cleaning" },
-  { category: "Commercial Cleaning", label: "Janitorial team servicing a corporate office" },
-  { category: "Fleet Washing", label: "Truck exterior wash, before/after" },
-];

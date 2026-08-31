@@ -24,6 +24,10 @@
 .DS_Store
 *.pem
 
+# raw project photo originals — the optimized versions in
+# public/images/projects/ are committed; see scripts/process-project-images.mjs
+/public/images/IMG_*
+
 # debug
 npm-debug.log*
 yarn-debug.log*

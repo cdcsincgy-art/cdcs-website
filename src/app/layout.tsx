@@ -61,8 +61,9 @@ const jsonLd = {
   url: siteConfig.url,
   image: [
     `${siteConfig.url}${ogImage.url}`,
-    `${siteConfig.url}/images/commercial-cleaning.jpg`,
-    `${siteConfig.url}/images/cdcs-team.jpg`,
+    `${siteConfig.url}/images/projects/commercial-cleaning/commercial-cleaning-facility-interior.jpg`,
+    `${siteConfig.url}/images/projects/fleet-washing/fleet-washing-truck-covered-in-foam.jpg`,
+    `${siteConfig.url}/images/projects/upholstery-extraction/upholstery-extraction-car-seat-before-after.jpg`,
   ],
   telephone: siteConfig.contact.phoneDisplay,
   email: siteConfig.contact.email,

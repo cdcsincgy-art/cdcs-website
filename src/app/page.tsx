@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
 import { ServiceCard } from "@/components/ServiceCard";
 import { CTABanner } from "@/components/CTABanner";
+import { ProjectImage } from "@/components/ProjectImage";
 import { services } from "@/lib/services-data";
-import { trustPoints, whyChooseUs, industries, processSteps, portfolioItems } from "@/lib/content-data";
+import { trustPoints, whyChooseUs, industries, processSteps } from "@/lib/content-data";
+import { homepageHeroImage, homepageProjectImages } from "@/lib/project-images";
 import { iconMap, IconArrowRight, IconWhatsapp, IconCheck } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 
@@ -67,18 +68,10 @@ export default function HomePage() {
           </div>
 
           <div className="animate-fade-up delay-200">
-            {/* Static export (output: "export", images.unoptimized) — next/image
-                adds no optimization here, so a plain <img> with explicit
-                dimensions is the correct, lighter choice. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/commercial-cleaning.jpg"
-              alt="A CDCS worker cleaning the exterior glass of a commercial building in Guyana"
-              width={1152}
-              height={2048}
-              fetchPriority="high"
-              decoding="async"
-              className="aspect-[4/3] w-full rounded-2xl object-cover object-center"
+            <ProjectImage
+              image={homepageHeroImage}
+              priority
+              className="w-full rounded-2xl object-cover shadow-xl shadow-black/30"
             />
           </div>
         </div>
@@ -214,21 +207,31 @@ export default function HomePage() {
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <SectionHeading
               eyebrow="Our Work"
-              title="See the CDCS Standard"
-              description="A preview of the project types we handle. Full before-and-after photos and videos are added as jobs are completed."
+              title="Real CDCS Projects Across Guyana"
+              description="A few photos from recent CDCS Inc. jobs — cleaning, pressure washing, fleet washing, and detailing."
             />
             <Button href="/our-work/" variant="ghost" size="md" className="shrink-0" icon={<IconArrowRight className="h-4 w-4" />}>
               View Full Gallery
             </Button>
           </div>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {portfolioItems.slice(0, 6).map((item, i) => (
-              <div key={i} className="group overflow-hidden rounded-xl">
-                <PlaceholderMedia label={item.label} ratio="video" />
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="text-sm font-bold text-navy-900">{item.category}</span>
+            {homepageProjectImages.map((image) => (
+              <figure
+                key={image.file}
+                className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+              >
+                <div className="aspect-[4/3] overflow-hidden">
+                  <ProjectImage image={image} className="h-full w-full object-cover object-center" />
                 </div>
-              </div>
+                <figcaption className="px-4 py-3 text-sm leading-relaxed text-slate-600">
+                  {image.beforeAfter && (
+                    <span className="mr-2 inline-block rounded bg-brand-50 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-brand-700">
+                      Before / After
+                    </span>
+                  )}
+                  {image.caption}
+                </figcaption>
+              </figure>
             ))}
           </div>
         </div>

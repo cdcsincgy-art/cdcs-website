@@ -7,7 +7,9 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTABanner } from "@/components/CTABanner";
 import { ServiceCard } from "@/components/ServiceCard";
 import { Faq } from "@/components/Faq";
+import { ProjectImage } from "@/components/ProjectImage";
 import { services, getServiceBySlug } from "@/lib/services-data";
+import { serviceHeroImage, serviceGalleryImages } from "@/lib/project-images";
 import { serviceIconMap, IconCheck, IconArrowRight } from "@/components/icons";
 import { siteConfig, ogImage } from "@/lib/site-config";
 
@@ -46,6 +48,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   if (!service) notFound();
 
   const Icon = serviceIconMap[service.icon];
+  const heroImage = serviceHeroImage(service.slug);
+  const gallery = serviceGalleryImages(service.slug);
   const related = (
     service.relatedSlugs
       ?.map((s) => getServiceBySlug(s))
@@ -129,7 +133,15 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               </Button>
             </div>
           </div>
-          <PlaceholderMedia label={service.heroPlaceholderLabel} ratio="square" className="lg:aspect-[4/5]" />
+          {heroImage ? (
+            <ProjectImage
+              image={heroImage}
+              priority
+              className="w-full rounded-2xl object-cover shadow-lg shadow-black/30"
+            />
+          ) : (
+            <PlaceholderMedia label={service.heroPlaceholderLabel} ratio="square" className="lg:aspect-[4/5]" />
+          )}
         </div>
       </section>
 
@@ -180,17 +192,63 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         </section>
       )}
 
-      {/* Gallery placeholder */}
-      <section className="bg-white py-16 sm:py-24">
-        <div className="container-page">
-          <SectionHeading eyebrow="Recent Work" title={`${service.title} — Before & After`} />
-          <div className="mt-10 grid gap-5 sm:grid-cols-3">
-            <PlaceholderMedia label="Before-and-after photo 1" ratio="square" />
-            <PlaceholderMedia label="Before-and-after photo 2" ratio="square" />
-            <PlaceholderMedia label="Before-and-after photo 3" ratio="square" />
+      {/* Recent work */}
+      {gallery.length > 0 ? (
+        <section className="bg-white py-16 sm:py-24">
+          <div className="container-page">
+            <SectionHeading
+              eyebrow="Our Work"
+              title={`${service.title} — Recent Projects`}
+              description="Photos from real CDCS Inc. jobs. More on the Our Work page."
+            />
+            <div className="mt-10 gap-5 sm:columns-2">
+              {gallery.map((image) => (
+                <figure
+                  key={image.file}
+                  className="mb-5 break-inside-avoid overflow-hidden rounded-xl border border-slate-200 shadow-sm"
+                >
+                  <ProjectImage image={image} className="w-full" />
+                  <figcaption className="px-4 py-3 text-sm leading-relaxed text-slate-600">
+                    {image.beforeAfter && (
+                      <span className="mr-2 inline-block rounded bg-brand-50 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-brand-700">
+                        Before / After
+                      </span>
+                    )}
+                    {image.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+            <div className="mt-8 text-center">
+              <Button
+                href={`/our-work/#${service.slug}`}
+                variant="ghost"
+                size="md"
+                icon={<IconArrowRight className="h-4 w-4" />}
+              >
+                See more of our work
+              </Button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="bg-white py-14 sm:py-16">
+          <div className="container-page">
+            <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-brand-50 p-8 text-center sm:p-10">
+              <h2 className="text-xl font-bold text-navy-900 sm:text-2xl">See CDCS Work in Progress</h2>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+                Photos from completed CDCS Inc. cleaning, pressure washing, fleet washing, and
+                detailing projects across Guyana.
+              </p>
+              <div className="mt-6">
+                <Button href="/our-work/" size="md" icon={<IconArrowRight className="h-4 w-4" />}>
+                  View Our Work
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FAQ (optional per-service) */}
       {service.faq && <Faq items={service.faq} />}

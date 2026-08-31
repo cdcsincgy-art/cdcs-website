@@ -46,31 +46,29 @@ lives in **`src/lib/site-config.ts`**. Update it there and it propagates across 
 
 ---
 
-## 3. Adding real photos and videos
+## 3. Project photos
 
-Every photo/video slot on the site is currently a clearly labeled placeholder (dashed border,
-"PLACEHOLDER IMAGE" tag) built with the `<PlaceholderMedia />` component
-(`src/components/ui/PlaceholderMedia.tsx`), per the request not to fabricate content.
+Authentic CDCS project photos live in `public/images/projects/`, organized by service, and are
+listed in **`src/lib/project-images.ts`** (path, dimensions, alt text, caption, category). They
+power the homepage hero and "Our Work" preview, the About photo, every service-page hero and
+"Recent Projects" gallery, and the `/our-work/` portfolio.
 
-To replace a placeholder with a real photo:
+**To add more photos:**
 
-1. Add your image file to the `public/images/` folder (create it if it doesn't exist), e.g.
-   `public/images/pressure-washing-1.jpg`.
-2. In the relevant page file, replace the `<PlaceholderMedia ... />` component with a normal
-   `<img>` tag, e.g.:
+1. Drop the originals into `public/images/` (they are git-ignored) and add an entry for each to
+   the `jobs` array in `scripts/process-project-images.mjs` — set the output path, a `maxW`, a
+   `trim` if the shot has phone/Instagram UI to crop out, and `jpg: true` if it will be a page
+   hero.
+2. Run `node scripts/process-project-images.mjs` — it writes optimized `.webp` (and `.jpg`
+   fallbacks) into `public/images/projects/`. Commit those.
+3. Add the images to the right category in `src/lib/project-images.ts` with a natural, accurate
+   `alt` and a factual `caption` (describe only what's visible — no client names, dates, values,
+   or quantified results). Set `beforeAfter: true` for side-by-side composites and
+   `heroForService: "<slug>"` to make one the hero of a service page.
 
-   ```tsx
-   <img
-     src="/images/pressure-washing-1.jpg"
-     alt="CDCS technician pressure washing a commercial walkway"
-     className="aspect-video w-full rounded-lg object-cover"
-   />
-   ```
-
-   Keep the `alt` text descriptive — it matters for SEO and accessibility.
-3. For the "Our Work" gallery, real items live in `src/lib/content-data.ts` in the
-   `portfolioItems` array — swap the `label` placeholders for real photos the same way, or extend
-   `PortfolioGallery.tsx` to render `<img>`/`<video>` per item once you have a full set.
+The three service pages without their own photos yet (deep cleaning, post-construction, and
+commercial facility cleaning) reuse a related commercial-cleaning shot and show a "View Our Work"
+card instead of a gallery until dedicated photos exist.
 
 ---
 
@@ -222,13 +220,13 @@ GA4 is wired in via `gtag.js` (`src/components/Analytics.tsx`, rendered once in 
 
 ## 11. What's intentionally left as a placeholder
 
-Per the brief, nothing has been invented. The following are marked as placeholders for you to
-fill in once available:
-- The homepage hero and the About page use real CDCS job-site photos
-  (`public/images/commercial-cleaning.jpg`, `public/images/cdcs-team.jpg`). Every other
-  photo/video slot — service pages and the Our Work gallery — is still a dashed-border
-  "PLACEHOLDER IMAGE" block.
+Per the brief, nothing has been invented. Still outstanding:
+- **Photos for deep cleaning, post-construction cleaning, and commercial facility cleaning** —
+  these three service pages currently reuse a related commercial-cleaning photo. Add dedicated
+  shots via `src/lib/project-images.ts` (see Section 3).
 - The embedded map on the Contact page (add a Google Maps embed once you have a public
   office/pickup address).
 - Testimonials, certifications, years-in-business stats, and client counts are **not included**
   anywhere on the site, since none were provided — add them once you have real ones to cite.
+- Project captions are deliberately generic (what's visible only). No client/company is named,
+  including where a company's livery is visible in a fleet-washing photo.
