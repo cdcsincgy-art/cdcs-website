@@ -37,9 +37,9 @@ export const services: ServiceDefinition[] = [
     category: "Commercial Cleaning",
     icon: "building",
     heroPlaceholderLabel: "Photo placeholder — office/janitorial cleaning crew in action",
-    metaTitle: "Commercial & Janitorial Cleaning Services in Guyana",
+    metaTitle: "Commercial & Janitorial Cleaning in Guyana",
     metaDescription:
-      "Recurring commercial and janitorial cleaning for offices, institutions, and organizations across Guyana. Trained teams, flexible schedules, and consistent quality from CDCS Inc.",
+      "Recurring commercial and janitorial cleaning for offices, institutions, and organizations across Guyana — trained teams, flexible schedules, consistent quality.",
     h1: "Commercial & Janitorial Cleaning",
     intro:
       "CDCS Inc. delivers structured, recurring cleaning programs designed for offices, corporate buildings, institutions, and organizations that depend on a consistently clean and professional environment. We build a service plan around your operating hours, foot traffic, and facility layout so your space stays presentable every day.",
@@ -75,9 +75,9 @@ export const services: ServiceDefinition[] = [
     category: "Pressure Washing",
     icon: "spray",
     heroPlaceholderLabel: "Photo placeholder — pressure washing a commercial walkway or building exterior",
-    metaTitle: "Pressure Washing Services Guyana | Commercial Exteriors",
+    metaTitle: "Pressure Washing Services in Guyana",
     metaDescription:
-      "Professional pressure washing for commercial entrances, parking areas, concrete, walls, and compounds in Guyana. Restore the exterior appearance of your property with CDCS Inc.",
+      "Professional pressure washing for commercial entrances, parking areas, concrete, walls, and compounds across Guyana. Restore your property's exterior.",
     h1: "Pressure Washing",
     intro:
       "First impressions start outside. CDCS Inc. provides professional pressure washing to remove built-up dirt, algae, oil stains, and grime from the exterior surfaces of commercial and institutional properties — restoring a clean, well-maintained appearance for staff, customers, and visitors.",
@@ -107,7 +107,7 @@ export const services: ServiceDefinition[] = [
     category: "Mobile Detailing",
     icon: "car",
     heroPlaceholderLabel: "Photo placeholder — mobile detailing technician working on a vehicle interior",
-    metaTitle: "Mobile Detailing Guyana | We Come to You",
+    metaTitle: "Mobile Vehicle Detailing in Guyana",
     metaDescription:
       "Premium mobile vehicle detailing in Georgetown, Guyana. CDCS Inc. brings professional interior and exterior detailing to your home, office, or business location.",
     h1: "Mobile Detailing",
@@ -138,7 +138,7 @@ export const services: ServiceDefinition[] = [
     category: "Fleet Washing",
     icon: "truck",
     heroPlaceholderLabel: "Photo placeholder — fleet washing trucks or commercial vehicles on-site",
-    metaTitle: "Fleet Washing Services Guyana | Trucks & Commercial Vehicles",
+    metaTitle: "Fleet Washing for Trucks & Vehicles in Guyana",
     metaDescription:
       "Scheduled and one-time fleet washing for trucks, commercial vehicles, and transportation operators in Guyana. Keep your fleet looking professional with CDCS Inc.",
     h1: "Fleet Washing",
@@ -169,7 +169,7 @@ export const services: ServiceDefinition[] = [
     category: "Deep Cleaning",
     icon: "sparkle",
     heroPlaceholderLabel: "Photo placeholder — deep cleaning of a commercial or residential space",
-    metaTitle: "Deep Cleaning Services Guyana | Residential & Commercial",
+    metaTitle: "Deep Cleaning Services in Guyana",
     metaDescription:
       "Intensive deep cleaning for residential and commercial spaces in Guyana. CDCS Inc. handles the buildup routine cleaning leaves behind.",
     h1: "Deep Cleaning",
@@ -198,7 +198,7 @@ export const services: ServiceDefinition[] = [
     category: "Extraction Cleaning",
     icon: "chair",
     heroPlaceholderLabel: "Photo placeholder — extraction cleaning of an office chair or carpet",
-    metaTitle: "Upholstery & Fabric Extraction Cleaning Guyana",
+    metaTitle: "Upholstery & Fabric Cleaning in Guyana",
     metaDescription:
       "Professional extraction and steam cleaning for office chairs, carpets, sofas, and vehicle interiors in Guyana, delivered by CDCS Inc.",
     h1: "Upholstery & Fabric Extraction",
@@ -228,7 +228,7 @@ export const services: ServiceDefinition[] = [
     category: "Commercial Cleaning",
     icon: "hardhat",
     heroPlaceholderLabel: "Photo placeholder — post-construction cleanup of a newly built space",
-    metaTitle: "Post-Construction Cleaning Guyana | Ready for Occupancy",
+    metaTitle: "Post-Construction Cleaning in Guyana",
     metaDescription:
       "Post-construction and renovation cleanup in Guyana. CDCS Inc. removes dust, debris, and residue so newly built or renovated spaces are ready for occupancy.",
     h1: "Post-Construction Cleaning",
@@ -257,7 +257,7 @@ export const services: ServiceDefinition[] = [
     category: "Commercial Cleaning",
     icon: "factory",
     heroPlaceholderLabel: "Photo placeholder — cleaning team servicing a large commercial facility",
-    metaTitle: "Commercial Facility Cleaning Programs Guyana",
+    metaTitle: "Commercial Facility Cleaning in Guyana",
     metaDescription:
       "Custom, structured cleaning programs for larger commercial and industrial facilities in Guyana, with recurring teams and equipment from CDCS Inc.",
     h1: "Commercial Facility Cleaning",

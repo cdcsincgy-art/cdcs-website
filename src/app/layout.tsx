@@ -12,11 +12,12 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { Analytics } from "@/components/Analytics";
 import { siteConfig, ogImage } from "@/lib/site-config";
+import { services } from "@/lib/services-data";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `Cleaning Services Guyana | Commercial & Janitorial Cleaning | CDCS Inc.`,
+    default: `Cleaning Services in Guyana | ${siteConfig.brandName}`,
     template: `%s | ${siteConfig.brandName}`,
   },
   description: siteConfig.description,
@@ -38,14 +39,10 @@ export const metadata: Metadata = {
     locale: "en_GY",
     url: siteConfig.url,
     siteName: siteConfig.brandName,
-    title: `Cleaning Services Guyana | CDCS Inc.`,
-    description: siteConfig.description,
     images: [ogImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Cleaning Services Guyana | CDCS Inc.`,
-    description: siteConfig.description,
     images: [ogImage],
   },
   icons: {
@@ -60,33 +57,43 @@ const jsonLd = {
   name: siteConfig.companyName,
   alternateName: siteConfig.brandName,
   description: siteConfig.description,
+  slogan: siteConfig.tagline,
   url: siteConfig.url,
   image: `${siteConfig.url}${ogImage.url}`,
   telephone: siteConfig.contact.phoneDisplay,
   email: siteConfig.contact.email,
+  knowsLanguage: ["en"],
   address: {
     "@type": "PostalAddress",
     addressLocality: siteConfig.location.city,
     addressCountry: "GY",
   },
-  areaServed: {
-    "@type": "Country",
-    name: "Guyana",
+  areaServed: [
+    { "@type": "Country", name: "Guyana" },
+    { "@type": "City", name: "Georgetown" },
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: siteConfig.contact.phoneDisplay,
+    email: siteConfig.contact.email,
+    contactType: "customer service",
+    areaServed: "GY",
+    availableLanguage: "English",
   },
   sameAs: [siteConfig.social.instagram, siteConfig.social.facebook],
-  makesOffer: [
-    "Commercial & Janitorial Cleaning",
-    "Pressure Washing",
-    "Mobile Detailing",
-    "Fleet Washing",
-    "Deep Cleaning",
-    "Upholstery & Fabric Extraction",
-    "Post-Construction Cleaning",
-    "Commercial Facility Cleaning",
-  ].map((name) => ({
-    "@type": "Offer",
-    itemOffered: { "@type": "Service", name },
-  })),
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Cleaning & facility services",
+    itemListElement: services.map((s) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: s.title,
+        description: s.shortDescription,
+        url: `${siteConfig.url}/services/${s.slug}/`,
+      },
+    })),
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -98,7 +105,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Header />

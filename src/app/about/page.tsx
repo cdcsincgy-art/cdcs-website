@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
 import { CTABanner } from "@/components/CTABanner";
 import { whyChooseUs } from "@/lib/content-data";
 import { iconMap } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "About Us | Commercial Cleaning Company in Guyana",
+  title: { absolute: "About CDCS Inc. — Cleaning Company in Guyana" },
   description:
-    "CDCS Inc. (Capital Detailing & Cleaning Services Inc.) is a Guyana-based commercial cleaning, pressure washing, and facility-support company built to serve businesses, organizations, and government agencies.",
+    "Capital Detailing & Cleaning Services Inc. (CDCS Inc.) — a Guyana-based commercial cleaning, pressure washing, and facility-support company for businesses.",
   alternates: { canonical: "/about/" },
 };
 
@@ -51,7 +50,17 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-          <PlaceholderMedia label="CDCS team or equipment photo — company profile" ratio="square" />
+          {/* Static export — see note in src/app/page.tsx on plain <img> usage. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/cdcs-team.jpg"
+            alt="Two CDCS team members cleaning a large commercial interior in Guyana — one mopping the floor, one cleaning the windows"
+            width={1400}
+            height={788}
+            loading="lazy"
+            decoding="async"
+            className="aspect-[16/10] w-full rounded-2xl object-cover"
+          />
         </div>
       </section>
 

@@ -47,29 +47,41 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   const Icon = serviceIconMap[service.icon];
   const related = services.filter((s) => s.slug !== service.slug).slice(0, 3);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    serviceType: service.title,
-    name: service.title,
-    description: service.metaDescription,
-    provider: {
-      "@type": "ProfessionalService",
-      name: siteConfig.companyName,
-      telephone: siteConfig.contact.phoneDisplay,
-      email: siteConfig.contact.email,
+  const serviceUrl = `${siteConfig.url}/services/${service.slug}/`;
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      serviceType: service.title,
+      name: service.title,
+      description: service.metaDescription,
+      url: serviceUrl,
+      provider: {
+        "@type": "ProfessionalService",
+        "@id": `${siteConfig.url}/#business`,
+        name: siteConfig.companyName,
+      },
+      areaServed: [
+        { "@type": "Country", name: "Guyana" },
+        { "@type": "City", name: "Georgetown" },
+      ],
     },
-    areaServed: {
-      "@type": "Country",
-      name: "Guyana",
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
+        { "@type": "ListItem", position: 2, name: "Services", item: `${siteConfig.url}/services/` },
+        { "@type": "ListItem", position: 3, name: service.title, item: serviceUrl },
+      ],
     },
-  };
+  ];
 
   return (
     <>
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 

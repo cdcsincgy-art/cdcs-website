@@ -123,6 +123,24 @@ export function IconWhatsapp(props: IconProps) {
   );
 }
 
+export function IconInstagram(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function IconFacebook(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M14 8.5h2.5V5.5h-2.5c-2 0-3.5 1.6-3.5 3.6V11H8.5v3H10.5v6.5h3V14h2.4l.6-3h-3V9.4c0-.5.4-.9.9-.9z" />
+    </svg>
+  );
+}
+
 export function IconMail(props: IconProps) {
   return (
     <svg {...base} {...props}>

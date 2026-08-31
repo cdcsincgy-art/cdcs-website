@@ -13,6 +13,7 @@ export function ServiceCard({ service }: { service: ServiceDefinition }) {
       <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{service.shortDescription}</p>
       <Link
         href={`/services/${service.slug}/`}
+        aria-label={`Learn more about ${service.title}`}
         className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 transition-colors hover:text-brand-700"
       >
         Learn More

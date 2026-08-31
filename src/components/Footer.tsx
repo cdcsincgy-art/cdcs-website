@@ -3,7 +3,7 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
 import { services } from "@/lib/services-data";
 import { siteConfig } from "@/lib/site-config";
-import { IconPhone, IconMail, IconMapPin, IconWhatsapp } from "@/components/icons";
+import { IconPhone, IconMail, IconMapPin, IconWhatsapp, IconInstagram, IconFacebook } from "@/components/icons";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -23,19 +23,19 @@ export function Footer() {
               href={siteConfig.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-9 w-9 items-center justify-center rounded-md border border-white/15 text-slate-300 hover:border-accent-500 hover:text-accent-400"
+              className="flex h-9 w-9 items-center justify-center rounded-md border border-white/15 text-slate-300 transition-colors hover:border-accent-500 hover:text-accent-400"
               aria-label="CDCS Inc. on Instagram"
             >
-              IG
+              <IconInstagram className="h-4 w-4" />
             </a>
             <a
               href={siteConfig.social.facebook}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-9 w-9 items-center justify-center rounded-md border border-white/15 text-slate-300 hover:border-accent-500 hover:text-accent-400"
+              className="flex h-9 w-9 items-center justify-center rounded-md border border-white/15 text-slate-300 transition-colors hover:border-accent-500 hover:text-accent-400"
               aria-label="CDCS Inc. on Facebook"
             >
-              FB
+              <IconFacebook className="h-4 w-4" />
             </a>
           </div>
         </div>

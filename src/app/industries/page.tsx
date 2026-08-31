@@ -4,9 +4,9 @@ import { CTABanner } from "@/components/CTABanner";
 import { iconMap } from "@/components/icons";
 
 export const metadata: Metadata = {
-  title: "Industries We Serve | Commercial Cleaning Across Guyana",
+  title: "Industries We Serve Across Guyana",
   description:
-    "CDCS Inc. supports corporate offices, government agencies, transportation and logistics companies, construction firms, retail, hospitality, and industrial facilities across Guyana.",
+    "CDCS Inc. serves corporate offices, government agencies, logistics companies, construction firms, retail, hospitality, and industrial facilities across Guyana.",
   alternates: { canonical: "/industries/" },
 };
 

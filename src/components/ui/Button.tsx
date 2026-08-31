@@ -5,14 +5,10 @@ type Variant = "primary" | "accent" | "outline" | "ghost";
 type Size = "md" | "lg";
 
 const variantClasses: Record<Variant, string> = {
-  primary:
-    "bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600 shadow-sm shadow-brand-900/10",
-  accent:
-    "bg-accent-500 text-navy-950 hover:bg-accent-600 focus-visible:outline-accent-600 shadow-sm shadow-accent-900/10",
-  outline:
-    "border-2 border-white/70 text-white hover:bg-white hover:text-navy-900",
-  ghost:
-    "border-2 border-navy-800 text-navy-900 hover:bg-navy-900 hover:text-white",
+  primary: "bg-brand-600 text-white hover:bg-brand-700 shadow-sm shadow-brand-900/10",
+  accent: "bg-accent-500 text-navy-950 hover:bg-accent-600 shadow-sm shadow-accent-900/10",
+  outline: "border-2 border-white/70 text-white hover:bg-white hover:text-navy-900",
+  ghost: "border-2 border-navy-800 text-navy-900 hover:bg-navy-900 hover:text-white",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -28,7 +24,15 @@ interface ButtonProps {
   className?: string;
   icon?: ReactNode;
   external?: boolean;
+  onClick?: () => void;
 }
+
+const focusRing: Record<Variant, string> = {
+  primary: "focus-visible:outline-brand-600",
+  accent: "focus-visible:outline-accent-600",
+  outline: "focus-visible:outline-white",
+  ghost: "focus-visible:outline-navy-900",
+};
 
 export function Button({
   href,
@@ -38,12 +42,19 @@ export function Button({
   className = "",
   icon,
   external = false,
+  onClick,
 }: ButtonProps) {
-  const classes = `inline-flex items-center justify-center gap-2 rounded-md font-semibold tracking-wide transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+  const classes = `inline-flex items-center justify-center gap-2 rounded-md font-semibold tracking-wide transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${focusRing[variant]} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
 
   if (external || href.startsWith("http") || href.startsWith("tel:") || href.startsWith("mailto:")) {
     return (
-      <a href={href} className={classes} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined}>
+      <a
+        href={href}
+        className={classes}
+        onClick={onClick}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
+      >
         {children}
         {icon}
       </a>
@@ -51,7 +62,7 @@ export function Button({
   }
 
   return (
-    <Link href={href} className={classes}>
+    <Link href={href} className={classes} onClick={onClick}>
       {children}
       {icon}
     </Link>

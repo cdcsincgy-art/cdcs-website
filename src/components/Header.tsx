@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
 import { IconPhone, IconWhatsapp } from "@/components/icons";
@@ -19,16 +18,34 @@ const navLinks = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
+  // Lock body scroll while the mobile menu is open.
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  // While open: move focus into the panel, and close on Escape (returning
+  // focus to the toggle) or on browser back/forward navigation.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    const onPop = () => setOpen(false);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("popstate", onPop);
+    panelRef.current?.querySelector<HTMLElement>("a, button")?.focus();
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("popstate", onPop);
     };
   }, [open]);
 
@@ -61,7 +78,7 @@ export function Header() {
         <div className="container-page flex items-center justify-between py-3">
           <Logo />
 
-          <nav className="hidden items-center gap-7 lg:flex">
+          <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -105,8 +122,11 @@ export function Header() {
               <IconWhatsapp className="h-5 w-5" />
             </a>
             <button
+              ref={triggerRef}
+              type="button"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
+              aria-controls="mobile-menu"
               onClick={() => setOpen((v) => !v)}
               className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-md border border-slate-200"
             >
@@ -120,12 +140,20 @@ export function Header() {
 
       {/* Mobile menu panel */}
       {open && (
-        <div className="fixed top-[65px] right-0 bottom-0 left-0 z-30 flex flex-col bg-white lg:hidden">
+        <div
+          ref={panelRef}
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site menu"
+          className="fixed top-[65px] right-0 bottom-0 left-0 z-30 flex flex-col bg-white lg:hidden"
+        >
           <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-5 py-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setOpen(false)}
                 className="rounded-md px-3 py-3.5 text-base font-semibold text-navy-900 hover:bg-slate-50"
               >
                 {link.label}
@@ -133,11 +161,12 @@ export function Header() {
             ))}
           </nav>
           <div className="border-t border-slate-200 px-5 py-5">
-            <Button href="/quote/" variant="accent" size="lg" className="w-full">
+            <Button href="/quote/" variant="accent" size="lg" className="w-full" onClick={() => setOpen(false)}>
               Request a Quote
             </Button>
             <a
               href={siteConfig.contact.phoneHref}
+              onClick={() => setOpen(false)}
               className="mt-3 flex items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3.5 text-sm font-bold text-navy-900"
             >
               <IconPhone className="h-4 w-4" />

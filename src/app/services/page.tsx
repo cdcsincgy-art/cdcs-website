@@ -5,9 +5,9 @@ import { CTABanner } from "@/components/CTABanner";
 import { services } from "@/lib/services-data";
 
 export const metadata: Metadata = {
-  title: "Our Services | Commercial Cleaning, Pressure Washing & More",
+  title: "Cleaning & Facility Services in Guyana",
   description:
-    "Explore CDCS Inc.'s full range of commercial cleaning, pressure washing, fleet washing, mobile detailing, and facility-support services across Guyana.",
+    "CDCS Inc.'s full range of commercial cleaning, pressure washing, fleet washing, mobile detailing, and facility-support services across Guyana.",
   alternates: { canonical: "/services/" },
 };
 

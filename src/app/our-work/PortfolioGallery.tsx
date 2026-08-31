@@ -13,10 +13,12 @@ export function PortfolioGallery() {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2.5">
+      <div className="flex flex-wrap gap-2.5" role="group" aria-label="Filter projects by service category">
         {portfolioCategories.map((cat) => (
           <button
             key={cat}
+            type="button"
+            aria-pressed={active === cat}
             onClick={() => setActive(cat)}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
               active === cat

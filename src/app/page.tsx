@@ -11,9 +11,11 @@ import { iconMap, IconArrowRight, IconWhatsapp, IconCheck } from "@/components/i
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Commercial Cleaning, Pressure Washing & Fleet Washing in Guyana | CDCS Inc.",
+  title: {
+    absolute: "Commercial Cleaning & Pressure Washing in Guyana | CDCS Inc.",
+  },
   description:
-    "CDCS Inc. delivers professional commercial cleaning, pressure washing, fleet washing, and mobile detailing for businesses, government agencies, and organizations across Guyana. Request a quote today.",
+    "Professional commercial cleaning, pressure washing, fleet washing, and mobile detailing for businesses and organizations across Guyana. Request a quote today.",
   alternates: { canonical: "/" },
 };
 
@@ -64,11 +66,19 @@ export default function HomePage() {
           </div>
 
           <div className="animate-fade-up delay-200">
+            {/* Static export (output: "export", images.unoptimized) — next/image
+                adds no optimization here, so a plain <img> with explicit
+                dimensions is the correct, lighter choice. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-src="/images/commercial-cleaning.jpg"
-  alt="CDCS professional cleaning team at work"
-  className="w-full rounded-2xl object-cover lg:aspect-[4/3]"
-/>
+              src="/images/commercial-cleaning.jpg"
+              alt="A CDCS worker cleaning the exterior glass of a commercial building in Guyana"
+              width={1152}
+              height={2048}
+              fetchPriority="high"
+              decoding="async"
+              className="aspect-[4/3] w-full rounded-2xl object-cover object-center"
+            />
           </div>
         </div>
       </section>

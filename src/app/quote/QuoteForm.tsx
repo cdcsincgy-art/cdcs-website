@@ -332,11 +332,11 @@ export function QuoteForm() {
       </div>
 
       <Field label="One-Time or Recurring Service" name="frequency" required>
-        <div className="flex gap-3">
+        <div className="flex gap-3" role="radiogroup" aria-label="One-time or recurring service">
           {(["One-Time", "Recurring"] as const).map((option) => (
             <label
               key={option}
-              className={`flex flex-1 cursor-pointer items-center justify-center rounded-md border-2 px-4 py-3 text-sm font-bold transition-colors ${
+              className={`flex flex-1 cursor-pointer items-center justify-center rounded-md border-2 px-4 py-3 text-sm font-bold transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-400 ${
                 frequency === option
                   ? "border-brand-600 bg-brand-50 text-brand-700"
                   : "border-slate-200 text-slate-600 hover:border-slate-300"
@@ -453,13 +453,20 @@ function Panel({
   resetLabel: string;
 }) {
   return (
-    <div className="rounded-xl border border-brand-200 bg-brand-50 p-8 text-center sm:p-12">
+    <div
+      role="status"
+      className="rounded-xl border border-brand-200 bg-brand-50 p-8 text-center sm:p-12"
+    >
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-600 text-white">
         <IconCheck className="h-7 w-7" />
       </div>
       <h3 className="mt-5 text-2xl font-bold text-navy-900">{heading}</h3>
       <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">{children}</p>
-      <button onClick={onReset} className="mt-6 text-sm font-bold text-brand-600 hover:underline">
+      <button
+        type="button"
+        onClick={onReset}
+        className="mt-6 text-sm font-bold text-brand-600 hover:underline"
+      >
         {resetLabel}
       </button>
     </div>

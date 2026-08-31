@@ -6,7 +6,7 @@ import { PortfolioGallery } from "./PortfolioGallery";
 export const metadata: Metadata = {
   title: "Our Work | Project Gallery",
   description:
-    "Browse examples of CDCS Inc.'s commercial cleaning, pressure washing, fleet washing, mobile detailing, deep cleaning, and extraction cleaning projects across Guyana.",
+    "Browse CDCS Inc. commercial cleaning, pressure washing, fleet washing, mobile detailing, and deep cleaning projects across Guyana.",
   alternates: { canonical: "/our-work/" },
 };
 
@@ -24,9 +24,8 @@ export default function OurWorkPage() {
             project you have in mind.
           </p>
           <p className="mt-3 max-w-2xl text-sm text-slate-400">
-            Note: this section currently shows placeholders. Real before-and-after photos and
-            videos are added here as projects are completed — see README.md for how to swap them
-            in.
+            Real before-and-after photos and videos from completed CDCS projects are added here as
+            work is finished.
           </p>
         </div>
       </section>

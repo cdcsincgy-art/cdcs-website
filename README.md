@@ -224,7 +224,10 @@ GA4 is wired in via `gtag.js` (`src/components/Analytics.tsx`, rendered once in 
 
 Per the brief, nothing has been invented. The following are marked as placeholders for you to
 fill in once available:
-- All photos and videos (dashed-border "PLACEHOLDER IMAGE" blocks throughout).
+- The homepage hero and the About page use real CDCS job-site photos
+  (`public/images/commercial-cleaning.jpg`, `public/images/cdcs-team.jpg`). Every other
+  photo/video slot — service pages and the Our Work gallery — is still a dashed-border
+  "PLACEHOLDER IMAGE" block.
 - The embedded map on the Contact page (add a Google Maps embed once you have a public
   office/pickup address).
 - Testimonials, certifications, years-in-business stats, and client counts are **not included**

@@ -3,8 +3,9 @@ import Link from "next/link";
 export function Logo({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   return (
-    <Link href="/" className="flex items-center gap-2.5 shrink-0">
+    <Link href="/" aria-label="CDCS Inc. — home" className="flex items-center gap-2.5 shrink-0">
       <span
+        aria-hidden="true"
         className={`flex h-10 w-10 items-center justify-center rounded-md text-base font-black tracking-tight ${
           isLight ? "bg-accent-500 text-navy-950" : "bg-navy-900 text-white"
         }`}
