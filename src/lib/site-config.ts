@@ -41,6 +41,14 @@ export const siteConfig = {
   // configured the form falls back to opening a pre-filled email/WhatsApp
   // message so no lead is ever lost. See README.md for setup steps.
   quoteFormEndpoint: process.env.NEXT_PUBLIC_QUOTE_FORM_ENDPOINT || "",
+  analytics: {
+    // Google Analytics 4 Measurement ID (format G-XXXXXXXXXX). Not a secret —
+    // it ships in client JS on every GA site. The env var lets you override it
+    // per environment; the fallback keeps the live site working with no Vercel
+    // config. Analytics only load on the domain in `url` above — never from
+    // localhost or Vercel preview URLs — see src/components/Analytics.tsx.
+    gaId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-EDWXCW6NXW",
+  },
 };
 
 export type SiteConfig = typeof siteConfig;

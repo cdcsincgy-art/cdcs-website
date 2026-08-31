@@ -3,6 +3,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { services } from "@/lib/services-data";
 import { siteConfig } from "@/lib/site-config";
+import { trackEvent } from "@/lib/analytics";
 import { IconArrowRight, IconUpload, IconCheck } from "@/components/icons";
 
 const propertyTypes = [
@@ -135,6 +136,13 @@ export function QuoteForm() {
         }
 
         if (res.ok && payload?.ok !== false) {
+          // GA4 conversion — fires only on a confirmed backend acceptance,
+          // never on validation errors, network failures, or the mailto
+          // fallback. No PII: only the (non-identifying) service + frequency.
+          trackEvent("generate_lead", {
+            service: String(data.get("service") || "unspecified"),
+            frequency: String(data.get("frequency") || "unspecified"),
+          });
           setStatus("success");
           setFieldErrors({});
           form.reset();

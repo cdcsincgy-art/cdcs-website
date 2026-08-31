@@ -140,10 +140,11 @@ applied by Vercel at serve time — they do **not** appear in a local `npm run b
 with `curl -I https://www.cdcsincgy.com/` after deploying. On other hosts, translate `vercel.json`
 into that host's equivalent (e.g. a Netlify/Cloudflare `_headers` file).
 
-The Content-Security-Policy currently allows only this origin plus `https://formspree.io` (the
-quote form). **If you add anything third-party — a Google Maps embed on the Contact page, an
-analytics script, an embedded video, a web font from Google — you must add its origin to the
-matching CSP directive in `vercel.json`, or the browser will silently block it.**
+The Content-Security-Policy currently allows this origin, `https://formspree.io` (the quote
+form), and the Google Analytics / Tag Manager origins. **If you add anything else third-party —
+a Google Maps embed on the Contact page, another analytics or ads script, an embedded video, a
+web font from Google — you must add its origin to the matching CSP directive in `vercel.json`,
+or the browser will silently block it.**
 
 ---
 
@@ -191,7 +192,35 @@ metadata (canonical URLs, sitemap, structured data).
 
 ---
 
-## 10. What's intentionally left as a placeholder
+## 10. Analytics (Google Analytics 4)
+
+GA4 is wired in via `gtag.js` (`src/components/Analytics.tsx`, rendered once in `layout.tsx`).
+
+- **Measurement ID** lives in `src/lib/site-config.ts` (`analytics.gaId`, currently
+  `G-EDWXCW6NXW`). Override per environment with `NEXT_PUBLIC_GA_MEASUREMENT_ID` if needed.
+  It is not a secret — it ships in client JS on every GA site.
+- **Only the live domain reports.** The script checks `window.location.hostname` against
+  `siteConfig.url` and does nothing on localhost or `*.vercel.app` preview URLs, so your own
+  browsing never lands in the data.
+- **Performance:** the script loads with `strategy="afterInteractive"` (after hydration, off the
+  critical path); a `<link rel="preconnect">` to `googletagmanager.com` is in `layout.tsx`.
+- **Pageviews** for client-side navigations are automatic — just confirm GA4 → Admin → Data
+  streams → your stream → *Enhanced measurement* has "Page changes based on browser history
+  events" enabled (on by default).
+- **Quote-form conversion:** a successful submission (confirmed by the Formspree backend, not the
+  mailto fallback) fires a GA4 `generate_lead` event with the selected `service` and `frequency`
+  — no personal data. **After deploying, mark it as a Key event:** GA4 → Admin → Events → toggle
+  *Mark as key event* on `generate_lead`.
+- **Privacy suggestions:** GA4 → Admin → Data settings → *Data retention* → 14 months; turn off
+  *Google signals* unless you need demographics/cross-device. GA4 does not store full IP
+  addresses. No cookie-consent banner is included (not legally required for a Guyana audience);
+  if you later need EU/UK coverage, add Google Consent Mode v2.
+- **CSP:** `vercel.json` already allows the Google Analytics / Tag Manager origins. If you switch
+  to GTM or add other Google tags, update the CSP directives accordingly.
+
+---
+
+## 11. What's intentionally left as a placeholder
 
 Per the brief, nothing has been invented. The following are marked as placeholders for you to
 fill in once available:
