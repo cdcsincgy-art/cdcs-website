@@ -132,6 +132,19 @@ Any static host works. Two straightforward options:
    publish directory `out`).
 2. Upload/connect the `out/` folder as you would any static site.
 
+### Security headers
+
+`vercel.json` sets the site's HTTP security headers (Content-Security-Policy, HSTS,
+`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`). These are
+applied by Vercel at serve time — they do **not** appear in a local `npm run build`; verify them
+with `curl -I https://www.cdcsincgy.com/` after deploying. On other hosts, translate `vercel.json`
+into that host's equivalent (e.g. a Netlify/Cloudflare `_headers` file).
+
+The Content-Security-Policy currently allows only this origin plus `https://formspree.io` (the
+quote form). **If you add anything third-party — a Google Maps embed on the Contact page, an
+analytics script, an embedded video, a web font from Google — you must add its origin to the
+matching CSP directive in `vercel.json`, or the browser will silently block it.**
+
 ---
 
 ## 8. Connecting your Squarespace-registered domain
