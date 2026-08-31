@@ -8,7 +8,7 @@ import { CTABanner } from "@/components/CTABanner";
 import { ServiceCard } from "@/components/ServiceCard";
 import { services, getServiceBySlug } from "@/lib/services-data";
 import { serviceIconMap, IconCheck, IconArrowRight } from "@/components/icons";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, ogImage } from "@/lib/site-config";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -23,8 +23,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: service.metaDescription,
     alternates: { canonical: `/services/${service.slug}/` },
     openGraph: {
+      type: "website",
+      url: `${siteConfig.url}/services/${service.slug}/`,
+      siteName: siteConfig.brandName,
       title: service.metaTitle,
       description: service.metaDescription,
+      images: [ogImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: service.metaTitle,
+      description: service.metaDescription,
+      images: [ogImage],
     },
   };
 }

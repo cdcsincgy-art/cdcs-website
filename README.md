@@ -167,6 +167,12 @@ metadata (canonical URLs, sitemap, structured data).
   `Service` schema on each individual service page.
 - `sitemap.xml` and `robots.txt` are generated automatically from `src/app/sitemap.ts` and
   `src/app/robots.ts`.
+- Open Graph / Twitter tags (including a 1200×630 social-sharing card) are set site-wide in
+  `layout.tsx`, with per-service titles/descriptions on service pages. The card image lives at
+  `public/og-image.png` — regenerate it with `npm run og:image` after changing the brand tokens
+  or copy in `scripts/generate-og-image.mjs`, then commit the new PNG.
+- The canonical domain is `https://www.cdcsincgy.com` (set once in `src/lib/site-config.ts` as
+  `url`). It must match the primary domain in Vercel; the bare apex redirects to it.
 - Image `alt` text should be added descriptively as real photos replace placeholders (see
   Section 3).
 

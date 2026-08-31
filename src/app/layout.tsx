@@ -10,7 +10,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, ogImage } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -39,11 +39,13 @@ export const metadata: Metadata = {
     siteName: siteConfig.brandName,
     title: `Cleaning Services Guyana | CDCS Inc.`,
     description: siteConfig.description,
+    images: [ogImage],
   },
   twitter: {
     card: "summary_large_image",
     title: `Cleaning Services Guyana | CDCS Inc.`,
     description: siteConfig.description,
+    images: [ogImage],
   },
   icons: {
     icon: "/favicon.ico",
@@ -58,6 +60,7 @@ const jsonLd = {
   alternateName: siteConfig.brandName,
   description: siteConfig.description,
   url: siteConfig.url,
+  image: `${siteConfig.url}${ogImage.url}`,
   telephone: siteConfig.contact.phoneDisplay,
   email: siteConfig.contact.email,
   address: {

@@ -44,3 +44,14 @@ export const siteConfig = {
 };
 
 export type SiteConfig = typeof siteConfig;
+
+// Social-sharing card, shared by every page's Open Graph + Twitter metadata.
+// Static 1200x630 PNG committed at public/og-image.png; regenerate it with
+// `npm run og:image` (scripts/generate-og-image.mjs) after brand/copy changes.
+export const ogImage = {
+  url: "/og-image.png",
+  width: 1200,
+  height: 630,
+  type: "image/png",
+  alt: `${siteConfig.brandName} — professional commercial cleaning, pressure washing, fleet washing, and mobile detailing in Guyana.`,
+};
