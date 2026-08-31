@@ -47,7 +47,7 @@ export const siteConfig = {
     // per environment; the fallback keeps the live site working with no Vercel
     // config. Analytics only load on the domain in `url` above — never from
     // localhost or Vercel preview URLs — see src/components/Analytics.tsx.
-    gaId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-EDWXCW6NXW",
+    gaId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-HE4BG5Z5MD",
   },
 };
 

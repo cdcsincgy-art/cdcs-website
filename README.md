@@ -197,7 +197,7 @@ metadata (canonical URLs, sitemap, structured data).
 GA4 is wired in via `gtag.js` (`src/components/Analytics.tsx`, rendered once in `layout.tsx`).
 
 - **Measurement ID** lives in `src/lib/site-config.ts` (`analytics.gaId`, currently
-  `G-EDWXCW6NXW`). Override per environment with `NEXT_PUBLIC_GA_MEASUREMENT_ID` if needed.
+  `G-HE4BG5Z5MD`). Override per environment with `NEXT_PUBLIC_GA_MEASUREMENT_ID` if needed.
   It is not a secret — it ships in client JS on every GA site.
 - **Only the live domain reports.** The script checks `window.location.hostname` against
   `siteConfig.url` and does nothing on localhost or `*.vercel.app` preview URLs, so your own
