@@ -15,7 +15,7 @@ import { siteConfig } from "@/lib/site-config";
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.brandName} | Commercial Cleaning & Facility Services in Guyana`,
+    default: `Cleaning Services Guyana | Commercial & Janitorial Cleaning | CDCS Inc.`,
     template: `%s | ${siteConfig.brandName}`,
   },
   description: siteConfig.description,
@@ -37,12 +37,12 @@ export const metadata: Metadata = {
     locale: "en_GY",
     url: siteConfig.url,
     siteName: siteConfig.brandName,
-    title: `${siteConfig.brandName} | Commercial Cleaning & Facility Services in Guyana`,
+    title: `Cleaning Services Guyana | CDCS Inc.`,
     description: siteConfig.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.brandName} | Commercial Cleaning & Facility Services in Guyana`,
+    title: `Cleaning Services Guyana | CDCS Inc.`,
     description: siteConfig.description,
   },
   icons: {

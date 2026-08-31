@@ -7,7 +7,7 @@ export const siteConfig = {
   brandShort: "CDCS",
   tagline: "Professional Cleaning. Powerful Results.",
   description:
-    "CDCS Inc. provides professional commercial cleaning, pressure washing, fleet washing, mobile detailing, and specialized facility-support services for businesses, government agencies, and organizations across Guyana.",
+    "Professional cleaning services in Guyana. CDCS Inc. provides commercial and janitorial cleaning, pressure washing, fleet washing, mobile detailing, and specialized facility cleaning.",
   url: "https://cdcsincgy.com", // TODO: replace with your live domain once connected
   location: {
     city: "Georgetown",
