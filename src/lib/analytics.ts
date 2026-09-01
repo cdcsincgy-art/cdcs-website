@@ -29,9 +29,16 @@ const CONTACT_EVENT: Record<ContactMethod, string> = {
  * GA4 event. Fired by <ContactLinkTracker> on real link clicks only — never on
  * page load.
  *
+ * `transport_type: "beacon"` makes gtag.js send the hit with
+ * `navigator.sendBeacon`, so it still leaves the browser after the click hands
+ * off to the dialer / mail app / WhatsApp and the tab is backgrounded or
+ * frozen. Without it the `/g/collect` request is routinely cancelled on that
+ * navigation and the event never reaches GA4.
+ *
  * No PII: the phone number and email address themselves are never sent. Only
  * the method, a coarse on-page location (header, footer, floating_button, …),
- * and the current path — all non-identifying.
+ * and the current path — all non-identifying. `transport_type` is consumed by
+ * gtag.js and is not recorded as an event parameter.
  */
 export function trackContactClick(
   method: ContactMethod,
@@ -40,6 +47,7 @@ export function trackContactClick(
   const payload: Record<string, unknown> = {
     contact_method: method,
     link_location: params?.link_location ?? "unknown",
+    transport_type: "beacon",
   };
   if (typeof window !== "undefined") {
     payload.page_path = window.location.pathname;
