@@ -116,6 +116,44 @@ export const insightArticles: InsightArticle[] = [
         "Tell us about your building, walkways, and parking areas and CDCS Inc. will assess the surfaces, match the method to each one, and propose a scope, schedule, and clear quote.",
     },
   },
+  {
+    slug: "carpet-upholstery-cleaning-guyana",
+    title:
+      "How Often Should Commercial Carpets and Upholstery Be Professionally Cleaned in Guyana?",
+    metaTitle: "Commercial Carpet & Upholstery Cleaning Frequency in Guyana",
+    metaDescription:
+      "How often should commercial carpets, office chairs, and upholstered furniture be professionally cleaned in Guyana? A practical guide to extraction and steam-cleaning frequency, with a sample schedule.",
+    excerpt:
+      "How often commercial carpet and upholstered furniture need professional cleaning depends on traffic, fabric, spills, and how well routine vacuuming keeps up. This guide covers extraction and steam-cleaning frequency area by area, with a practical schedule for offices and facilities in Guyana.",
+    datePublished: "2026-09-01",
+    dateModified: "2026-09-01",
+    readingTimeMinutes: 11,
+    topic: "Facility Care",
+    primaryKeyword: "commercial carpet and upholstery cleaning frequency in Guyana",
+    heroImageFile: "upholstery-extraction-cleaning-wand",
+    relatedServiceSlugs: [
+      "upholstery-fabric-extraction",
+      "deep-cleaning",
+      "commercial-janitorial-cleaning",
+    ],
+    keywords: [
+      "carpet cleaning Guyana",
+      "steam cleaning Guyana",
+      "upholstery cleaning Guyana",
+      "commercial carpet cleaning Guyana",
+      "office carpet cleaning Guyana",
+      "fabric chair cleaning Guyana",
+      "carpet extraction Guyana",
+      "upholstery extraction Guyana",
+    ],
+    relatedServicesIntro:
+      "If you'd rather hand this to a team that assesses the fabric first, these are the CDCS Inc. services that cover the work above.",
+    cta: {
+      title: "Planning Carpet or Upholstery Cleaning for Your Office?",
+      description:
+        "Tell us your carpet area, the number and type of fabric chairs or sofas, and any problem spots, and CDCS Inc. will assess the fabrics, match the method, and propose a scope, schedule, and clear quote.",
+    },
+  },
 ];
 
 export function getArticleBySlug(slug: string): InsightArticle | undefined {

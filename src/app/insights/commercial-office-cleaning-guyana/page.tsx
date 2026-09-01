@@ -192,7 +192,12 @@ export default function OfficeCleaningFrequencyArticle() {
         every three to six months, sooner for entrance runners and busy walkways.
         Upholstered task chairs, reception sofas, and waiting-area seating are on
         a similar cycle — every three to six months for heavily used seating,
-        twice a year for lighter use.
+        twice a year for lighter use. For a fuller breakdown by area and
+        furniture type, see our guide to{" "}
+        <Link href="/insights/carpet-upholstery-cleaning-guyana/">
+          how often commercial carpets and upholstery should be cleaned
+        </Link>
+        .
       </p>
 
       <h3>Periodic deep cleaning</h3>
