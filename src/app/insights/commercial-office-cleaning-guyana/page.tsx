@@ -6,9 +6,7 @@ import { getArticleBySlug } from "@/lib/insights-data";
 import { projectImageByFile } from "@/lib/project-images";
 import { siteConfig } from "@/lib/site-config";
 
-const article = getArticleBySlug(
-  "how-often-should-a-commercial-office-be-cleaned-guyana",
-)!;
+const article = getArticleBySlug("commercial-office-cleaning-guyana")!;
 
 const articleUrl = `${siteConfig.url}/insights/${article.slug}/`;
 const heroImage = projectImageByFile(article.heroImageFile);

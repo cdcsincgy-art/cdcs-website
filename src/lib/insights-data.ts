@@ -37,7 +37,7 @@ export interface InsightArticle {
 
 export const insightArticles: InsightArticle[] = [
   {
-    slug: "how-often-should-a-commercial-office-be-cleaned-guyana",
+    slug: "commercial-office-cleaning-guyana",
     title: "How Often Should a Commercial Office Be Professionally Cleaned in Guyana?",
     metaTitle: "How Often Should a Commercial Office Be Cleaned in Guyana?",
     metaDescription:

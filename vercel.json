@@ -1,5 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/insights/how-often-should-a-commercial-office-be-cleaned-guyana",
+      "destination": "/insights/commercial-office-cleaning-guyana/",
+      "permanent": true
+    },
+    {
+      "source": "/insights/how-often-should-a-commercial-office-be-cleaned-guyana/",
+      "destination": "/insights/commercial-office-cleaning-guyana/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
