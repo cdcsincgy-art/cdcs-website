@@ -9,6 +9,7 @@ import { ServiceCard } from "@/components/ServiceCard";
 import { Faq } from "@/components/Faq";
 import { ProjectImage } from "@/components/ProjectImage";
 import { services, getServiceBySlug } from "@/lib/services-data";
+import { insightsForService } from "@/lib/insights-data";
 import {
   serviceHeroImage,
   serviceGalleryImages,
@@ -75,6 +76,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   const overviewLinks = (service.relatedSlugs ?? [])
     .map((s) => getServiceBySlug(s))
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
+
+  const relatedInsights = insightsForService(service.slug);
 
   const serviceUrl = `${siteConfig.url}/services/${service.slug}/`;
   const heroImageUrl = heroImage
@@ -360,6 +363,39 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
       {/* FAQ (optional per-service) */}
       {service.faq && <Faq items={service.faq} />}
+
+      {/* Insights / resources — helpful context, kept subordinate to the CTA */}
+      {relatedInsights.length > 0 && (
+        <section className="bg-white pb-4 pt-16 sm:pt-24">
+          <div className="container-page">
+            <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+              <p className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">
+                <span className="h-px w-6 bg-brand-600/50" aria-hidden />
+                From CDCS Insights
+              </p>
+              <ul className="mt-5 space-y-5">
+                {relatedInsights.map((a) => (
+                  <li key={a.slug}>
+                    <Link
+                      href={`/insights/${a.slug}/`}
+                      className="group block"
+                    >
+                      <h3 className="text-base font-bold leading-snug text-navy-900 group-hover:text-brand-700">
+                        {a.title}
+                      </h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{a.excerpt}</p>
+                      <span className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 group-hover:text-brand-700">
+                        Read the guide
+                        <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Related services */}
       <section className="bg-slate-50 py-16 sm:py-24">

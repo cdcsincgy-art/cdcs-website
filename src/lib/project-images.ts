@@ -308,6 +308,15 @@ function pick(endsWith: string): ProjectImage {
   throw new Error(`No project image ending in "${endsWith}"`);
 }
 
+/**
+ * Look up one authentic project photo by the tail of its file path, for use
+ * outside the Our Work galleries (e.g. an Insights article hero). Throws at
+ * build time if the name doesn't match, so a bad reference can't ship.
+ */
+export function projectImageByFile(endsWith: string): ProjectImage {
+  return pick(endsWith);
+}
+
 /** The wide commercial-cleaning shot used as the homepage hero and About photo. */
 export const homepageHeroImage: ProjectImage = pick("commercial-cleaning-facility-interior");
 
