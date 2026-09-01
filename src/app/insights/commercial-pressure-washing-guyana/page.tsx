@@ -403,8 +403,12 @@ export default function CommercialPressureWashingArticle() {
         . After building or renovation work, it is usually combined with the{" "}
         <Link href="/services/post-construction-cleaning/">
           final clean-down before handover
-        </Link>
-        .
+        </Link>{" "}
+        — our guide to{" "}
+        <Link href="/insights/post-construction-cleaning-guyana/">
+          what post-construction cleaning involves
+        </Link>{" "}
+        covers how the two fit together.
       </p>
 
       <Callout title="Planning a schedule — a short checklist">

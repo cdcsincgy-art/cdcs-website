@@ -271,9 +271,11 @@ export default function JanitorialContractArticle() {
         <li>
           <strong>Additional work outside the agreement</strong> — one-off jobs
           such as a post-event clean, a{" "}
-          <Link href="/services/deep-cleaning/">one-off deep clean</Link>, or a
-          clean-up after building work, and how these are quoted and authorised
-          before they go ahead.
+          <Link href="/services/deep-cleaning/">one-off deep clean</Link>, or{" "}
+          <Link href="/insights/post-construction-cleaning-guyana/">
+            cleaning after building work
+          </Link>
+          , and how these are quoted and authorised before they go ahead.
         </li>
       </ul>
 

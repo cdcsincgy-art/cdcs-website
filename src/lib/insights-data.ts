@@ -227,6 +227,111 @@ export const insightArticles: InsightArticle[] = [
         "Tell us your facility size, the areas to be cleaned, and how often you need service, and CDCS Inc. will assess the site and send a written proposal with a clear figure for the recurring scope.",
     },
   },
+  {
+    slug: "post-construction-cleaning-guyana",
+    title: "What Does Professional Post-Construction Cleaning Involve in Guyana?",
+    metaTitle: "Post-Construction Cleaning in Guyana: What It Involves",
+    metaDescription:
+      "What post-construction cleaning involves in Guyana — the rough, builders', and final detail clean stages, what each covers, and how it is scoped for handover.",
+    excerpt:
+      "Post-construction cleaning is the stage that turns a finished build into a space ready to hand over. This guide explains the rough, builders', and final detail clean stages, the residues each removes, how the work is scoped on an active site, and how contractors and developers in Guyana can plan for it.",
+    datePublished: "2026-09-01",
+    dateModified: "2026-09-01",
+    readingTimeMinutes: 10,
+    topic: "Construction Handover",
+    primaryKeyword: "post-construction cleaning in Guyana",
+    heroImageFile: "commercial-window-cleaning-glass-facade",
+    relatedServiceSlugs: [
+      "post-construction-cleaning",
+      "deep-cleaning",
+      "commercial-janitorial-cleaning",
+    ],
+    keywords: [
+      "post construction cleaning Guyana",
+      "post-construction cleaning services Guyana",
+      "builders clean Guyana",
+      "construction cleanup Guyana",
+      "post renovation cleaning Guyana",
+      "commercial cleaning Guyana",
+    ],
+    relatedServicesIntro:
+      "These are the CDCS Inc. services a project handover typically draws on.",
+    cta: {
+      title: "Handing Over a Project Soon?",
+      description:
+        "Tell us the project type, size, and stage, and CDCS Inc. will scope a post-construction clean around your handover date and site conditions.",
+    },
+  },
+  {
+    slug: "commercial-deep-cleaning-guyana",
+    title: "Commercial Deep Cleaning in Guyana: What It Is and When Your Business Needs It",
+    metaTitle: "Commercial Deep Cleaning in Guyana: What It Is & When You Need It",
+    metaDescription:
+      "How commercial deep cleaning differs from routine cleaning, what a deep clean covers, and when a business or facility in Guyana should book one.",
+    excerpt:
+      "Deep cleaning reaches what routine cleaning does not have time for — behind and under fittings, tops of partitions, vents, grout, and the parts of kitchens and washrooms that need scrubbing. This guide explains the difference, what a deep clean covers, and when a commercial space in Guyana genuinely needs one.",
+    datePublished: "2026-09-01",
+    dateModified: "2026-09-01",
+    readingTimeMinutes: 10,
+    topic: "Facility Care",
+    primaryKeyword: "commercial deep cleaning in Guyana",
+    heroImageFile: "janitorial-restroom-cleaning",
+    relatedServiceSlugs: [
+      "deep-cleaning",
+      "commercial-janitorial-cleaning",
+      "upholstery-fabric-extraction",
+    ],
+    keywords: [
+      "deep cleaning Guyana",
+      "commercial deep cleaning Guyana",
+      "office deep cleaning Guyana",
+      "deep cleaning services Guyana",
+      "move out cleaning Guyana",
+      "move in cleaning Guyana",
+    ],
+    relatedServicesIntro:
+      "These are the CDCS Inc. programmes a deep clean is usually planned alongside.",
+    cta: {
+      title: "Need a Deep Clean Scheduled?",
+      description:
+        "Tell us the space, its condition, and your deadline — an inspection, a move, an event — and CDCS Inc. will scope a deep clean and a schedule that works around your operation.",
+    },
+  },
+  {
+    slug: "commercial-fleet-washing-guyana",
+    title: "How Often Should a Commercial Vehicle Fleet Be Washed in Guyana?",
+    metaTitle: "Commercial Fleet Washing in Guyana: How Often & What's Involved",
+    metaDescription:
+      "How often trucks, vans, and commercial fleets should be washed in Guyana, what an on-site depot wash covers, and how to set up a scheduled washing programme.",
+    excerpt:
+      "How often a fleet needs washing depends on what the vehicles do, where they run, and whether they carry branding. This guide covers fleet washing frequency by vehicle type, what an on-site wash at your depot involves, and how to set up a scheduled programme in Guyana.",
+    datePublished: "2026-09-01",
+    dateModified: "2026-09-01",
+    readingTimeMinutes: 9,
+    topic: "Fleet Operations",
+    primaryKeyword: "commercial fleet washing in Guyana",
+    heroImageFile: "fleet-washing-truck-covered-in-foam",
+    relatedServiceSlugs: [
+      "fleet-washing",
+      "mobile-detailing",
+      "pressure-washing",
+    ],
+    keywords: [
+      "fleet washing Guyana",
+      "truck washing Guyana",
+      "commercial vehicle washing Guyana",
+      "fleet wash service Guyana",
+      "depot vehicle cleaning Guyana",
+      "bus washing Guyana",
+    ],
+    relatedServicesIntro:
+      "These are the CDCS Inc. services a fleet operator most often uses.",
+    cta: {
+      title: "Setting Up a Fleet Washing Programme?",
+      description:
+        "Tell us your fleet size, vehicle types, depot location, and dispatch pattern, and CDCS Inc. will propose an on-site washing schedule and a clear quote.",
+    },
+  },
 ];
 
 export function getArticleBySlug(slug: string): InsightArticle | undefined {
@@ -243,15 +348,23 @@ function byNewest(a: InsightArticle, b: InsightArticle): number {
 }
 
 /**
- * Articles that support a given service page, newest first. Capped so a service
- * page's "From CDCS Insights" block stays a short, secondary resource list as
- * the library grows.
+ * Articles that support a given service page, capped so a service page's "From
+ * CDCS Insights" block stays a short, secondary resource list as the library
+ * grows. Articles whose primary service (relatedServiceSlugs[0]) is this page
+ * come first — so a page always leads with the content written specifically for
+ * it — then articles that reference it secondarily, each group newest first.
  */
 export function insightsForService(serviceSlug: string): InsightArticle[] {
-  return insightArticles
-    .filter((a) => a.relatedServiceSlugs.includes(serviceSlug))
-    .sort(byNewest)
-    .slice(0, 3);
+  const matches = insightArticles.filter((a) =>
+    a.relatedServiceSlugs.includes(serviceSlug),
+  );
+  const primary = matches
+    .filter((a) => a.relatedServiceSlugs[0] === serviceSlug)
+    .sort(byNewest);
+  const secondary = matches
+    .filter((a) => a.relatedServiceSlugs[0] !== serviceSlug)
+    .sort(byNewest);
+  return [...primary, ...secondary].slice(0, 3);
 }
 
 /** All articles, newest first — used by the hub index. */

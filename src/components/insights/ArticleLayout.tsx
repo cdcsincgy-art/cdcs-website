@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CTABanner } from "@/components/CTABanner";
 import { ProjectImage } from "@/components/ProjectImage";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Faq } from "@/components/Faq";
 import { IconArrowRight } from "@/components/icons";
 import { projectImageByFile } from "@/lib/project-images";
 import { getServiceBySlug } from "@/lib/services-data";
@@ -22,9 +23,16 @@ import { siteConfig } from "@/lib/site-config";
 export function ArticleLayout({
   article,
   children,
+  faq,
 }: {
   article: InsightArticle;
   children: ReactNode;
+  /**
+   * Optional FAQ block. When provided, the questions are rendered visibly on
+   * the page (via <Faq>) AND emitted as FAQPage structured data — never one
+   * without the other.
+   */
+  faq?: { q: string; a: string }[];
 }) {
   const hero = projectImageByFile(article.heroImageFile);
   const articleUrl = `${siteConfig.url}/insights/${article.slug}/`;
@@ -89,6 +97,19 @@ export function ArticleLayout({
         { "@type": "ListItem", position: 3, name: article.title, item: articleUrl },
       ],
     },
+    ...(faq && faq.length > 0
+      ? [
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faq.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -145,6 +166,13 @@ export function ArticleLayout({
           <article className="article-prose mx-auto max-w-2xl">{children}</article>
         </div>
       </section>
+
+      {/* ================= FAQ (visible + FAQPage schema above) ================= */}
+      {faq && faq.length > 0 && (
+        <div className="border-t border-slate-200">
+          <Faq items={faq} />
+        </div>
+      )}
 
       {/* ================= RELATED SERVICES ================= */}
       {relatedServices.length > 0 && (

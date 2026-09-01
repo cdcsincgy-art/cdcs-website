@@ -210,7 +210,11 @@ export default function OfficeCleaningFrequencyArticle() {
         every quarter — or at minimum twice a year — resets those areas and
         keeps the routine programme from slowly losing ground. Many offices book
         a deep clean before an audit, a client visit, or the start of a new
-        lease year.
+        lease year. Our guide to{" "}
+        <Link href="/insights/commercial-deep-cleaning-guyana/">
+          what a commercial deep clean involves and when to book one
+        </Link>{" "}
+        goes into more detail.
       </p>
 
       <h2>What pushes cleaning frequency up or down</h2>
