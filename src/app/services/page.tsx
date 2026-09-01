@@ -10,9 +10,9 @@ import { serviceIconMap, IconCheck, IconArrowRight } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Cleaning & Facility Services in Guyana",
+  title: "Our Cleaning & Facility Services in Guyana",
   description:
-    "CDCS Inc.'s full range of commercial cleaning, janitorial, pressure washing, fleet washing, and facility-support services in Georgetown and across Guyana.",
+    "CDCS Inc.'s full range of services in Georgetown and across Guyana — commercial and janitorial cleaning, pressure washing, fleet washing, and deep cleaning.",
   alternates: { canonical: "/services/" },
 };
 

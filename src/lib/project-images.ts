@@ -246,10 +246,10 @@ export const projectCategories: ProjectCategory[] = [
   },
   {
     slug: "upholstery-fabric-extraction",
-    title: "Upholstery & Fabric Extraction",
+    title: "Carpet, Upholstery & Fabric Cleaning",
     service: "upholstery-fabric-extraction",
     blurb:
-      "Extraction and steam cleaning for car seats, office chairs, carpets, and fabric surfaces.",
+      "Hot-water extraction, often called steam cleaning, for carpets, office chairs, car seats, and fabric surfaces.",
     images: [
       {
         file: `${P}/upholstery-extraction/upholstery-extraction-car-seat-before-after`,

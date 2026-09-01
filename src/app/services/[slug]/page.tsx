@@ -70,7 +70,16 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
     services.filter((s) => s.slug !== service.slug)
   ).slice(0, 3);
 
+  // Contextual in-body internal links, drawn from the same related services and
+  // anchored on the plain service name (no exact-match keyword anchors).
+  const overviewLinks = (service.relatedSlugs ?? [])
+    .map((s) => getServiceBySlug(s))
+    .filter((s): s is NonNullable<typeof s> => Boolean(s));
+
   const serviceUrl = `${siteConfig.url}/services/${service.slug}/`;
+  const heroImageUrl = heroImage
+    ? `${siteConfig.url}${heroImage.file}${heroImage.fallback ? ".jpg" : ".webp"}`
+    : undefined;
 
   const jsonLd = [
     {
@@ -80,10 +89,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
       name: service.title,
       description: service.metaDescription,
       url: serviceUrl,
+      ...(heroImageUrl ? { image: heroImageUrl } : {}),
       provider: {
         "@type": "ProfessionalService",
         "@id": `${siteConfig.url}/#business`,
         name: siteConfig.companyName,
+        url: siteConfig.url,
       },
       areaServed: [
         { "@type": "Country", name: "Guyana" },
@@ -173,6 +184,49 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </section>
+
+      {/* ================= OVERVIEW ================= */}
+      {service.overview && service.overview.length > 0 && (
+        <section className="bg-white pt-16 sm:pt-24">
+          <div className="container-page">
+            <div className="max-w-3xl">
+              <SectionHeading
+                eyebrow="Overview"
+                title={`About ${service.title} in Guyana`}
+              />
+              <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                {service.overview.map((para) => (
+                  <p key={para.slice(0, 40)}>{para}</p>
+                ))}
+              </div>
+              {overviewLinks.length > 0 && (
+                <p className="mt-6 text-sm leading-relaxed text-slate-600">
+                  Often arranged alongside{" "}
+                  {overviewLinks.map((s, i) => (
+                    <span key={s.slug}>
+                      <Link
+                        href={`/services/${s.slug}/`}
+                        className="font-semibold text-brand-600 hover:underline"
+                      >
+                        {s.title.toLowerCase()}
+                      </Link>
+                      {i === overviewLinks.length - 1
+                        ? ". "
+                        : i === overviewLinks.length - 2
+                          ? " and "
+                          : ", "}
+                    </span>
+                  ))}
+                  <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
+                    Request a quote
+                  </Link>{" "}
+                  to get started.
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ================= IDEAL FOR / WHAT'S INCLUDED ================= */}
       <section className="bg-white py-16 sm:py-24">
