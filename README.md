@@ -70,6 +70,22 @@ The three service pages without their own photos yet (deep cleaning, post-constr
 commercial facility cleaning) reuse a related commercial-cleaning shot and show a "View Our Work"
 card instead of a gallery until dedicated photos exist.
 
+### Logo
+
+The official CDCS seal is `public/images/cdcs-logo.png` (kept as supplied). `npm run logo:assets`
+(`scripts/generate-logo-assets.mjs`) derives everything else from it — never editing the
+original:
+
+- `public/images/cdcs-logo-mark.{webp,png}` — 256px transparent mark used in the header and
+  footer `<Logo>` (via `<picture>`). On dark surfaces the footer places it on a small white chip
+  because the seal is black line art.
+- `src/app/favicon.ico` + `icon.png` + `apple-icon.png` — browser icons, seal on white. The
+  seal's thin outlines and micro-text are soft below ~32px; it reads well from 32px up and at
+  Google's ~48px search size.
+- The social card (`public/og-image.png`, `npm run og:image`) shows the seal on a white disc.
+- `ProfessionalService` JSON-LD `logo` points at the full-resolution
+  `https://www.cdcsincgy.com/images/cdcs-logo.png`.
+
 ---
 
 ## 4. Connecting the quote form to email

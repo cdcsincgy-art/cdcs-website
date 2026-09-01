@@ -45,9 +45,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     images: [ogImage],
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
+  // favicon.ico / icon.png / apple-icon.png are provided by the App Router
+  // file conventions in src/app/ — regenerate with `npm run logo:assets`.
 };
 
 const jsonLd = {
@@ -59,6 +58,7 @@ const jsonLd = {
   description: siteConfig.description,
   slogan: siteConfig.tagline,
   url: siteConfig.url,
+  logo: `${siteConfig.url}/images/cdcs-logo.png`,
   image: [
     `${siteConfig.url}${ogImage.url}`,
     `${siteConfig.url}/images/projects/commercial-cleaning/commercial-cleaning-facility-interior.jpg`,

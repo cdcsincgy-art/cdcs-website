@@ -8,8 +8,8 @@
  * an image/* content-type on any host. Re-run this script whenever the brand
  * tokens or copy below change, and commit the regenerated PNG.
  *
- * Content is limited to CDCS's own brand, tagline, and factual service list —
- * no photography, testimonials, or performance claims.
+ * Content is limited to CDCS's own brand (the official logo), tagline, and
+ * factual service list — no photography, testimonials, or performance claims.
  */
 import { createRequire } from "node:module";
 import { readFile, writeFile } from "node:fs/promises";
@@ -43,6 +43,24 @@ const [soraExtraBold, interRegular, interSemiBold] = await Promise.all([
   readFile(join(fontsDir, "inter/files/inter-latin-600-normal.woff")),
 ]);
 
+// Official CDCS seal on a white disc (the seal is black line art; the card is
+// dark). Scaled only — not recoloured or redrawn. Passed to Satori as a data URI.
+const sealDisc = await sharp({
+  create: { width: 220, height: 220, channels: 4, background: "#ffffff" },
+})
+  .composite([
+    {
+      input: await sharp(join(root, "public/images/cdcs-logo.png"))
+        .trim({ threshold: 10 })
+        .resize(196, 196, { fit: "contain", background: "#ffffff" })
+        .toBuffer(),
+      gravity: "center",
+    },
+  ])
+  .png()
+  .toBuffer();
+const sealSrc = `data:image/png;base64,${sealDisc.toString("base64")}`;
+
 const tree = h(
   "div",
   {
@@ -62,23 +80,15 @@ const tree = h(
   h(
     "div",
     { display: "flex", alignItems: "center" },
-    h(
-      "div",
-      {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 68,
-        height: 68,
-        borderRadius: 16,
-        backgroundColor: ACCENT_500,
-        color: NAVY_950,
-        fontFamily: "Sora",
-        fontSize: 32,
-        fontWeight: 800,
+    {
+      type: "img",
+      props: {
+        src: sealSrc,
+        width: 82,
+        height: 82,
+        style: { borderRadius: "50%" },
       },
-      "CD"
-    ),
+    },
     h(
       "div",
       { display: "flex", flexDirection: "column", marginLeft: 22 },
