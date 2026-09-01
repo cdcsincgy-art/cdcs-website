@@ -11,6 +11,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { Analytics } from "@/components/Analytics";
+import { ContactLinkTracker } from "@/components/ContactLinkTracker";
 import { siteConfig, ogImage } from "@/lib/site-config";
 import { services } from "@/lib/services-data";
 
@@ -117,6 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <WhatsAppFloat />
         <Analytics />
+        <ContactLinkTracker />
       </body>
     </html>
   );

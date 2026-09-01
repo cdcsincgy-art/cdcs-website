@@ -104,7 +104,7 @@ export function Header() {
           </div>
 
           {/* Mobile controls */}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-2 lg:hidden" data-analytics-location="mobile_nav">
             <a
               href={siteConfig.contact.phoneHref}
               aria-label="Call CDCS Inc."
@@ -146,6 +146,7 @@ export function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"
+          data-analytics-location="mobile_nav"
           className="fixed top-[65px] right-0 bottom-0 left-0 z-30 flex flex-col bg-white lg:hidden"
         >
           <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-5 py-6">

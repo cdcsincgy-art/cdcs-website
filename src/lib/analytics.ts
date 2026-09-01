@@ -14,3 +14,35 @@ export function trackEvent(name: string, params?: Record<string, unknown>) {
   const gtag = (window as unknown as { gtag?: Gtag }).gtag;
   gtag?.("event", name, params);
 }
+
+/** Primary contact methods we measure as conversions. */
+export type ContactMethod = "whatsapp" | "phone" | "email";
+
+const CONTACT_EVENT: Record<ContactMethod, string> = {
+  whatsapp: "whatsapp_click",
+  phone: "phone_click",
+  email: "email_click",
+};
+
+/**
+ * Record a click on a primary contact method (WhatsApp / phone / email) as a
+ * GA4 event. Fired by <ContactLinkTracker> on real link clicks only — never on
+ * page load.
+ *
+ * No PII: the phone number and email address themselves are never sent. Only
+ * the method, a coarse on-page location (header, footer, floating_button, …),
+ * and the current path — all non-identifying.
+ */
+export function trackContactClick(
+  method: ContactMethod,
+  params?: { link_location?: string },
+) {
+  const payload: Record<string, unknown> = {
+    contact_method: method,
+    link_location: params?.link_location ?? "unknown",
+  };
+  if (typeof window !== "undefined") {
+    payload.page_path = window.location.pathname;
+  }
+  trackEvent(CONTACT_EVENT[method], payload);
+}
