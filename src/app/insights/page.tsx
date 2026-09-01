@@ -97,8 +97,8 @@ export default function InsightsHubPage() {
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
             CDCS Inc. works with offices, commercial facilities, institutions, and organizations
             across Georgetown and Guyana every day. This is where we share what we&apos;ve learned —
-            how to plan cleaning schedules, keep facilities presentable between deeper cleans, and
-            decide when an outsourced janitorial program is the right move.
+            how to plan cleaning and exterior-maintenance schedules, keep interiors and building
+            exteriors presentable, and decide when an outsourced programme is the right move.
           </p>
         </div>
       </section>

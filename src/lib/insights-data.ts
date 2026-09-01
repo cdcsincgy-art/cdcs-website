@@ -33,6 +33,14 @@ export interface InsightArticle {
   /** Service slugs this article supports — powers contextual internal links. */
   relatedServiceSlugs: string[];
   keywords: string[];
+  /**
+   * Closing CTA-banner copy for this article. A generic fallback is used when
+   * omitted (see ArticleLayout), so every article can tune its own call to
+   * action without the shell hard-coding one topic.
+   */
+  cta?: { title: string; description: string };
+  /** Lead line above the "services referenced" block; generic fallback if omitted. */
+  relatedServicesIntro?: string;
 }
 
 export const insightArticles: InsightArticle[] = [
@@ -64,6 +72,49 @@ export const insightArticles: InsightArticle[] = [
       "professional office cleaning",
       "commercial cleaning schedule",
     ],
+    relatedServicesIntro:
+      "If you'd rather hand the schedule to a supervised team, these are the CDCS Inc. programs that cover the areas above.",
+    cta: {
+      title: "Need a Cleaning Schedule Built for Your Office?",
+      description:
+        "Tell us your facility size, headcount, and operating hours and CDCS Inc. will propose a commercial cleaning schedule and a clear service plan.",
+    },
+  },
+  {
+    slug: "commercial-pressure-washing-guyana",
+    title: "How Often Should Commercial Properties Be Pressure Washed in Guyana?",
+    metaTitle: "How Often to Pressure Wash Commercial Properties in Guyana",
+    metaDescription:
+      "A practical guide to commercial pressure washing frequency in Guyana — how often to clean building exteriors, walkways, concrete, parking areas, walls, and loading zones, with a sample schedule.",
+    excerpt:
+      "How often a commercial property needs pressure washing depends on its surfaces, exposure, surroundings, and traffic. This Guyana-specific guide works through it area by area and includes a practical exterior-cleaning frequency table.",
+    datePublished: "2026-09-01",
+    dateModified: "2026-09-01",
+    readingTimeMinutes: 10,
+    topic: "Property Maintenance",
+    primaryKeyword: "commercial pressure washing frequency in Guyana",
+    heroImageFile: "pressure-washing-commercial-building",
+    relatedServiceSlugs: [
+      "pressure-washing",
+      "commercial-janitorial-cleaning",
+      "commercial-facility-cleaning",
+      "post-construction-cleaning",
+    ],
+    keywords: [
+      "pressure washing Guyana",
+      "commercial pressure washing Guyana",
+      "pressure washing Georgetown Guyana",
+      "commercial property cleaning Guyana",
+      "exterior cleaning Guyana",
+      "commercial pressure cleaning",
+    ],
+    relatedServicesIntro:
+      "If you'd rather hand the exterior programme to a supervised team, these are the CDCS Inc. services that cover the work above.",
+    cta: {
+      title: "Planning Pressure Washing for Your Property?",
+      description:
+        "Tell us about your building, walkways, and parking areas and CDCS Inc. will assess the surfaces, match the method to each one, and propose a scope, schedule, and clear quote.",
+    },
   },
 ];
 

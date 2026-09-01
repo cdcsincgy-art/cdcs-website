@@ -35,6 +35,15 @@ export function ArticleLayout({
     .map((slug) => getServiceBySlug(slug))
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
 
+  const relatedServicesIntro =
+    article.relatedServicesIntro ??
+    "These are the CDCS Inc. programmes that cover the work described above.";
+  const cta = article.cta ?? {
+    title: "Ready to Put This Into Practice?",
+    description:
+      "Tell us about your property, fleet, or facility and CDCS Inc. will put together a clear service plan and quote.",
+  };
+
   const jsonLd = [
     {
       "@context": "https://schema.org",
@@ -144,7 +153,7 @@ export function ArticleLayout({
             <SectionHeading
               eyebrow="Put It Into Practice"
               title="CDCS Services Referenced in This Article"
-              description="If you'd rather hand the schedule to a supervised team, these are the CDCS Inc. programs that cover the areas above."
+              description={relatedServicesIntro}
             />
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {relatedServices.map((s) => (
@@ -168,10 +177,7 @@ export function ArticleLayout({
         </section>
       )}
 
-      <CTABanner
-        title="Need a Cleaning Schedule Built for Your Office?"
-        description="Tell us your facility size, headcount, and operating hours and CDCS Inc. will propose a commercial cleaning schedule and a clear service plan."
-      />
+      <CTABanner title={cta.title} description={cta.description} />
     </>
   );
 }
