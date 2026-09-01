@@ -16,13 +16,32 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about/" },
 };
 
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
+    { "@type": "ListItem", position: 2, name: "About", item: `${siteConfig.url}/about/` },
+  ],
+};
+
 export default function AboutPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+
       <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-20">
         <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
         <div className="container-page relative">
+          <nav className="mb-5 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-accent-400">Home</Link>
+            <span className="mx-2">/</span>
+            <span className="text-slate-300">About</span>
+          </nav>
           <p className="mb-4 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-accent-400">
             <span className="h-px w-6 bg-accent-400/60" aria-hidden />
             About CDCS
