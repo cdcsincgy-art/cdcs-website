@@ -392,6 +392,14 @@ export default function OfficeCleaningFrequencyArticle() {
           pre-event clean, or covering a new area without hiring.
         </li>
       </ul>
+      <p>
+        If you decide to go that route, our guide to{" "}
+        <Link href="/insights/commercial-janitorial-contract-guyana/">
+          what a commercial janitorial service agreement should include
+        </Link>{" "}
+        covers what to put in the scope, how to compare quotes fairly, and the
+        questions to ask a contractor before appointing them.
+      </p>
 
       <Callout title="Building your own schedule — a short checklist">
         <p>Work through these in order and you will have a defensible schedule:</p>

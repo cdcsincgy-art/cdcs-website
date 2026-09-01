@@ -154,24 +154,73 @@ export const insightArticles: InsightArticle[] = [
         "Tell us your carpet area, the number and type of fabric chairs or sofas, and any problem spots, and CDCS Inc. will assess the fabrics, match the method, and propose a scope, schedule, and clear quote.",
     },
   },
+  {
+    slug: "commercial-janitorial-contract-guyana",
+    title: "What Should a Commercial Janitorial Service Agreement Include in Guyana?",
+    metaTitle: "What a Commercial Janitorial Contract Should Cover in Guyana",
+    metaDescription:
+      "A practical checklist for organizations evaluating a commercial janitorial service agreement in Guyana — scope of work, frequencies, staffing, supervision, quality control, pricing, and how to compare quotes fairly.",
+    excerpt:
+      "Before signing a commercial cleaning contract, it helps to know what a well-written janitorial service agreement covers. This guide walks through scope, frequencies, staffing, supervision, quality control, pricing, and how to compare quotations fairly — practical guidance for organizations in Guyana.",
+    datePublished: "2026-09-01",
+    dateModified: "2026-09-01",
+    readingTimeMinutes: 12,
+    topic: "Procurement",
+    primaryKeyword: "commercial janitorial service agreements in Guyana",
+    heroImageFile: "commercial-cleaning-staircase",
+    relatedServiceSlugs: [
+      "commercial-janitorial-cleaning",
+      "commercial-facility-cleaning",
+      "deep-cleaning",
+    ],
+    keywords: [
+      "janitorial services Guyana",
+      "commercial cleaning Guyana",
+      "commercial cleaning contract Guyana",
+      "janitorial contract Guyana",
+      "office cleaning services Guyana",
+      "commercial cleaning company Guyana",
+      "facility cleaning Guyana",
+      "janitorial services Georgetown Guyana",
+    ],
+    relatedServicesIntro:
+      "If you're ready to put an agreement in place, these are the CDCS Inc. programmes it would cover.",
+    cta: {
+      title: "Building a Janitorial Agreement for Your Organization?",
+      description:
+        "Send us your scope document — or tell us your facility, hours, and priorities — and CDCS Inc. will quote against it and provide a sample service agreement and inspection checklist.",
+    },
+  },
 ];
 
 export function getArticleBySlug(slug: string): InsightArticle | undefined {
   return insightArticles.find((a) => a.slug === slug);
 }
 
-/** Articles that are written to support a given service page, newest first. */
+// The registry is kept in chronological order (oldest first). This orders
+// newest first, using registry position to break ties between articles that
+// share a publish date.
+function byNewest(a: InsightArticle, b: InsightArticle): number {
+  const byDate = b.datePublished.localeCompare(a.datePublished);
+  if (byDate !== 0) return byDate;
+  return insightArticles.indexOf(b) - insightArticles.indexOf(a);
+}
+
+/**
+ * Articles that support a given service page, newest first. Capped so a service
+ * page's "From CDCS Insights" block stays a short, secondary resource list as
+ * the library grows.
+ */
 export function insightsForService(serviceSlug: string): InsightArticle[] {
   return insightArticles
     .filter((a) => a.relatedServiceSlugs.includes(serviceSlug))
-    .sort((a, b) => b.datePublished.localeCompare(a.datePublished));
+    .sort(byNewest)
+    .slice(0, 3);
 }
 
 /** All articles, newest first — used by the hub index. */
 export function allInsightsNewestFirst(): InsightArticle[] {
-  return [...insightArticles].sort((a, b) =>
-    b.datePublished.localeCompare(a.datePublished),
-  );
+  return [...insightArticles].sort(byNewest);
 }
 
 /** Long, human-readable date for article bylines (e.g. "1 September 2026"). */
