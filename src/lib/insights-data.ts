@@ -191,6 +191,42 @@ export const insightArticles: InsightArticle[] = [
         "Send us your scope document — or tell us your facility, hours, and priorities — and CDCS Inc. will quote against it and provide a sample service agreement and inspection checklist.",
     },
   },
+  {
+    slug: "commercial-cleaning-cost-guyana",
+    title: "How Much Does Commercial Cleaning Cost in Guyana? What Affects the Price",
+    metaTitle: "What Affects the Cost of Commercial Cleaning in Guyana",
+    metaDescription:
+      "A plain-language guide to what drives a commercial cleaning quote in Guyana — facility size, cleaning frequency, scope of work, hours, consumables, and periodic tasks — and how to get an accurate figure for your office or facility.",
+    excerpt:
+      "There is no single price for commercial cleaning — a quote is built from your facility size, how often it is cleaned, the scope of work, the hours involved, and how consumables are handled. This guide explains each cost driver and how to get an accurate quote for a business in Guyana.",
+    datePublished: "2026-09-01",
+    dateModified: "2026-09-01",
+    readingTimeMinutes: 10,
+    topic: "Budgeting",
+    primaryKeyword: "commercial cleaning cost in Guyana",
+    heroImageFile: "janitorial-restroom-cleaning",
+    relatedServiceSlugs: [
+      "commercial-janitorial-cleaning",
+      "commercial-facility-cleaning",
+      "deep-cleaning",
+    ],
+    keywords: [
+      "commercial cleaning cost Guyana",
+      "commercial cleaning prices Guyana",
+      "janitorial services cost Guyana",
+      "office cleaning cost Guyana",
+      "commercial cleaning quote Guyana",
+      "commercial cleaning Guyana",
+      "janitorial services Guyana",
+    ],
+    relatedServicesIntro:
+      "These are the CDCS Inc. programmes a commercial cleaning quote would typically cover.",
+    cta: {
+      title: "Want an Accurate Commercial Cleaning Quote?",
+      description:
+        "Tell us your facility size, the areas to be cleaned, and how often you need service, and CDCS Inc. will assess the site and send a written proposal with a clear figure for the recurring scope.",
+    },
+  },
 ];
 
 export function getArticleBySlug(slug: string): InsightArticle | undefined {

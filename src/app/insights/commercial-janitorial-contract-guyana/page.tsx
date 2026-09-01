@@ -316,6 +316,13 @@ export default function JanitorialContractArticle() {
           example an annual review, so there are no mid-term surprises.
         </li>
       </ul>
+      <p>
+        If you are still working out a budget, our guide to{" "}
+        <Link href="/insights/commercial-cleaning-cost-guyana/">
+          what affects the cost of commercial cleaning
+        </Link>{" "}
+        breaks down the factors that drive a quote up or down.
+      </p>
 
       <h2>Comparing quotations and choosing a contractor</h2>
 

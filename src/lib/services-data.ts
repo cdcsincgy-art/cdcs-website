@@ -47,14 +47,15 @@ export const services: ServiceDefinition[] = [
     heroPlaceholderLabel: "Photo placeholder — office/janitorial cleaning crew in action",
     metaTitle: "Commercial Cleaning & Janitorial Services in Guyana",
     metaDescription:
-      "Recurring commercial cleaning and janitorial services for offices, banks, and government buildings in Georgetown and across Guyana — trained, supervised teams.",
-    h1: "Commercial & Janitorial Cleaning in Guyana",
+      "Commercial and office cleaning plus recurring janitorial services for offices, banks, and government facilities in Georgetown and across Guyana — supervised teams.",
+    h1: "Commercial Cleaning & Janitorial Services in Guyana",
     intro:
       "CDCS Inc. is a Georgetown-based commercial cleaning company providing structured, recurring janitorial programs for offices, corporate buildings, banks, government offices, and institutions across Guyana. We build a cleaning plan around your operating hours, foot traffic, and facility layout — from daily office cleaning to restroom and common-area upkeep — so your workplace stays consistently clean and presentable. Programs run daily, weekly, or on a custom schedule, and every team is supervised with regular quality checks.",
     overview: [
       "Commercial cleaning and janitorial service is the day-to-day upkeep that keeps a workplace presentable between deeper cleans: reception and entrance areas, open-plan and private offices, boardrooms, restrooms, kitchens and break rooms, corridors, stairwells, and shared equipment. CDCS Inc. runs these programs for businesses and public-sector offices in Georgetown and, by arrangement, elsewhere in Guyana.",
       "Most clients use a recurring schedule — daily, several times a week, or weekly — with the visit timed for early morning, evening, or another off-peak window so cleaning never gets in the way of staff or visitors. One-time and pre-event cleans are available too. Every program is assigned a briefed team and checked against an agreed scope so standards hold over the length of the contract.",
       "High-contact points — door handles, light switches, shared desks, lift buttons, and restroom fixtures — are part of every routine visit. Where a space needs more than routine attention, it can be paired with a deep clean, and newly fitted-out or renovated offices are handed over with post-construction cleaning first.",
+      "Organizations choose CDCS Inc. as their professional commercial cleaning company because the service is delivered like a managed contract rather than an informal arrangement: a written scope of work, an assigned and supervised team, defined cleaning frequencies, and regular quality checks. CDCS Inc. is based in Georgetown and serves offices and commercial facilities across the greater Georgetown area, with service elsewhere in Guyana arranged around the site and schedule.",
     ],
     relatedSlugs: ["deep-cleaning", "post-construction-cleaning", "commercial-facility-cleaning"],
     faq: [
@@ -73,6 +74,14 @@ export const services: ServiceDefinition[] = [
       {
         q: "What does a commercial cleaning program include?",
         a: "A typical program covers reception, offices, restrooms, and common areas; floor care; trash removal and liner replacement; and sanitizing of high-touch surfaces, with supervised teams and regular quality checks.",
+      },
+      {
+        q: "How is a commercial cleaning program priced?",
+        a: "Pricing depends on the size and layout of the facility, how often it is cleaned, the scope of work, and the cleaning hours required. CDCS Inc. assesses the site and provides a written proposal with a clear figure for the recurring scope, plus rates for any periodic or one-time work.",
+      },
+      {
+        q: "Does CDCS Inc. provide commercial cleaning outside Georgetown?",
+        a: "CDCS Inc. is based in Georgetown and primarily serves the greater Georgetown area. Service in other parts of Guyana can be arranged depending on the site, the scope, and the schedule — contact us with the details.",
       },
     ],
     idealFor: [
@@ -443,10 +452,10 @@ export const services: ServiceDefinition[] = [
     category: "Commercial Cleaning",
     icon: "factory",
     heroPlaceholderLabel: "Photo placeholder — cleaning team servicing a large commercial facility",
-    metaTitle: "Commercial Facility Cleaning in Guyana",
+    metaTitle: "Commercial Facility Cleaning Programs in Guyana",
     metaDescription:
-      "Custom, structured cleaning programs for larger commercial and industrial facilities in Guyana, with recurring teams and equipment from CDCS Inc.",
-    h1: "Commercial Facility Cleaning",
+      "Custom, structured cleaning programs for larger commercial and industrial facilities in Guyana — multi-floor sites, warehouses, and multi-building operations, with recurring teams, equipment, and on-site supervision from CDCS Inc.",
+    h1: "Commercial Facility Cleaning Programs",
     intro:
       "Larger facilities need more than a standard cleaning visit — they need a structured program. CDCS Inc. designs custom facility cleaning plans that scale to your building size, staffing needs, and operational schedule, backed by trained teams, appropriate equipment, and on-site supervision.",
     overview: [
@@ -458,7 +467,7 @@ export const services: ServiceDefinition[] = [
       "Warehouses and distribution centers",
       "Industrial and manufacturing facilities",
       "Large multi-floor commercial buildings",
-      "Organizations requiring recurring janitorial contracts",
+      "Organizations managing large or multi-site cleaning contracts",
       "Facilities with specialized scheduling needs (night shifts, off-hours service)",
     ],
     whatsIncluded: [
@@ -479,7 +488,7 @@ export const services: ServiceDefinition[] = [
         a: "Yes. Programs can be built around night shifts and off-hours service so cleaning does not interrupt operations.",
       },
     ],
-    keywords: ["commercial cleaning Guyana", "facility cleaning Guyana"],
+    keywords: ["facility cleaning Guyana", "industrial cleaning Guyana", "multi-site cleaning contract Guyana"],
   },
 ];
 

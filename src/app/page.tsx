@@ -172,8 +172,15 @@ export default function HomePage() {
               />
               <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-600">
                 Corporate facilities, government offices, and property managers keep CDCS Inc. on
-                contract because every visit is organized the same way — a defined scope, a trained
-                team, and supervision that holds the standard.
+                contract for{" "}
+                <Link
+                  href="/services/commercial-janitorial-cleaning/"
+                  className="font-semibold text-brand-600 hover:underline"
+                >
+                  professional janitorial services
+                </Link>{" "}
+                because every visit is organized the same way — a defined scope, a trained team, and
+                supervision that holds the standard.
               </p>
               <dl className="mt-8 divide-y divide-slate-200 border-y border-slate-200">
                 {whyChooseUs.map((item) => {
