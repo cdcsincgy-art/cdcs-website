@@ -11,13 +11,8 @@ export function CTABanner({
 }) {
   return (
     <section className="relative overflow-hidden bg-navy-900">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-40"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 15% 20%, rgba(28,123,214,0.35), transparent 45%), radial-gradient(circle at 85% 80%, rgba(231,161,37,0.25), transparent 45%)",
-        }}
-      />
+      <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" aria-hidden />
+      <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
       <div className="container-page relative py-16 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{title}</h2>

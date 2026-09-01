@@ -4,10 +4,16 @@ import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ServiceCard } from "@/components/ServiceCard";
 import { CTABanner } from "@/components/CTABanner";
+import { DeliveryModel } from "@/components/DeliveryModel";
 import { ProjectImage } from "@/components/ProjectImage";
 import { services } from "@/lib/services-data";
 import { trustPoints, whyChooseUs, industries, processSteps } from "@/lib/content-data";
-import { homepageHeroImage, homepageProjectImages } from "@/lib/project-images";
+import {
+  homepageHeroImage,
+  homepageProjectImages,
+  operatingStandardsImage,
+  categoryLabel,
+} from "@/lib/project-images";
 import { iconMap, IconArrowRight, IconWhatsapp, IconCheck } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 
@@ -23,21 +29,16 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      {/* HERO */}
+      {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-50"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 20% 10%, rgba(28,123,214,0.4), transparent 40%), radial-gradient(circle at 90% 90%, rgba(231,161,37,0.3), transparent 45%)",
-          }}
-        />
-        <div className="container-page relative grid gap-10 py-16 sm:py-20 lg:grid-cols-2 lg:items-center lg:py-28">
+        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-[0.6]" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 brand-glow opacity-90" aria-hidden />
+        <div className="container-page relative grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-28">
           <div className="animate-fade-up">
-            <p className="mb-4 inline-flex items-center rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent-400">
+            <p className="mb-5 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent-400">
               Commercial Cleaning &amp; Facility Services · Georgetown, Guyana
             </p>
-            <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.1rem]">
+            <h1 className="text-pretty text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.25rem]">
               Commercial Cleaning &amp; Janitorial Services in Guyana
             </h1>
             <p className="mt-4 text-lg font-bold text-accent-500 sm:text-xl">
@@ -68,41 +69,54 @@ export default function HomePage() {
           </div>
 
           <div className="animate-fade-up delay-200">
-            <ProjectImage
-              image={homepageHeroImage}
-              priority
-              className="w-full rounded-2xl object-cover shadow-xl shadow-black/30"
-            />
+            <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-2 shadow-2xl shadow-black/40">
+              <span
+                aria-hidden
+                className="absolute -left-3 -top-3 hidden h-16 w-16 rounded-tl-2xl border-l-2 border-t-2 border-accent-500/70 sm:block"
+              />
+              <div className="overflow-hidden rounded-xl">
+                <ProjectImage
+                  image={homepageHeroImage}
+                  priority
+                  className="w-full object-cover"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* TRUST / CAPABILITY STRIP */}
-      <section className="border-b border-slate-200 bg-white py-10 sm:py-12">
-        <div className="container-page">
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
+      {/* ============ CAPABILITY RIBBON (dark continuation of the masthead) ============ */}
+      <section className="border-y border-white/10 bg-navy-900">
+        <div className="container-page py-6 sm:py-7">
+          <ul className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3 lg:grid-cols-6 lg:divide-x lg:divide-white/10">
             {trustPoints.map((point) => {
               const Icon = iconMap[point.icon];
               return (
-                <div key={point.label} className="flex flex-col items-center gap-2.5 text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-600">
-                    {Icon && <Icon className="h-6 w-6" />}
-                  </div>
-                  <p className="text-xs font-bold leading-snug text-navy-900 sm:text-sm">{point.label}</p>
-                </div>
+                <li
+                  key={point.label}
+                  className="flex items-center gap-2.5 lg:justify-center lg:px-3 lg:text-center"
+                >
+                  <span className="text-accent-400">{Icon && <Icon className="h-5 w-5 shrink-0" />}</span>
+                  <span className="text-xs font-semibold leading-tight text-slate-200">{point.label}</span>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </div>
       </section>
 
-      {/* OVERVIEW — crawlable intro with internal links to key service pages */}
-      <section className="bg-white py-14 sm:py-16">
+      {/* ================= WHAT WE DO / SERVICES ================= */}
+      <section className="bg-white py-20 sm:py-28">
         <div className="container-page">
-          <div className="mx-auto max-w-3xl text-base leading-relaxed text-slate-700 sm:text-lg">
-            <p>
-              Based in Georgetown, CDCS Inc. provides professional cleaning services to businesses,
-              government agencies, and organizations across Guyana. Our teams handle{" "}
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,34rem)_1fr] lg:items-end lg:gap-16">
+            <SectionHeading
+              eyebrow="What We Do"
+              title="Full-Scope Commercial Cleaning & Facility Services in Guyana"
+            />
+            <p className="text-base leading-relaxed text-slate-600 lg:pb-1">
+              Based in Georgetown, CDCS Inc. serves businesses, government agencies, and
+              organizations across Guyana — handling{" "}
               <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
                 commercial and janitorial cleaning
               </Link>
@@ -118,27 +132,17 @@ export default function HomePage() {
               <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
                 fleet washing
               </Link>
-              , post-construction cleaning, and mobile detailing — as one-time projects or recurring
-              contracts built around your schedule.
+              , post-construction cleaning, and mobile detailing as one-time projects or recurring
+              contracts.
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* SERVICES */}
-      <section className="bg-slate-50 py-16 sm:py-24">
-        <div className="container-page">
-          <SectionHeading
-            eyebrow="What We Do"
-            title="Full-Scope Commercial Cleaning & Facility Services in Guyana"
-            description="From daily janitorial programs to fleet washing and mobile detailing, CDCS Inc. delivers the service standards commercial clients rely on."
-          />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {services.map((service) => (
               <ServiceCard key={service.slug} service={service} />
             ))}
           </div>
-          <div className="mt-10 text-center">
+          <div className="mt-10">
             <Button href="/services/" variant="ghost" size="md" icon={<IconArrowRight className="h-4 w-4" />}>
               View All Services
             </Button>
@@ -146,54 +150,97 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WHY CHOOSE CDCS */}
-      <section className="bg-white py-16 sm:py-24">
+      {/* ================= OPERATING STANDARDS (reputation / why clients stay) ================= */}
+      <section className="bg-slate-50 py-20 sm:py-28">
         <div className="container-page">
-          <SectionHeading
-            eyebrow="Why Choose CDCS"
-            title="Built for Clients Who Depend on Consistent Results"
-            align="center"
-          />
-          <div className="mx-auto mt-12 grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {whyChooseUs.map((item) => {
-              const Icon = iconMap[item.icon];
-              return (
-                <div key={item.title} className="flex gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-navy-900 text-accent-400">
-                    {Icon && <Icon className="h-5 w-5" />}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-navy-900">{item.title}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{item.description}</p>
-                  </div>
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+            <div>
+              <SectionHeading
+                eyebrow="Why Clients Stay"
+                title="Built for Clients Who Depend on Consistent Results"
+              />
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-600">
+                Corporate facilities, government offices, and property managers keep CDCS Inc. on
+                contract because every visit is organized the same way — a defined scope, a trained
+                team, and supervision that holds the standard.
+              </p>
+              <dl className="mt-8 divide-y divide-slate-200 border-y border-slate-200">
+                {whyChooseUs.map((item) => {
+                  const Icon = iconMap[item.icon];
+                  return (
+                    <div key={item.title} className="flex gap-4 py-4">
+                      <span className="mt-0.5 shrink-0 text-brand-600">
+                        {Icon && <Icon className="h-5 w-5" />}
+                      </span>
+                      <div>
+                        <dt className="font-bold text-navy-900">{item.title}</dt>
+                        <dd className="mt-1 text-sm leading-relaxed text-slate-600">{item.description}</dd>
+                      </div>
+                    </div>
+                  );
+                })}
+              </dl>
+            </div>
+
+            <div className="relative isolate">
+              <div
+                aria-hidden
+                className="absolute -inset-4 -z-10 hidden rounded-2xl bg-navy-950 sm:block"
+              />
+              <div className="relative rounded-xl border border-navy-900/10 bg-white p-2 shadow-xl shadow-navy-900/15">
+                <div className="aspect-[4/5] overflow-hidden rounded-lg">
+                  <ProjectImage
+                    image={operatingStandardsImage}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
-              );
-            })}
+              </div>
+              <p className="mt-3 text-center text-xs text-slate-600 sm:absolute sm:-bottom-9 sm:left-0 sm:right-0">
+                {operatingStandardsImage.caption}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-16 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:mt-24 sm:p-8">
+            <DeliveryModel />
           </div>
         </div>
       </section>
 
-      {/* INDUSTRIES */}
-      <section className="bg-navy-900 py-16 sm:py-24">
-        <div className="container-page">
-          <SectionHeading
-            eyebrow="Who We Serve"
-            title="Industries We Serve"
-            description="CDCS Inc. is built to support the operational demands of commercial, institutional, and industrial clients."
-            light
-          />
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      {/* ================= INDUSTRIES (dark, textured) ================= */}
+      <section className="relative overflow-hidden bg-navy-950 py-20 sm:py-28">
+        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="container-page relative">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <SectionHeading
+              eyebrow="Who We Serve"
+              title="Industries We Serve"
+              description="CDCS Inc. is built to support the operational demands of commercial, institutional, and industrial clients."
+              light
+            />
+            <Link
+              href="/industries/"
+              className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-accent-400 hover:text-accent-300"
+            >
+              All industries
+              <IconArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 sm:grid-cols-3 lg:grid-cols-4">
             {industries.map((industry) => {
               const Icon = iconMap[industry.icon];
               return (
                 <div
                   key={industry.name}
-                  className="flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-8 text-center transition-colors hover:border-accent-500/50 hover:bg-white/10"
+                  className="group flex flex-col gap-4 bg-navy-950 p-6 transition-colors duration-300 hover:bg-navy-900"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent-500/15 text-accent-400">
-                    {Icon && <Icon className="h-6 w-6" />}
-                  </div>
-                  <p className="text-sm font-bold text-white">{industry.name}</p>
+                  <span className="text-accent-400">{Icon && <Icon className="h-6 w-6" />}</span>
+                  <p className="text-sm font-bold leading-snug text-white">{industry.name}</p>
+                  <span
+                    aria-hidden
+                    className="mt-auto h-0.5 w-6 bg-accent-500/40 transition-all duration-300 group-hover:w-10 group-hover:bg-accent-500"
+                  />
                 </div>
               );
             })}
@@ -201,35 +248,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* OUR WORK */}
-      <section className="bg-slate-50 py-16 sm:py-24">
+      {/* ================= OUR WORK (editorial) ================= */}
+      <section className="bg-white py-20 sm:py-28">
         <div className="container-page">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <SectionHeading
               eyebrow="Our Work"
               title="Real CDCS Projects Across Guyana"
-              description="A few photos from recent CDCS Inc. jobs — cleaning, pressure washing, fleet washing, and detailing."
+              description="Photos from recent CDCS Inc. jobs — cleaning, pressure washing, fleet washing, and detailing for businesses and vehicle owners."
             />
-            <Button href="/our-work/" variant="ghost" size="md" className="shrink-0" icon={<IconArrowRight className="h-4 w-4" />}>
+            <Button
+              href="/our-work/"
+              variant="ghost"
+              size="md"
+              className="shrink-0"
+              icon={<IconArrowRight className="h-4 w-4" />}
+            >
               View Full Gallery
             </Button>
           </div>
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {homepageProjectImages.map((image) => (
               <figure
                 key={image.file}
-                className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+                className="group relative overflow-hidden rounded-xl border border-slate-200 bg-navy-950"
               >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <ProjectImage image={image} className="h-full w-full object-cover object-center" />
+                <div className="aspect-[4/5] overflow-hidden">
+                  <ProjectImage
+                    image={image}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
                 </div>
-                <figcaption className="px-4 py-3 text-sm leading-relaxed text-slate-600">
-                  {image.beforeAfter && (
-                    <span className="mr-2 inline-block rounded bg-brand-50 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-brand-700">
-                      Before / After
-                    </span>
-                  )}
-                  {image.caption}
+                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950 via-navy-950/70 to-transparent p-4 pt-12">
+                  <span className="inline-block rounded bg-accent-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-navy-950">
+                    {categoryLabel(image)}
+                  </span>
+                  <p className="mt-2 text-sm font-medium leading-snug text-white">{image.caption}</p>
                 </figcaption>
               </figure>
             ))}
@@ -237,42 +292,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="bg-white py-16 sm:py-24">
+      {/* ================= HOW IT WORKS (timeline) ================= */}
+      <section className="border-t-2 border-accent-500/70 bg-slate-50 py-20 sm:py-28">
         <div className="container-page">
-          <SectionHeading eyebrow="How It Works" title="A Simple, Professional Process" align="center" />
-          <div className="mx-auto mt-14 grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-5">
-            {processSteps.map((step, i) => {
-              const Icon = iconMap[step.icon];
-              return (
-                <div key={step.step} className="relative flex flex-col items-center text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-brand-600 bg-brand-50 text-brand-600">
-                    {Icon && <Icon className="h-7 w-7" />}
-                  </div>
-                  <span className="mt-4 text-xs font-black tracking-widest text-accent-600">STEP {step.step}</span>
-                  <h3 className="mt-1.5 text-sm font-bold text-navy-900">{step.title}</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">{step.description}</p>
+          <SectionHeading
+            eyebrow="How It Works"
+            title="A Simple, Professional Process"
+            description="From first contact to a maintained contract, the steps are the same for a one-time project or an ongoing program."
+            align="center"
+          />
+          <ol className="mx-auto mt-14 grid max-w-6xl gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
+            {processSteps.map((step, i) => (
+              <li key={step.step} className="relative flex flex-col">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy-900 text-sm font-black text-white">
+                    {step.step}
+                  </span>
                   {i < processSteps.length - 1 && (
-                    <div className="mt-6 hidden h-px w-full bg-slate-200 lg:block" aria-hidden />
+                    <span className="hidden h-px flex-1 bg-slate-300 lg:block" aria-hidden />
                   )}
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+                <h3 className="mt-4 text-sm font-bold text-navy-900">{step.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.description}</p>
+              </li>
+            ))}
+          </ol>
 
-      {/* TRUST NOTE (no invented stats — honest positioning) */}
-      <section className="bg-brand-50 py-12">
-        <div className="container-page">
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm">
+          <div className="mx-auto mt-16 flex max-w-3xl flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm sm:flex-row sm:text-left">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
               <IconCheck className="h-6 w-6" />
-            </div>
+            </span>
             <p className="text-sm leading-relaxed text-navy-800">
               CDCS Inc. is structured to support recurring commercial contracts and large-scale
-              projects — with trained teams, professional equipment, and service plans built
-              around your operation. <Link href="/about/" className="font-bold text-brand-600 hover:underline">Learn more about how we work →</Link>
+              projects — with trained teams, professional equipment, and service plans built around
+              your operation.{" "}
+              <Link href="/about/" className="font-bold text-brand-600 hover:underline">
+                Learn more about how we work →
+              </Link>
             </p>
           </div>
         </div>

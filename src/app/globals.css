@@ -78,6 +78,38 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* A narrower measure for long-form reading passages. */
+.measure {
+  max-width: 42rem;
+}
+
+/* Fine "operational" grid texture for dark branded sections. Kept very low
+   contrast so it reads as structure, not decoration. Pair with a low opacity. */
+.bg-grid-dark {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 46px 46px;
+  background-position: center;
+}
+
+/* Same idea for tinted light sections. */
+.bg-grid-light {
+  background-image:
+    linear-gradient(to right, rgba(7, 26, 48, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(7, 26, 48, 0.05) 1px, transparent 1px);
+  background-size: 46px 46px;
+  background-position: center;
+}
+
+/* Soft brand glow used behind dark hero / CTA content. One restrained pair of
+   radial washes — not a full gradient background. */
+.brand-glow {
+  background-image:
+    radial-gradient(circle at 15% 12%, rgba(28, 123, 214, 0.28), transparent 42%),
+    radial-gradient(circle at 88% 88%, rgba(231, 161, 37, 0.16), transparent 46%);
+}
+
 /* Placeholder media block used everywhere a real photo/video will go later */
 .media-placeholder {
   position: relative;

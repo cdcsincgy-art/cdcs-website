@@ -289,15 +289,33 @@ export function projectImagesForService(slug: string): ProjectImage[] {
   return projectCategories.find((c) => c.service === slug)?.images ?? [];
 }
 
+/** Look up a category (and its display title) by the service slug it covers. */
+export function categoryForService(slug: string): ProjectCategory | undefined {
+  return projectCategories.find((c) => c.service === slug);
+}
+
+/** A short, human category label for an image, from its service slug. */
+export function categoryLabel(image: ProjectImage): string {
+  return categoryForService(image.service)?.title ?? "CDCS Project";
+}
+
+/** Find one image anywhere in the catalogue by the tail of its file path. */
+function pick(endsWith: string): ProjectImage {
+  for (const c of projectCategories) {
+    const hit = c.images.find((i) => i.file.endsWith(endsWith));
+    if (hit) return hit;
+  }
+  throw new Error(`No project image ending in "${endsWith}"`);
+}
+
 /** The wide commercial-cleaning shot used as the homepage hero and About photo. */
-export const homepageHeroImage: ProjectImage = projectCategories[0].images.find((i) =>
-  i.file.endsWith("commercial-cleaning-facility-interior")
-)!;
+export const homepageHeroImage: ProjectImage = pick("commercial-cleaning-facility-interior");
 
 /** A commercial-cleaning shot for the About page (not used as a page hero). */
-export const aboutImage: ProjectImage = projectCategories[0].images.find((i) =>
-  i.file.endsWith("commercial-exterior-window-cleaning")
-)!;
+export const aboutImage: ProjectImage = pick("commercial-exterior-window-cleaning");
+
+/** Operational photo shown beside the homepage / About "how we operate" copy. */
+export const operatingStandardsImage: ProjectImage = pick("commercial-cleaning-staircase");
 
 /** The designated hero image for a service page, or null. */
 export function serviceHeroImage(slug: string): ProjectImage | null {
@@ -314,13 +332,16 @@ export function serviceGalleryImages(slug: string): ProjectImage[] {
 }
 
 /**
- * Six single photos for the homepage "Our Work" preview — one per service,
- * plus a second commercial-cleaning shot. None is the homepage hero, and none
- * is a before/after composite (those need to be shown uncropped).
+ * Curated set for the homepage "Our Work" editorial grid — one strong photo per
+ * service line, shown with an overlaid category label. None is the homepage
+ * hero, the operating-standards photo, or a before/after composite (those need
+ * to be shown uncropped, which the grid can't guarantee).
  */
 export const homepageProjectImages: ProjectImage[] = [
-  ...projectCategories
-    .map((c) => serviceHeroImage(c.service))
-    .filter((x): x is ProjectImage => x !== null),
-  projectCategories[0].images.find((i) => i.file.endsWith("janitorial-restroom-cleaning"))!,
+  pick("commercial-window-cleaning-glass-facade"),
+  pick("pressure-washing-commercial-building"),
+  pick("fleet-washing-truck-covered-in-foam"),
+  pick("mobile-detailing-vehicle-interior-seats-out"),
+  pick("upholstery-extraction-cleaning-wand"),
+  pick("janitorial-restroom-cleaning"),
 ];

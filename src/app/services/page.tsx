@@ -30,15 +30,20 @@ export default function ServicesPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
-      <section className="bg-navy-950 py-16 sm:py-20">
-        <div className="container-page">
+      <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-20">
+        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
+        <div className="container-page relative">
           <nav className="mb-5 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-accent-400">Home</Link>
             <span className="mx-2">/</span>
             <span className="text-slate-300">Services</span>
           </nav>
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent-400">Our Services</p>
-          <h1 className="max-w-2xl text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+          <p className="mb-4 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-accent-400">
+            <span className="h-px w-6 bg-accent-400/60" aria-hidden />
+            Our Services
+          </p>
+          <h1 className="max-w-2xl text-pretty text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl">
             Commercial Cleaning &amp; Facility Services, Built for Guyana&apos;s Businesses
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
@@ -48,10 +53,11 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="bg-white py-14 sm:py-16">
+      <section className="bg-white py-20 sm:py-28">
         <div className="container-page">
-          <div className="mx-auto max-w-3xl text-base leading-relaxed text-slate-700 sm:text-lg">
-            <p>
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,32rem)_1fr] lg:items-end lg:gap-16">
+            <SectionHeading eyebrow="What We Offer" title="Our Full Range of Services" />
+            <p className="text-base leading-relaxed text-slate-600 lg:pb-1">
               CDCS Inc. is a Georgetown-based cleaning company. Most clients start with{" "}
               <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
                 commercial &amp; janitorial cleaning
@@ -71,13 +77,7 @@ export default function ServicesPage() {
               as their needs change.
             </p>
           </div>
-        </div>
-      </section>
-
-      <section className="bg-slate-50 py-16 sm:py-24">
-        <div className="container-page">
-          <SectionHeading eyebrow="What We Offer" title="Our Full Range of Services" />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {services.map((service) => (
               <ServiceCard key={service.slug} service={service} />
             ))}

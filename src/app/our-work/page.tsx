@@ -31,15 +31,20 @@ export default function OurWorkPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
-      <section className="bg-navy-950 py-16 sm:py-20">
-        <div className="container-page">
+      <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-20">
+        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
+        <div className="container-page relative">
           <nav className="mb-5 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-accent-400">Home</Link>
             <span className="mx-2">/</span>
             <span className="text-slate-300">Our Work</span>
           </nav>
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent-400">Our Work</p>
-          <h1 className="max-w-2xl text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+          <p className="mb-4 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-accent-400">
+            <span className="h-px w-6 bg-accent-400/60" aria-hidden />
+            Our Work
+          </p>
+          <h1 className="max-w-2xl text-pretty text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl">
             Real CDCS Projects Across Guyana
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
@@ -74,6 +79,10 @@ export default function OurWorkPage() {
           <div className="container-page">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div className="max-w-2xl">
+                <p className="mb-3 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">
+                  <span className="h-px w-6 bg-brand-600/50" aria-hidden />
+                  {`0${i + 1}`.slice(-2)} · Project Category
+                </p>
                 <h2 className="text-2xl font-bold tracking-tight text-navy-900 sm:text-3xl">
                   {category.title}
                 </h2>
@@ -110,9 +119,9 @@ export default function OurWorkPage() {
         </section>
       ))}
 
-      <section className="bg-white py-14">
+      <section className="bg-slate-50 py-14">
         <div className="container-page">
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-brand-50 p-8 text-center sm:flex-row sm:text-left">
+          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:flex-row sm:text-left">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm">
               <IconCheck className="h-6 w-6" />
             </div>

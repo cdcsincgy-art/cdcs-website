@@ -108,15 +108,26 @@ export default function IndustriesPage() {
 
       <section className="bg-white py-16 sm:py-24">
         <div className="container-page">
-          <SectionHeading eyebrow="Sectors" title="Built for Organizations That Depend on Reliable Service" />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <SectionHeading
+            eyebrow="Sectors"
+            title="Built for Organizations That Depend on Reliable Service"
+            description="Each sector below links to the CDCS Inc. service most commonly used to support it."
+          />
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {industryDetails.map((industry) => {
               const Icon = iconMap[industry.icon];
               return (
-                <div key={industry.name} className="flex flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-navy-900 text-accent-400">
-                    {Icon && <Icon className="h-6 w-6" />}
-                  </div>
+                <div
+                  key={industry.name}
+                  className="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-navy-900/20 hover:shadow-lg hover:shadow-navy-900/10"
+                >
+                  <span
+                    aria-hidden
+                    className="absolute inset-x-0 top-0 h-0.5 bg-slate-200 transition-colors duration-300 group-hover:bg-accent-500"
+                  />
+                  <span className="flex h-11 w-11 items-center justify-center rounded-lg text-navy-800 ring-1 ring-inset ring-navy-900/12 transition-colors duration-300 group-hover:bg-navy-900 group-hover:text-white group-hover:ring-navy-900">
+                    {Icon && <Icon className="h-[22px] w-[22px]" />}
+                  </span>
                   <h3 className="mt-4 font-bold text-navy-900">{industry.name}</h3>
                   <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{industry.description}</p>
                   <Link
@@ -124,7 +135,7 @@ export default function IndustriesPage() {
                     className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
                   >
                     {industry.linkLabel}
-                    <IconArrowRight className="h-4 w-4" />
+                    <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>
               );
