@@ -18,6 +18,12 @@ export interface ServiceDefinition {
   icon: string; // key into <ServiceIcon />
   heroPlaceholderLabel: string;
   metaTitle: string;
+  /**
+   * When true, `metaTitle` is used verbatim as the <title> tag (the root
+   * layout's "%s | CDCS Inc." template is skipped). Use this when metaTitle
+   * already carries its own brand/structure.
+   */
+  seoTitleAbsolute?: boolean;
   metaDescription: string;
   h1: string;
   intro: string;
@@ -45,12 +51,13 @@ export const services: ServiceDefinition[] = [
     category: "Commercial Cleaning",
     icon: "building",
     heroPlaceholderLabel: "Photo placeholder — office/janitorial cleaning crew in action",
-    metaTitle: "Commercial Cleaning & Janitorial Services in Guyana",
+    metaTitle: "Cleaning Services Guyana | Commercial & Janitorial | CDCS",
+    seoTitleAbsolute: true,
     metaDescription:
-      "Commercial and office cleaning plus recurring janitorial services for offices, banks, and government facilities in Georgetown and across Guyana — supervised teams.",
+      "Professional cleaning services in Guyana for offices, businesses, government facilities and institutions. Commercial and janitorial cleaning by CDCS Inc.",
     h1: "Commercial Cleaning & Janitorial Services in Guyana",
     intro:
-      "CDCS Inc. is a Georgetown-based commercial cleaning company providing structured, recurring janitorial programs for offices, corporate buildings, banks, government offices, and institutions across Guyana. We build a cleaning plan around your operating hours, foot traffic, and facility layout — from daily office cleaning to restroom and common-area upkeep — so your workplace stays consistently clean and presentable. Programs run daily, weekly, or on a custom schedule, and every team is supervised with regular quality checks.",
+      "CDCS Inc. is a Georgetown-based cleaning company providing professional cleaning services in Guyana for offices, corporate buildings, banks, government offices, and institutions. We run structured, recurring janitorial programs built around your operating hours, foot traffic, and facility layout — from daily office cleaning to restroom and common-area upkeep — so your workplace stays consistently clean and presentable. Programs run daily, weekly, or on a custom schedule, and every team is supervised with regular quality checks.",
     overview: [
       "Commercial cleaning and janitorial service is the day-to-day upkeep that keeps a workplace presentable between deeper cleans: reception and entrance areas, open-plan and private offices, boardrooms, restrooms, kitchens and break rooms, corridors, stairwells, and shared equipment. CDCS Inc. runs these programs for businesses and public-sector offices in Georgetown and, by arrangement, elsewhere in Guyana.",
       "Most clients use a recurring schedule — daily, several times a week, or weekly — with the visit timed for early morning, evening, or another off-peak window so cleaning never gets in the way of staff or visitors. One-time and pre-event cleans are available too. Every program is assigned a briefed team and checked against an agreed scope so standards hold over the length of the contract.",
@@ -106,7 +113,14 @@ export const services: ServiceDefinition[] = [
       "A trained team is assigned and briefed on your site's requirements",
       "Ongoing quality checks keep the program consistent over time",
     ],
-    keywords: ["commercial cleaning Guyana", "janitorial services Guyana", "office cleaning Georgetown Guyana"],
+    keywords: [
+      "cleaning services Guyana",
+      "commercial cleaning Guyana",
+      "janitorial services Guyana",
+      "cleaning company Guyana",
+      "office cleaning Guyana",
+      "commercial cleaning Georgetown Guyana",
+    ],
   },
   {
     slug: "pressure-washing",

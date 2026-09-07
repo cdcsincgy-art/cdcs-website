@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const service = getServiceBySlug(slug);
   if (!service) return {};
   return {
-    title: service.metaTitle,
+    title: service.seoTitleAbsolute ? { absolute: service.metaTitle } : service.metaTitle,
     description: service.metaDescription,
     alternates: { canonical: `/services/${service.slug}/` },
     openGraph: {
@@ -225,6 +225,57 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </Link>{" "}
                   to get started.
                 </p>
+              )}
+
+              {/* Page-specific: businesses-in-Guyana context for the core
+                  commercial/janitorial page. Kept in-flow within the overview
+                  section so the design is unchanged. */}
+              {service.slug === "commercial-janitorial-cleaning" && (
+                <div className="mt-12 border-t border-slate-200 pt-10">
+                  <SectionHeading
+                    eyebrow="For Organizations"
+                    title="Professional Cleaning Services for Businesses in Guyana"
+                  />
+                  <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                    <p>
+                      CDCS Inc. delivers structured commercial cleaning services for businesses,
+                      offices, and organizations across Guyana — corporate offices, government
+                      buildings, banks and financial institutions, schools, medical and
+                      professional practices, and multi-tenant commercial properties. Every
+                      programme is built on a defined scope of work, run by a supervised team, and
+                      checked against an agreed standard rather than left to an informal
+                      arrangement.
+                    </p>
+                    <p>
+                      Both one-time and recurring cleaning contracts are available. A space is
+                      often brought up to standard first with a{" "}
+                      <Link href="/services/deep-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        deep clean
+                      </Link>{" "}
+                      or, for a newly fitted-out office,{" "}
+                      <Link href="/services/post-construction-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        post-construction cleaning
+                      </Link>
+                      , and then kept there on a recurring janitorial schedule. Larger and
+                      multi-site organizations are served through a{" "}
+                      <Link href="/services/commercial-facility-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        structured facility cleaning programme
+                      </Link>
+                      . To get started,{" "}
+                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
+                        request a quote
+                      </Link>{" "}
+                      with your facility size, operating hours, and priorities — our guide to{" "}
+                      <Link
+                        href="/insights/commercial-janitorial-contract-guyana/"
+                        className="font-semibold text-brand-600 hover:underline"
+                      >
+                        what a commercial janitorial service agreement should include
+                      </Link>{" "}
+                      covers what to expect.
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           </div>
