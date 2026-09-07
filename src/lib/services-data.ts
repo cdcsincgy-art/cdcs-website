@@ -130,12 +130,13 @@ export const services: ServiceDefinition[] = [
     category: "Pressure Washing",
     icon: "spray",
     heroPlaceholderLabel: "Photo placeholder — pressure washing a commercial walkway or building exterior",
-    metaTitle: "Pressure Washing Services in Guyana",
+    metaTitle: "Pressure Washing Services Guyana | Commercial & Exterior | CDCS",
+    seoTitleAbsolute: true,
     metaDescription:
-      "Commercial pressure washing in Georgetown and across Guyana — building exteriors, walkways, parking areas, concrete, and walls. Pressure matched to each surface.",
+      "Professional pressure washing services in Guyana for buildings, concrete, yards, parking areas, walls and commercial properties. Request a quote from CDCS Inc.",
     h1: "Pressure Washing in Guyana",
     intro:
-      "First impressions start outside. CDCS Inc. provides professional pressure washing across Guyana to remove built-up dirt, algae, oil stains, and grime from the exterior surfaces of commercial and institutional properties — walkways, facades, parking areas, and compounds — restoring a clean, well-maintained appearance for staff, customers, and visitors.",
+      "First impressions start outside. CDCS Inc. provides professional pressure washing services in Guyana for businesses, property owners, and organizations — clearing dirt, algae, oil staining, and grime from building exteriors, walkways, parking areas, walls, and compounds so a property looks clean and well maintained to staff, customers, and visitors. Based in Georgetown, CDCS covers commercial, residential, and institutional exterior cleaning across the country where operationally feasible.",
     overview: [
       "In Guyana's climate, exterior surfaces pick up algae, moss, mold, and traffic grime quickly, and a tired-looking frontage is the first thing customers and visitors notice. Commercial pressure washing clears that build-up from concrete, pavers, block and masonry, painted walls, signage surrounds, and glass-adjacent areas, bringing a property back to a maintained appearance.",
       "CDCS Inc. handles pressure washing for shopfronts and office entrances, parking areas and walkways, warehouse aprons and loading docks, boundary walls, and compound areas around Georgetown. Water pressure and nozzle choice are matched to each surface so cleaning is effective without damaging the substrate, and oil or grease staining on driveways and bays is treated as part of the job.",
@@ -182,7 +183,14 @@ export const services: ServiceDefinition[] = [
       "Wall and low-rise exterior washing",
       "Scheduling around business hours to minimize disruption",
     ],
-    keywords: ["pressure washing Guyana", "commercial cleaning Georgetown"],
+    keywords: [
+      "pressure washing Guyana",
+      "pressure washing services Guyana",
+      "pressure washing Georgetown Guyana",
+      "power washing services Guyana",
+      "commercial pressure washing Guyana",
+      "exterior cleaning Guyana",
+    ],
   },
   {
     slug: "mobile-detailing",

@@ -277,6 +277,70 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </div>
                 </div>
               )}
+
+              {/* Page-specific: surface/property context for the pressure
+                  washing page. Kept in-flow within the overview section. */}
+              {service.slug === "pressure-washing" && (
+                <div className="mt-12 border-t border-slate-200 pt-10">
+                  <SectionHeading
+                    eyebrow="What We Clean"
+                    title="Professional Pressure Washing Services in Guyana"
+                  />
+                  <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                    <p>
+                      CDCS Inc. provides pressure washing for commercial, residential, and
+                      institutional properties in Georgetown and, where operationally feasible,
+                      elsewhere in Guyana. Typical work includes:
+                    </p>
+                    <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
+                      {[
+                        "Concrete slabs, walkways, and steps",
+                        "Yards, compounds, and forecourts",
+                        "Driveways and parking areas",
+                        "Boundary walls and fences",
+                        "Building exteriors and painted walls",
+                        "Shopfronts and office entrances",
+                        "Warehouse aprons and loading / service areas",
+                        "Retail and restaurant frontages",
+                      ].map((item) => (
+                        <li key={item} className="flex items-start gap-2.5 text-sm">
+                          <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <p>
+                      Water pressure and nozzle are matched to each surface, delicate or painted
+                      finishes are tested first, and oil and grease staining is pre-treated as part
+                      of the job. Commercial pressure washing pairs naturally with an interior{" "}
+                      <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        commercial and janitorial cleaning
+                      </Link>{" "}
+                      programme, the final clean-down after{" "}
+                      <Link href="/services/post-construction-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        post-construction
+                      </Link>{" "}
+                      work, and on-site{" "}
+                      <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
+                        fleet washing
+                      </Link>{" "}
+                      for depots and yards. See recent jobs on{" "}
+                      <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
+                        Our Work
+                      </Link>
+                      , read our guide to{" "}
+                      <Link href="/insights/commercial-pressure-washing-guyana/" className="font-semibold text-brand-600 hover:underline">
+                        how often commercial properties should be pressure washed
+                      </Link>
+                      , or{" "}
+                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
+                        request a pressure washing quote
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
