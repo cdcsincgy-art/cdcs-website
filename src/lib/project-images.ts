@@ -180,7 +180,7 @@ export const projectCategories: ProjectCategory[] = [
         fallback: false,
         width: 594,
         height: 960,
-        alt: "Cleaning foam on the wheels and deck of a flatbed trailer during a CDCS fleet wash",
+        alt: "Cleaning foam on the wheels and deck of a flatbed trailer during a CDCS fleet wash in Guyana",
         caption: "Foam on the wheels of a flatbed trailer mid-wash.",
         service: "fleet-washing",
       },

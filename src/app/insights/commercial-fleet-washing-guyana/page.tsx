@@ -235,11 +235,14 @@ export default function CommercialFleetWashingArticle() {
 
       <h2>Setting up a scheduled fleet washing programme</h2>
       <p>
-        Most operators run different vehicle groups on different cycles — for
-        example vans weekly, trucks bi-weekly, plant monthly — with the whole
-        programme scaled to fleet size and adjusted as the fleet changes. One-time
-        washes are available for an audit, a lease return, or before a specific
-        job. The yard, apron, or loading area itself can be{" "}
+        The CDCS Inc.{" "}
+        <Link href="/services/fleet-washing/">fleet and truck washing service</Link>{" "}
+        builds a recurring programme around your fleet size, vehicle types, depot
+        location, and required frequency. Most operators run different vehicle
+        groups on different cycles — for example vans weekly, trucks bi-weekly,
+        plant monthly — with the whole programme scaled to the fleet and adjusted
+        as it changes. One-time washes are available for an audit, a lease return,
+        or before a specific job. The yard, apron, or loading area itself can be{" "}
         <Link href="/services/pressure-washing/">pressure washed</Link> on the
         same visit where it needs it.
       </p>

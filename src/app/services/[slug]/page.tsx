@@ -476,6 +476,86 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </div>
                 </div>
               )}
+
+              {/* Page-specific: on-site washing + recurring programs for the
+                  fleet washing page. Kept in-flow within the overview section. */}
+              {service.slug === "fleet-washing" && (
+                <div className="mt-12 border-t border-slate-200 pt-10">
+                  <SectionHeading
+                    eyebrow="On-Site & Scheduled"
+                    title="Professional Fleet & Truck Washing Services in Guyana"
+                  />
+                  <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                    <p>
+                      CDCS Inc. brings the wash to the fleet — mobile fleet washing in Guyana at
+                      your depot, yard, business location, or fleet operating point. Our team works
+                      through the vehicles where they already park, so drivers and vehicles are not
+                      tied up travelling to a wash one at a time. Service is based in Georgetown,
+                      with fleet work elsewhere in Guyana arranged around fleet size, location, and
+                      operating requirements.
+                    </p>
+                    <p>Vehicle types CDCS can service on site include:</p>
+                    <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
+                      {[
+                        "Trucks and prime movers",
+                        "Canters and delivery vehicles",
+                        "Trailers and flatbeds",
+                        "Commercial vans and company vehicles",
+                        "Buses and crew transport where applicable",
+                        "Construction vehicles and equipment where the site allows",
+                      ].map((item) => (
+                        <li key={item} className="flex items-start gap-2.5 text-sm">
+                          <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <h3 className="pt-2 font-bold text-navy-900">Recurring fleet-washing programs</h3>
+                    <p>
+                      CDCS can prepare a recurring fleet-washing program based on fleet size,
+                      vehicle type, location, and required frequency. A program is structured around
+                      the number of vehicles, the vehicle types, the washing frequency (weekly,
+                      bi-weekly, monthly, or a custom schedule), your operational schedule, the
+                      depot or yard location, and the wash scope required — from a straight exterior
+                      wash to cab, wheels, trailer, and an undercarriage rinse. One-time washes are
+                      available for a specific job, an audit, or a lease return.
+                    </p>
+                    <p>
+                      Fleet washing pairs with{" "}
+                      <Link href="/services/pressure-washing/" className="font-semibold text-brand-600 hover:underline">
+                        pressure washing
+                      </Link>{" "}
+                      for the yard or apron itself, and{" "}
+                      <Link href="/services/mobile-detailing/" className="font-semibold text-brand-600 hover:underline">
+                        mobile detailing
+                      </Link>{" "}
+                      for management or pool vehicles that need an interior and finish detail rather
+                      than a wash. Interior premises are covered by{" "}
+                      <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        commercial and janitorial cleaning
+                      </Link>{" "}
+                      and larger sites by a{" "}
+                      <Link href="/services/commercial-facility-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        facility cleaning programme
+                      </Link>
+                      . Our guide to{" "}
+                      <Link href="/insights/commercial-fleet-washing-guyana/" className="font-semibold text-brand-600 hover:underline">
+                        how often a commercial vehicle fleet should be washed
+                      </Link>{" "}
+                      covers frequency by vehicle type. See real fleet work on{" "}
+                      <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
+                        Our Work
+                      </Link>
+                      ,{" "}
+                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
+                        request a fleet washing quote
+                      </Link>
+                      , or ask about a recurring fleet washing program.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
