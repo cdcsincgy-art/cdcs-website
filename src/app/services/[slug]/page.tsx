@@ -341,6 +341,62 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </div>
                 </div>
               )}
+
+              {/* Page-specific: come-to-you context and detail scope for the
+                  mobile detailing page. Kept in-flow within the overview
+                  section. */}
+              {service.slug === "mobile-detailing" && (
+                <div className="mt-12 border-t border-slate-200 pt-10">
+                  <SectionHeading
+                    eyebrow="We Come to You"
+                    title="Professional Mobile Car Detailing in Guyana"
+                  />
+                  <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                    <p>
+                      CDCS Inc. brings the equipment to the vehicle. Our team arrives at your home,
+                      office, or business premises with the water, power, and tools to detail the
+                      car on site — so you don&apos;t have to drop it at a detailing shop, wait
+                      around, or plan your day around it. Service is based in Georgetown, and jobs
+                      in other areas of Guyana can be arranged depending on the location and what
+                      the detail involves.
+                    </p>
+                    <p>
+                      A detail typically covers exterior washing, wheels and tyres, glass inside
+                      and out, interior vacuuming, and cleaning of the dashboard, console, and door
+                      panels. Seat, carpet, and mat cleaning is part of the interior work, and
+                      heavily soiled or stained fabric can be treated with{" "}
+                      <Link href="/services/upholstery-fabric-extraction/" className="font-semibold text-brand-600 hover:underline">
+                        hot-water extraction
+                      </Link>{" "}
+                      — the same method used in our carpet and upholstery cleaning service.
+                      Additional work such as engine bay cleaning and headlight restoration is
+                      available depending on the selected service.
+                    </p>
+                    <p>
+                      Mobile detailing suits private owners, executives and professionals,
+                      dealerships, and businesses keeping management, pool, or sales vehicles
+                      presentable. Where a business runs a larger number of vehicles on a routine
+                      schedule,{" "}
+                      <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
+                        fleet washing
+                      </Link>{" "}
+                      is usually the better fit. To book,{" "}
+                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
+                        request a mobile detailing quote
+                      </Link>{" "}
+                      — or see recent details on{" "}
+                      <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
+                        Our Work
+                      </Link>{" "}
+                      or{" "}
+                      <Link href="/contact/" className="font-semibold text-brand-600 hover:underline">
+                        contact the CDCS Inc. team
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>

@@ -200,12 +200,13 @@ export const services: ServiceDefinition[] = [
     category: "Mobile Detailing",
     icon: "car",
     heroPlaceholderLabel: "Photo placeholder — mobile detailing technician working on a vehicle interior",
-    metaTitle: "Mobile Car & Vehicle Detailing in Guyana",
+    metaTitle: "Mobile Car Detailing Guyana | We Come to You | CDCS",
+    seoTitleAbsolute: true,
     metaDescription:
-      "Mobile car detailing in Georgetown, Guyana. CDCS Inc. brings full interior and exterior vehicle detailing to your home, office, or business — no shop visit needed.",
+      "Professional mobile car detailing in Guyana at your home, office or business. Interior and exterior vehicle detailing and extraction cleaning by CDCS Inc.",
     h1: "Mobile Car Detailing in Guyana",
     intro:
-      "CDCS Inc. brings premium vehicle detailing directly to you. Whether you're at home, at the office, or managing a busy schedule, our mobile detailing team arrives fully equipped to deliver a thorough interior and exterior service without you needing to visit a shop.",
+      "CDCS Inc. provides mobile car detailing in Guyana — professional interior and exterior vehicle detailing brought directly to you. Whether the vehicle is at home, at the office, or at your business premises in Georgetown, our mobile detailing team arrives fully equipped to deliver a thorough detail without you needing to leave the car at a shop.",
     overview: [
       "Mobile detailing means the full service comes to your driveway or parking area in Georgetown rather than you booking out half a day at a shop. The team arrives with water, power, and equipment and works through the vehicle inside and out: exterior wash and dry, wheels and tires, glass, and a full interior clean of seats, carpets, mats, dashboard, console, and door cards.",
       "It suits private owners who want their car kept sharp, executives and professionals who can't spare shop time, and businesses that need pool cars, management vehicles, or sales stock presented well. For larger numbers of vehicles on a routine basis, fleet washing is the better fit.",
@@ -247,7 +248,14 @@ export const services: ServiceDefinition[] = [
       },
     ],
     relatedSlugs: ["upholstery-fabric-extraction", "fleet-washing", "deep-cleaning"],
-    keywords: ["mobile detailing Guyana"],
+    keywords: [
+      "mobile detailing Guyana",
+      "mobile car detailing Guyana",
+      "car detailing Guyana",
+      "car detailing Georgetown Guyana",
+      "interior car detailing Guyana",
+      "vehicle detailing Guyana",
+    ],
   },
   {
     slug: "fleet-washing",
