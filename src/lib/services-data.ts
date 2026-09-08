@@ -25,6 +25,12 @@ export interface ServiceDefinition {
    */
   seoTitleAbsolute?: boolean;
   metaDescription: string;
+  /**
+   * Optional override for the closing CTA banner heading. Defaults to
+   * `Ready to Schedule ${title}?`. Use a service-specific quote prompt where
+   * that reads more naturally.
+   */
+  ctaTitle?: string;
   h1: string;
   intro: string;
   /**
@@ -404,12 +410,14 @@ export const services: ServiceDefinition[] = [
     category: "Extraction Cleaning",
     icon: "chair",
     heroPlaceholderLabel: "Photo placeholder — extraction cleaning of an office chair or carpet",
-    metaTitle: "Carpet, Upholstery & Fabric Cleaning in Guyana",
+    metaTitle: "Carpet & Upholstery Cleaning Guyana | Steam Cleaning | CDCS",
+    seoTitleAbsolute: true,
     metaDescription:
-      "Carpet, upholstery, office-chair, and vehicle-seat cleaning in Guyana. CDCS Inc. uses hot-water extraction — commonly called steam cleaning — on fabric surfaces.",
+      "Professional carpet and upholstery cleaning in Guyana using hot-water extraction. Office chairs, sofas, carpets and vehicle seats cleaned by CDCS Inc.",
+    ctaTitle: "Request a Carpet & Upholstery Cleaning Quote",
     h1: "Carpet, Upholstery & Fabric Cleaning in Guyana",
     intro:
-      "Fabric surfaces absorb dust, allergens, and stains over time, even with regular surface cleaning. CDCS Inc. uses hot-water extraction — the method most people call steam cleaning — to lift embedded dirt from carpets, office furniture, and vehicle interiors, refreshing the look, feel, and smell of your fabric surfaces.",
+      "Fabric surfaces hold dust, grit, and stains that build up below the surface, even with regular vacuuming. CDCS Inc. provides carpet cleaning in Guyana and upholstery cleaning using hot-water extraction — the method most people call steam cleaning — to lift that embedded soil from office and home carpets, chairs, sofas, and vehicle interiors in Georgetown and across the country, refreshing the look and feel of the fabric.",
     overview: [
       "Hot-water extraction works in two steps: a heated cleaning solution is worked into the fibres to loosen dirt, oils, and residue, then a machine immediately draws the solution back out along with the soil it has lifted. It reaches well below the surface, which is why it's used for fabric that vacuuming and spot-cleaning can't fully revive. \"Steam cleaning\" is the everyday name for the same process.",
       "For offices in Georgetown, the common requests are carpeted floors in workspaces and conference rooms, and task, executive, and reception chairs that have picked up years of use. CDCS Inc. also cleans sofas and lounge seating, hospitality and event furniture, and car and vehicle seats and interior carpet.",
@@ -455,11 +463,27 @@ export const services: ServiceDefinition[] = [
       },
       {
         q: "Will old stains come out completely?",
-        a: "Many do, but not all. Set-in stains, dye transfer, and damage to the fibre itself may lighten rather than disappear. We pre-treat and give an honest read on what to expect before starting.",
+        a: "Many do, but not all. How much lifts depends on the fabric type, the type of stain, how long it has been there, any previous treatments, and the condition of the fibre. Set-in stains, dye transfer, and damage to the fibre itself may lighten rather than disappear. We pre-treat and give an honest read on what to expect before starting.",
+      },
+      {
+        q: "Can you clean a whole office of chairs and carpeted areas?",
+        a: "Yes. Multiple task and executive chairs, reception and waiting-area seating, and carpeted workspaces and conference rooms can be quoted together as a single commercial cleaning project, scheduled around your operating hours.",
+      },
+      {
+        q: "Do you provide carpet and upholstery cleaning outside Georgetown?",
+        a: "CDCS Inc. is based in Georgetown and takes on carpet and upholstery cleaning elsewhere in Guyana depending on the location, the size of the job, and the schedule. Contact us with the details.",
       },
     ],
     relatedSlugs: ["deep-cleaning", "commercial-janitorial-cleaning", "mobile-detailing"],
-    keywords: ["carpet cleaning Guyana", "upholstery cleaning Guyana", "steam cleaning Guyana"],
+    keywords: [
+      "carpet cleaning Guyana",
+      "upholstery cleaning Guyana",
+      "carpet cleaning services Guyana",
+      "upholstery cleaning services Guyana",
+      "steam cleaning services Guyana",
+      "commercial carpet cleaning Guyana",
+      "sofa cleaning Guyana",
+    ],
   },
   {
     slug: "post-construction-cleaning",

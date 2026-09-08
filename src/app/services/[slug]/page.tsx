@@ -662,6 +662,95 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </div>
                 </div>
               )}
+
+              {/* Page-specific: surface types + commercial/residential/vehicle
+                  positioning for the carpet & upholstery page. Kept in-flow
+                  within the overview section. */}
+              {service.slug === "upholstery-fabric-extraction" && (
+                <div className="mt-12 border-t border-slate-200 pt-10">
+                  <SectionHeading
+                    eyebrow="What We Clean"
+                    title="Professional Carpet & Upholstery Cleaning in Guyana"
+                  />
+                  <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                    <p>
+                      CDCS Inc. provides hot-water extraction cleaning — the process most people
+                      call steam cleaning — for fabric surfaces in offices, homes, and vehicles:
+                    </p>
+                    <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
+                      {[
+                        "Office and commercial carpets",
+                        "Task, executive, and reception chairs",
+                        "Sofas and lounge furniture",
+                        "Waiting-area and event seating",
+                        "Fabric seats and upholstered furniture",
+                        "Vehicle seats and interior carpet",
+                      ].map((item) => (
+                        <li key={item} className="flex items-start gap-2.5 text-sm">
+                          <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <h3 className="pt-2 font-bold text-navy-900">Commercial carpet &amp; upholstery cleaning</h3>
+                    <p>
+                      For offices, corporate facilities, conference and reception areas, hospitality
+                      venues, and institutions, multiple chairs, carpeted areas, and upholstered
+                      furniture can be quoted together as a single commercial cleaning project,
+                      scheduled around your operating hours. It fits alongside a{" "}
+                      <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        recurring janitorial programme
+                      </Link>{" "}
+                      or a{" "}
+                      <Link href="/services/deep-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        deep clean
+                      </Link>
+                      .
+                    </p>
+
+                    <h3 className="pt-2 font-bold text-navy-900">Residential carpet &amp; upholstery cleaning</h3>
+                    <p>
+                      For homes, CDCS Inc. cleans sofas, upholstered chairs, carpets, and fabric
+                      furniture. Fabric is inspected first, high-traffic lanes and visible marks are
+                      pre-treated, and how much lifts depends on the fabric type, the type and age
+                      of the staining, any previous treatments, and the condition of the fibre — we
+                      give an honest read before starting and do not guarantee full stain removal.
+                    </p>
+
+                    <h3 className="pt-2 font-bold text-navy-900">Vehicle seats and interior carpet</h3>
+                    <p>
+                      Extraction cleaning of car and vehicle seats and interior carpet is part of
+                      this service. If you want a full interior and exterior vehicle service rather
+                      than fabric cleaning alone,{" "}
+                      <Link href="/services/mobile-detailing/" className="font-semibold text-brand-600 hover:underline">
+                        mobile detailing
+                      </Link>{" "}
+                      is the better fit and can include the same fabric extraction.
+                    </p>
+
+                    <p>
+                      Our guide to{" "}
+                      <Link href="/insights/carpet-upholstery-cleaning-guyana/" className="font-semibold text-brand-600 hover:underline">
+                        how often commercial carpets and upholstery should be cleaned
+                      </Link>{" "}
+                      covers frequency by area and furniture type. See before-and-after work on{" "}
+                      <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
+                        Our Work
+                      </Link>
+                      ,{" "}
+                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
+                        request a carpet &amp; upholstery cleaning quote
+                      </Link>
+                      , or{" "}
+                      <Link href="/contact/" className="font-semibold text-brand-600 hover:underline">
+                        contact the CDCS Inc. team
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -850,7 +939,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
       </section>
 
       <CTABanner
-        title={`Ready to Schedule ${service.title}?`}
+        title={service.ctaTitle ?? `Ready to Schedule ${service.title}?`}
         description="Request a quote and our team will confirm the details and provide a clear service proposal."
       />
     </>

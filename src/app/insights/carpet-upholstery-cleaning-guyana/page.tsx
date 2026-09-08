@@ -384,11 +384,15 @@ export default function CarpetUpholsteryCleaningArticle() {
 
       <h2>Scheduling to minimise disruption</h2>
       <p>
-        Most offices have carpet and upholstery cleaning done in the evening, over
-        a weekend, or on a quiet weekday, with larger floors handled zone by zone
-        across several visits so no one is ever locked out of their workspace. A
-        Friday-evening carpet clean is usually dry and back in use by Monday in
-        rooms with reasonable airflow.
+        The CDCS Inc.{" "}
+        <Link href="/services/upholstery-fabric-extraction/">
+          extraction cleaning service
+        </Link>{" "}
+        works around your hours: most offices have carpet and upholstery cleaning
+        done in the evening, over a weekend, or on a quiet weekday, with larger
+        floors handled zone by zone across several visits so no one is ever locked
+        out of their workspace. A Friday-evening carpet clean is usually dry and
+        back in use by Monday in rooms with reasonable airflow.
       </p>
       <p>
         It is also worth coordinating with your cleaning contractor so that a{" "}

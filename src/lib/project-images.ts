@@ -266,7 +266,7 @@ export const projectCategories: ProjectCategory[] = [
         fallback: true,
         width: 1100,
         height: 1273,
-        alt: "A CDCS worker running an extraction cleaning tool over a car seat, with a cleaned band showing on the fabric",
+        alt: "A CDCS worker running a hot-water extraction cleaning tool over a car seat in Guyana, with a cleaned band showing on the fabric",
         caption: "Extracting dirt from a car seat with a cleaning wand.",
         service: "upholstery-fabric-extraction",
         heroForService: "upholstery-fabric-extraction",
