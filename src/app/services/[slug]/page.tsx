@@ -556,6 +556,112 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </div>
                 </div>
               )}
+
+              {/* Page-specific: residential + commercial deep cleaning scope.
+                  Kept in-flow within the overview section. */}
+              {service.slug === "deep-cleaning" && (
+                <div className="mt-12 border-t border-slate-200 pt-10">
+                  <SectionHeading
+                    eyebrow="Homes & Businesses"
+                    title="Professional Deep Cleaning Services in Guyana"
+                  />
+                  <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                    <p>
+                      A deep clean is an intensive one-time clean for a residential or commercial
+                      property that needs more detailed attention than a routine visit. Clients
+                      usually book one when a property has not been professionally cleaned in a
+                      while, for a move-in or move-out, before an inspection, ahead of guests or an
+                      event, when a rental is being turned around, to restore things after heavy
+                      use, or as the first visit before a recurring commercial cleaning programme
+                      begins.
+                    </p>
+
+                    <h3 className="pt-2 font-bold text-navy-900">What a deep clean covers</h3>
+                    <div className="grid gap-x-8 gap-y-4 sm:grid-cols-3">
+                      <div>
+                        <p className="text-sm font-bold text-navy-900">Kitchens</p>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-700">
+                          Counters and surfaces, cabinet and appliance exteriors, sinks and
+                          fixtures, degreasing where required, floors, and hard-to-reach areas.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-navy-900">Bathrooms &amp; washrooms</p>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-700">
+                          Toilets, sinks, and fixtures, tiled surfaces and shower areas where
+                          applicable, grout detailing, floors, and detailed sanitation.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-navy-900">General areas</p>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-700">
+                          Floors, baseboards and skirting, doors and frames, vents, fittings, and
+                          ledges, detailed dust removal, and wall spot-cleaning where the finish
+                          allows.
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-slate-600">
+                      A deep clean does not restore damaged surfaces or guarantee removal of set-in
+                      stains — where a mark or finish cannot be safely recovered, we say so before
+                      starting.
+                    </p>
+
+                    <h3 className="pt-2 font-bold text-navy-900">Commercial deep cleaning</h3>
+                    <p>
+                      For offices, commercial buildings, institutions, and rental properties, a deep
+                      clean establishes a clean baseline — before an inspection, before occupancy,
+                      or right before a{" "}
+                      <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        recurring janitorial programme
+                      </Link>{" "}
+                      begins, so the routine schedule starts from a genuinely clean starting point
+                      rather than catching up over several visits. For a newly built or fitted-out
+                      space, the right first step is{" "}
+                      <Link href="/services/post-construction-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        post-construction cleaning
+                      </Link>
+                      , and larger multi-site properties are served by a{" "}
+                      <Link href="/services/commercial-facility-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        facility cleaning programme
+                      </Link>
+                      .
+                    </p>
+
+                    <h3 className="pt-2 font-bold text-navy-900">Residential deep cleaning</h3>
+                    <p>
+                      CDCS Inc. deep cleans houses, apartments, and rental properties — including
+                      move-in and move-out cleans where the home needs to be handed over or taken on
+                      in good condition.
+                    </p>
+
+                    <p>
+                      Some specialist work is quoted separately or combined with a deep clean where
+                      it is needed:{" "}
+                      <Link href="/services/upholstery-fabric-extraction/" className="font-semibold text-brand-600 hover:underline">
+                        carpet and upholstery extraction
+                      </Link>{" "}
+                      for soiled fabric, and{" "}
+                      <Link href="/services/pressure-washing/" className="font-semibold text-brand-600 hover:underline">
+                        pressure washing
+                      </Link>{" "}
+                      for exterior areas. Our guide to{" "}
+                      <Link href="/insights/commercial-deep-cleaning-guyana/" className="font-semibold text-brand-600 hover:underline">
+                        what a commercial deep clean involves and when to book one
+                      </Link>{" "}
+                      goes into more detail. See related work on{" "}
+                      <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
+                        Our Work
+                      </Link>
+                      , or{" "}
+                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
+                        request a deep cleaning quote
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>

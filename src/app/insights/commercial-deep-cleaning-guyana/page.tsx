@@ -205,7 +205,9 @@ export default function CommercialDeepCleaningArticle() {
       <p>
         A deep clean is a one-time job by nature, but many offices schedule one
         regularly — quarterly or twice a year — on top of their routine
-        programme, so the building never drifts far from standard. Our guide to{" "}
+        programme, so the building never drifts far from standard. The CDCS Inc.{" "}
+        <Link href="/services/deep-cleaning/">deep cleaning service</Link>{" "}
+        handles both the one-time reset and the periodic cycle; our guide to{" "}
         <Link href="/insights/commercial-office-cleaning-guyana/">
           how often a commercial office should be cleaned
         </Link>{" "}
