@@ -281,9 +281,13 @@ export default function PostConstructionCleaningArticle() {
 
       <h2>Getting post-construction cleaning quoted</h2>
       <p>
-        CDCS Inc. assesses the site and its stage, scopes the clean against the
-        handover spec, and schedules it around the build programme and the
-        site&apos;s access hours. Where it helps, the clean is combined with{" "}
+        The CDCS Inc.{" "}
+        <Link href="/services/post-construction-cleaning/">
+          post-construction cleaning service
+        </Link>{" "}
+        assesses the site and its stage, scopes the clean against the handover
+        spec, and schedules it around the build programme and the site&apos;s
+        access hours. Where it helps, the clean is combined with{" "}
         <Link href="/services/pressure-washing/">pressure washing</Link> for the
         exterior and handed over to a{" "}
         <Link href="/services/commercial-janitorial-cleaning/">

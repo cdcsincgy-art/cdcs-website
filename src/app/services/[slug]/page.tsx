@@ -397,6 +397,85 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </div>
                 </div>
               )}
+
+              {/* Page-specific: rough-to-handover stages for the
+                  post-construction cleaning page. Kept in-flow within the
+                  overview section. */}
+              {service.slug === "post-construction-cleaning" && (
+                <div className="mt-12 border-t border-slate-200 pt-10">
+                  <SectionHeading
+                    eyebrow="How It Runs"
+                    title="Post-Construction Cleaning from Rough Clean to Final Handover"
+                  />
+                  <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                    <p>
+                      On most projects the work runs in stages that track the build programme rather
+                      than as a single visit. Not every project needs all three stages of final
+                      cleaning — the scope depends on the condition of the site and what the client
+                      requires for project handover.
+                    </p>
+                    <div className="space-y-5">
+                      <div>
+                        <h3 className="font-bold text-navy-900">A. Rough / initial clean</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-700">
+                          Carried out during or straight after the trades: clearing loose
+                          construction debris and offcuts, removing the bulk of the heavy dust, and
+                          an initial surface clean so the space can be worked in and inspected.
+                        </p>
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-navy-900">B. Detailed construction clean</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-700">
+                          The main pass once construction and installation work is finished: fine
+                          dust off every surface, floors cleaned to the installed finish, fixtures,
+                          windows and frames, tracks, ledges, doors, and detailed surfaces — with
+                          adhesive, sticker, grout-haze, and paint residue removed where it lifts
+                          without marking the finish.
+                        </p>
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-navy-900">C. Final / handover clean</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-700">
+                          After snagging and any remedial work: final detailing and touch-ups,
+                          glass, fixtures and floors brought to a presentation-ready standard for
+                          occupancy or handover.
+                        </p>
+                      </div>
+                    </div>
+                    <p>
+                      Post-construction cleaning pairs with{" "}
+                      <Link href="/services/pressure-washing/" className="font-semibold text-brand-600 hover:underline">
+                        exterior pressure washing
+                      </Link>{" "}
+                      for frontages and compounds, a full{" "}
+                      <Link href="/services/deep-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        deep clean
+                      </Link>{" "}
+                      where a fitted-out space has sat unused, a{" "}
+                      <Link href="/services/commercial-facility-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        structured facility cleaning programme
+                      </Link>{" "}
+                      on larger sites, and an incoming occupier&apos;s{" "}
+                      <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        commercial and janitorial cleaning
+                      </Link>{" "}
+                      from handover. Our guide to{" "}
+                      <Link href="/insights/post-construction-cleaning-guyana/" className="font-semibold text-brand-600 hover:underline">
+                        what professional post-construction cleaning involves
+                      </Link>{" "}
+                      covers scoping and site coordination in more detail. See related work on{" "}
+                      <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
+                        Our Work
+                      </Link>
+                      , or{" "}
+                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
+                        request a post-construction cleaning quote
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -501,8 +580,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
           <div className="container-page relative">
             <SectionHeading
               eyebrow="Our Work"
-              title="CDCS Work in Progress"
-              description="We're adding dedicated photos for this service. In the meantime, here is related CDCS Inc. commercial cleaning work across Guyana."
+              title="Related CDCS Commercial Cleaning Work"
+              description="Authentic CDCS Inc. commercial cleaning work from projects across Guyana — floor, glass, and detailed surface cleaning of the kind involved in bringing a space to a presentation-ready standard."
               light
             />
             <div className="mt-10 grid gap-4 sm:grid-cols-3">
