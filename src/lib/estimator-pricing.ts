@@ -98,6 +98,67 @@ export const pricing = {
   vehicleCondition: { Normal: 1, Moderate: 1.15, Heavy: 1.3 } as Record<string, number>,
   // (Severe -> photo assessment)
 
+  // --- Standalone detailing services (approved starting rates) ---
+  // Keyed by the focusService answer.
+  standaloneDetailing: {
+    "Engine wash only": {
+      base: 4000,
+      sizeUplift: true,
+      severeMessage:
+        "Severe grease or oil buildup in the engine bay is confirmed from photos before pricing — send a few and CDCS will follow up.",
+    },
+    "Undercarriage wash only": {
+      base: 4000,
+      sizeUplift: true,
+      severeMessage:
+        "Severe mud, tar, or grease buildup underneath is confirmed from photos before pricing.",
+    },
+    "Headlight restoration only": {
+      base: 8000,
+      sizeUplift: false,
+      severeMessage:
+        "Cracked lenses, moisture inside the housing, or damage beyond surface hazing is assessed first — normal restoration may not be suitable.",
+      note: "GYD $8,000 covers a standard pair of front headlights.",
+    },
+    "Buffing & polishing only": {
+      base: 15000,
+      sizeUplift: true,
+      heavyAssessment: true, // heavy oxidation / deep scratches / correction-level -> photo
+      range: true,
+      rangeFactor: 1.3,
+      note:
+        "Starting price. Buffing & polishing restores gloss and reduces light swirl marks — deeper scratches and paint damage are not guaranteed to be removed.",
+    },
+    "Odor treatment only": {
+      base: 5000,
+      sizeUplift: false,
+      range: true,
+      rangeFactor: 1.6,
+      severeMessage:
+        "Severe smoke, biological contamination, urine, or an unknown source is assessed (photos or in person) before pricing.",
+      note: "Starting price for a standard odor treatment.",
+    },
+  } as Record<
+    string,
+    {
+      base: number;
+      sizeUplift: boolean;
+      heavyAssessment?: boolean;
+      severeMessage?: string;
+      range?: boolean;
+      rangeFactor?: number;
+      note?: string;
+    }
+  >,
+  // Vehicle-size uplift for size-sensitive standalone detailing (engine, bottom, buffing).
+  detailSizeMultipliers: {
+    "Small car / sedan": 1,
+    SUV: 1.25,
+    Pickup: 1.25,
+    "Large SUV / 7-seater": 1.5,
+    "Canter / light commercial": 1.75,
+  } as Record<string, number>,
+
   // --- §4 FLEET & HEAVY-DUTY one-off mobile, normal condition ---
   fleet: {
     "Canter / light commercial": { Exterior: 7000, "Exterior + Engine": 10000, "Exterior + Bottom": 10000, "Exterior + Engine + Bottom": 13000 },
@@ -411,10 +472,7 @@ function priceVehicleWash(a: AnswerMap, addOns: string[]): EstimateResult {
   };
 
   if (focus !== "Full wash / detail") {
-    return photoAssessment(
-      `${focus.replace(/ only$/, "")} is priced with your specific vehicle. Send a photo, or book it alongside a wash, and CDCS will confirm the price.`,
-      analytics,
-    );
+    return priceStandaloneDetail(focus, a, { ...analytics, subscription_interest: "none" });
   }
 
   const cond = s(a.vehicleCondition);
@@ -511,6 +569,62 @@ function clampSub(oneTime: number, visits: number, factor: number): number {
   const raw = oneTime * visits * factor;
   const floor = oneTime * visits * pricing.subscription.marginFloorFactor;
   return roundCommercial(Math.max(raw, floor));
+}
+
+/**
+ * Standalone detailing services (engine wash, undercarriage wash, headlight
+ * restoration, buffing & polishing, odor treatment) — approved starting rates
+ * with vehicle-size uplift where relevant. Severe / correction-level condition
+ * escalates to a photo assessment rather than an uncontrolled multiplier.
+ */
+function priceStandaloneDetail(focus: string, a: AnswerMap, analytics: EstimateResult["analytics"]): EstimateResult {
+  const cfg = pricing.standaloneDetailing[focus];
+  const an = { ...analytics, detail_focus: focus.replace(/ only$/, "").toLowerCase() };
+  if (!cfg) return photoAssessment(PHOTO_REASON, an);
+
+  const vClass = s(a.vehicleClass);
+  const cond = s(a.vehicleCondition);
+  const isWashbay = s(a.serviceMode).startsWith("Washbay");
+  const name = focus.replace(/ only$/, "");
+
+  // Condition gates — a photo, not a blind multiplier.
+  if (cfg.heavyAssessment && (cond === "Heavy" || cond === "Severe")) {
+    return photoAssessment(
+      "Heavy oxidation, deep scratches, or paint-correction work is quoted from photos first. Buffing improves gloss and reduces light swirl marks — deeper scratches and paint damage are not guaranteed to be removed.",
+      an,
+    );
+  }
+  if (cond === "Severe") {
+    return photoAssessment(cfg.severeMessage ?? PHOTO_REASON, an);
+  }
+
+  // Vehicle-size uplift (engine, bottom, buffing).
+  let sizeMult = 1;
+  if (cfg.sizeUplift) {
+    const m = pricing.detailSizeMultipliers[vClass];
+    if (m == null) {
+      return photoAssessment("Send a photo of the vehicle and CDCS will confirm the price for it.", an);
+    }
+    sizeMult = m;
+  }
+
+  const condMult = pricing.vehicleCondition[cond] ?? 1; // Normal 1 · Moderate 1.15 · Heavy 1.3
+  let amount = cfg.base * sizeMult * condMult;
+  if (!isWashbay) amount = Math.max(amount, pricing.mobileMinimum);
+
+  const label = `${name}${cfg.sizeUplift && vClass ? ` — ${vClass}` : ""}${
+    condMult !== 1 ? ` (+${Math.round((condMult - 1) * 100)}% ${cond})` : ""
+  }`;
+  const lineItems: EstimateLineItem[] = [{ label, amount: roundCommercial(amount) }];
+
+  if (cfg.range) {
+    return rangeOut(amount, amount * (cfg.rangeFactor ?? 1.3), {
+      lineItems,
+      noteExtra: cfg.note,
+      analytics: an,
+    });
+  }
+  return priceOut(amount, { lineItems, noteExtra: cfg.note, analytics: an });
 }
 
 // ---------------------------------------------------------------------------

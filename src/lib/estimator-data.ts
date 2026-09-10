@@ -98,9 +98,9 @@ export const estimatorServices: EstimatorService[] = [
   { id: "parking-area-cleaning", label: "Parking Area Cleaning", category: "Pressure & Exterior Cleaning", group: "pressure_washing", servicePageSlug: "pressure-washing", presetAnswers: { surfaceType: "Parking area" } },
 
   // --- Vehicle Detailing ---
-  { id: "mobile-detailing", label: "Mobile Vehicle Detailing", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
-  { id: "exterior-vehicle-wash", label: "Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { washPackage: "Exterior only" } },
-  { id: "interior-exterior-wash", label: "Interior & Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { washPackage: "Interior + exterior" } },
+  { id: "mobile-detailing", label: "Mobile Vehicle Detailing", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Full wash / detail" } },
+  { id: "exterior-vehicle-wash", label: "Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Full wash / detail", washPackage: "Exterior only" } },
+  { id: "interior-exterior-wash", label: "Interior & Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Full wash / detail", washPackage: "Interior + exterior" } },
   { id: "engine-wash", label: "Engine Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Engine wash only" } },
   { id: "undercarriage-wash", label: "Vehicle Bottom / Undercarriage Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Undercarriage wash only" } },
   { id: "headlight-restoration", label: "Headlight Restoration", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Headlight restoration only" } },
@@ -234,12 +234,12 @@ export const questionSets: Record<EstimatorGroupId, EstimatorQuestion[]> = {
   ],
 
   mobile_detailing: [
-    { id: "serviceMode", label: "Where will the wash happen?", type: "select", options: ["Mobile (we come to you)", "Washbay (drop-off at CDCS)"] },
+    { id: "focusService", label: "Focus", type: "select", options: ["Full wash / detail", "Engine wash only", "Undercarriage wash only", "Headlight restoration only", "Buffing & polishing only", "Odor treatment only"], optional: true },
+    { id: "serviceMode", label: "Where will the work happen?", type: "select", options: ["Mobile (we come to you)", "Washbay (drop-off at CDCS)"] },
     { id: "vehicleClass", label: "Vehicle type", type: "select", options: ["Small car / sedan", "SUV", "Pickup", "Large SUV / 7-seater", "Canter / light commercial", "Other"] },
-    { id: "washPackage", label: "Wash package", type: "select", options: ["Interior + exterior", "Exterior only"] },
-    { id: "focusService", label: "Anything specific instead of a full wash?", type: "select", options: ["Full wash / detail", "Engine wash only", "Undercarriage wash only", "Headlight restoration only", "Buffing & polishing only", "Odor treatment only"], optional: true },
+    { id: "washPackage", label: "Wash package", type: "select", options: ["Interior + exterior", "Exterior only"], showWhen: { questionId: "focusService", equalsAny: ["Full wash / detail"] } },
     { id: "vehicleCondition", label: "Vehicle condition", type: "select", options: ["Normal", "Moderate", "Heavy", "Severe"] },
-    { id: "subscriptionInterest", label: "Interested in a recurring plan?", type: "select", options: ["One-time only", "2 washes per month", "4 washes per month"], optional: true },
+    { id: "subscriptionInterest", label: "Interested in a recurring plan?", type: "select", options: ["One-time only", "2 washes per month", "4 washes per month"], optional: true, showWhen: { questionId: "focusService", equalsAny: ["Full wash / detail"] } },
     { id: "petHair", label: "Pet hair", type: "boolean" },
     { id: "heavyStains", label: "Heavy interior stains", type: "boolean" },
     { id: "odor", label: "Odor to treat", type: "boolean" },
