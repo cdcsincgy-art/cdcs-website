@@ -300,13 +300,31 @@ export const pricing = {
     } as Record<string, { low: number; high: number }>,
   },
 
-  // --- §15 POST-CONSTRUCTION (PROVISIONAL) ---
+  // --- §15 POST-CONSTRUCTION — PRICING ENGINE V2 (sq-ft primary; CDCS
+  //     management-approved preliminary ranges; not binding quotations) ---
   postConstruction: {
-    // small, predictable final/detailed cleans only:
-    smallMaxSqFt: 3000,
-    smallMaxFloors: 2,
-    smallBand: { low: 45000, high: 110000 },
-    // everything else -> site assessment
+    minimumCharge: 45000, // §B — no estimate below this
+    roundTo: 5000, // §I
+    maxSqFt: 5000, // §K — above this -> site assessment
+    maxFloors: 4, // §F — above this -> site assessment
+    // §A per-sq-ft rate ranges by cleaning stage
+    stageRates: {
+      "Rough clean": { low: 22, high: 28 },
+      "Detailed clean": { low: 28, high: 38 },
+      "Final handover clean": { low: 35, high: 48 },
+    } as Record<string, { low: number; high: number }>,
+    // §C condition / construction dust (mapped to the dustLevel question)
+    conditionFactor: { Light: 1.0, Moderate: 1.1, Heavy: 1.25 } as Record<string, number>,
+    // §D construction debris (debrisLevel question)
+    debrisFactor: { Light: 1.0, Moderate: 1.1, Heavy: 1.2 } as Record<string, number>,
+    // §E paint / cement / grout / adhesive residue — by count of selected residue types
+    residueFactorByCount: [1.0, 1.1, 1.1, 1.2], // 0 / 1 / 2 / 3 selected
+    residueAssessmentCount: 4, // 4+ residue types -> assessment
+    // §F floors
+    floorFactor: { 1: 1.0, 2: 1.05, 3: 1.1, 4: 1.15 } as Record<number, number>,
+    // §G/H coverage — "Both" (interior + reachable exterior) at ground/low level
+    bothCoverageFactor: 1.1,
+    bothCoverageMaxFloors: 2, // "Both" above this -> site assessment (elevated glazing)
   },
 
   // --- §16 COMMERCIAL / JANITORIAL — PRICING ENGINE V2 (CDCS management-approved
@@ -1032,32 +1050,146 @@ function priceDeep(serviceId: string, a: AnswerMap): EstimateResult {
 }
 
 // ---------------------------------------------------------------------------
-// §15 — POST-CONSTRUCTION (PROVISIONAL — small range, else site assessment)
+// §15 — POST-CONSTRUCTION — PRICING ENGINE V2
+//
+// Square footage × stage rate range × condition × debris × residue × floor ×
+// coverage — SEQUENTIALLY / MULTIPLICATIVELY (never additive). The GYD 45,000
+// minimum is applied AFTER the base + modifiers. Rounded to nearest 5,000.
+// Site / photo assessment only for genuinely complex or high-risk jobs.
 // ---------------------------------------------------------------------------
 
+const pcRound = (x: number): number =>
+  Math.round(x / pricing.postConstruction.roundTo) * pricing.postConstruction.roundTo;
+
 function pricePostConstruction(a: AnswerMap): EstimateResult {
+  const P = pricing.postConstruction;
   const sqft = n(a.squareFootage);
-  const floors = n(a.floors);
+  const floors = Math.max(1, Math.round(n(a.floors) || 1));
   const stage = s(a.constructionStage);
+  const dust = s(a.dustLevel);
   const debris = s(a.debrisLevel);
-  const analytics = { stage: stage || "unspecified" };
+  const coverage = s(a.coverage);
+  const residues = Array.isArray(a.residues) ? a.residues.map(String) : [];
+  const analytics = {
+    stage: stage || "unspecified",
+    coverage: coverage || "unspecified",
+    sqft_band: sqft <= 0 ? "unspecified" : sqft <= P.maxSqFt ? `<=${P.maxSqFt}` : ">5000",
+  };
 
-  const small =
-    sqft > 0 &&
-    sqft <= pricing.postConstruction.smallMaxSqFt &&
-    (floors || 1) <= pricing.postConstruction.smallMaxFloors &&
-    stage !== "Rough clean" &&
-    debris !== "Very heavy";
-
-  if (!small) {
+  // --- assessment triggers (§C/§D/§E/§F/§G/§K) ---
+  if (floors > P.maxFloors) {
     return siteAssessment(
-      "Post-construction scope depends on site conditions at handover — floor area, debris, residues and finishes are confirmed on inspection before pricing.",
+      "Post-construction cleaning above 4 floors is scoped on a site walkthrough — access, glazing and logistics are confirmed first.",
       analytics,
     );
   }
-  return rangeOut(pricing.postConstruction.smallBand.low, pricing.postConstruction.smallBand.high, {
-    lineItems: [{ label: `${stage} · ~${sqft.toLocaleString("en-US")} sq ft`, amount: roundCommercial((pricing.postConstruction.smallBand.low + pricing.postConstruction.smallBand.high) / 2) }],
-    noteExtra: "Preliminary range for a small, predictable final clean — confirmed after CDCS reviews the site.",
+  if (dust === "Very heavy") {
+    return photoAssessment(
+      "Severe construction residue — hardened cement, extensive grout haze or heavy contamination — is confirmed from photos or a site visit before pricing. Permanent surface damage is not guaranteed removable.",
+      analytics,
+    );
+  }
+  if (debris === "Very heavy") {
+    return siteAssessment(
+      "Large-volume construction waste, hauling, skips or unclear disposal is scoped on a site visit — disposal is not assumed to be included.",
+      analytics,
+    );
+  }
+  if (residues.length >= P.residueAssessmentCount) {
+    return photoAssessment(
+      "Extensive multi-type construction residue (cement, grout, paint and adhesive together) is restoration-level work — confirmed from photos or a site visit. Permanent surface damage is not guaranteed removable.",
+      analytics,
+    );
+  }
+  if (coverage === "Exterior only") {
+    return siteAssessment(
+      "Exterior and elevated post-construction cleaning — facades, high-access glazing, scaffolding or lift work — is quoted after a site visit. It is not priced as ordinary post-construction cleaning.",
+      analytics,
+    );
+  }
+  if (coverage === "Both" && floors > P.bothCoverageMaxFloors) {
+    return siteAssessment(
+      "Interior plus multi-storey exterior post-construction cleaning includes elevated glazing and facade work, quoted after a site visit.",
+      analytics,
+    );
+  }
+  if (sqft <= 0) {
+    return siteAssessment(
+      "Give the approximate floor area, or arrange a walkthrough, for a preliminary post-construction estimate.",
+      analytics,
+    );
+  }
+  if (sqft > P.maxSqFt) {
+    return siteAssessment(
+      "Post-construction projects over 5,000 sq ft are scoped on a site walkthrough for an official CDCS quotation. Your project details are kept for that request.",
+      analytics,
+    );
+  }
+
+  const rate = P.stageRates[stage];
+  if (!rate) {
+    return siteAssessment("CDCS confirms the cleaning stage and scope on a walkthrough before pricing.", analytics);
+  }
+
+  // --- §I modifiers, sequential / multiplicative ---
+  const conditionFactor = P.conditionFactor[dust] ?? 1;
+  const debrisFactor = P.debrisFactor[debris] ?? 1;
+  const residueFactor = P.residueFactorByCount[Math.min(residues.length, P.residueFactorByCount.length - 1)] ?? 1;
+  const floorFactor = P.floorFactor[floors] ?? 1;
+  const coverageFactor = coverage === "Both" ? P.bothCoverageFactor : 1;
+  const factor = conditionFactor * debrisFactor * residueFactor * floorFactor * coverageFactor;
+
+  let low = sqft * rate.low * factor;
+  let high = sqft * rate.high * factor;
+
+  // --- §B minimum, applied AFTER base + modifiers ---
+  const minimumApplied = high < P.minimumCharge;
+  if (minimumApplied) {
+    low = P.minimumCharge;
+    high = P.minimumCharge + 10000; // sensible small-job range starting at the minimum
+  } else {
+    low = Math.max(low, P.minimumCharge);
+    high = Math.max(high, low);
+  }
+
+  const loR = pcRound(low);
+  let hiR = Math.max(loR, pcRound(high));
+  // keep a meaningful spread when the figure sits right on the minimum
+  if (hiR <= loR) hiR = loR + 2 * P.roundTo;
+
+  // safety — never NaN / below the minimum / inverted
+  if (!Number.isFinite(loR) || !Number.isFinite(hiR) || loR < P.minimumCharge || hiR < loR) {
+    return siteAssessment(SITE_REASON, analytics);
+  }
+
+  const applied: string[] = [];
+  if (conditionFactor !== 1) applied.push(`construction dust ${dust.toLowerCase()} (+${Math.round((conditionFactor - 1) * 100)}%)`);
+  if (debrisFactor !== 1) applied.push(`debris ${debris.toLowerCase()} (+${Math.round((debrisFactor - 1) * 100)}%)`);
+  if (residueFactor !== 1) applied.push(`paint / cement / grout / adhesive residue (+${Math.round((residueFactor - 1) * 100)}%)`);
+  if (floorFactor !== 1) applied.push(`${floors} floors (+${Math.round((floorFactor - 1) * 100)}%)`);
+  if (coverageFactor !== 1) applied.push(`interior + reachable exterior (+${Math.round((coverageFactor - 1) * 100)}%)`);
+
+  const extraNotes: string[] = [];
+  if (minimumApplied) extraNotes.push(`Minimum post-construction job charge of ${formatGYD(P.minimumCharge)} applies.`);
+  if (coverage === "Both") extraNotes.push("Elevated exterior glass or facade work is confirmed and quoted on site.");
+  if (residues.length > 0) extraNotes.push("Permanent surface damage and set stains are not guaranteed removable.");
+
+  return rangeOut(loR, hiR, {
+    headline: "Preliminary Estimate",
+    lineItems: [
+      {
+        label: `${stage} · ~${sqft.toLocaleString("en-US")} sq ft @ ${formatGYD(rate.low)}–${formatGYD(rate.high)}/sq ft`,
+        amount: pcRound((loR + hiR) / 2),
+      },
+    ],
+    noteExtra: [
+      "Based on the project size, cleaning stage and condition information provided.",
+      applied.length ? `Applied: ${applied.join(", ")}.` : "",
+      "Final pricing is subject to confirmation of site condition, construction residue, access, measurements and final scope.",
+      ...extraNotes,
+    ]
+      .filter(Boolean)
+      .join(" "),
     analytics,
   });
 }
