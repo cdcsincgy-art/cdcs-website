@@ -20,6 +20,7 @@ import {
   estimatorCategories,
   getEstimatorService,
   groupLabels,
+  isQuestionVisible,
   presetQuestionIds,
   questionSets,
   servicesInCategory,
@@ -165,8 +166,8 @@ export function Estimator() {
   // Questions fixed by the chosen service — seeded, not asked.
   const hiddenIds = useMemo(() => presetQuestionIds(service), [service]);
   const visibleQuestions = useMemo(
-    () => questions.filter((q) => !hiddenIds.includes(q.id)),
-    [questions, hiddenIds],
+    () => questions.filter((q) => !hiddenIds.includes(q.id) && isQuestionVisible(q, state.answers)),
+    [questions, hiddenIds, state.answers],
   );
 
   const result: EstimateResult | null = useMemo(() => {
@@ -237,6 +238,7 @@ export function Estimator() {
       trackEvent("estimator_completed", {
         service_category: service?.category,
         service_id: service?.id,
+        ...result.analytics,
         outcome: result.kind,
       });
     }
@@ -868,6 +870,7 @@ function PhotoUpload({
 
 function JobSummaryList({ questions, answers }: { questions: EstimatorQuestion[]; answers: Answers }) {
   const rows = questions
+    .filter((q) => isQuestionVisible(q, answers))
     .map((q) => [q.label, formatAnswer(q, answers[q.id])] as const)
     .filter(([, v]) => v !== "");
   if (rows.length === 0) return null;
@@ -980,11 +983,53 @@ function ResultScreen(
         </>
       )}
 
+      {(result.kind === "estimated_price" || result.kind === "estimated_range") && result.lineItems && result.lineItems.length > 0 && (
+        <div className="mt-4 rounded-lg border border-slate-200">
+          <dl className="divide-y divide-slate-200">
+            {result.lineItems.map((li, i) => (
+              <div key={li.label + i} className="flex justify-between gap-4 px-4 py-2 text-sm">
+                <dt className="text-slate-500">{li.label}</dt>
+                <dd className="text-right font-semibold text-navy-900">
+                  {li.amount < 0 ? `−${formatGYD(-li.amount)}` : formatGYD(li.amount)}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+
       {(result.kind === "estimated_price" || result.kind === "estimated_range") && result.subtotalLabel && (
-        <p className="mt-4 text-sm text-slate-600">
-          Estimated subtotal: <span className="font-bold text-navy-900">{result.subtotalLabel}</span>
-          {result.addOnsTotal ? ` · add-ons ${formatGYD(result.addOnsTotal)}` : ""}
+        <p className="mt-3 text-sm text-slate-600">
+          Estimated {result.kind === "estimated_range" ? "range" : "subtotal"}:{" "}
+          <span className="font-bold text-navy-900">{result.subtotalLabel}</span>
         </p>
+      )}
+
+      {result.subscriptions && result.subscriptions.length > 0 && (
+        <div className="mt-5 rounded-lg border-2 border-brand-200 bg-brand-50 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-brand-700">Recurring plan options</p>
+          <ul className="mt-2 space-y-1.5 text-sm">
+            {result.subscriptions.map((sub) => (
+              <li key={sub.label} className="flex justify-between gap-4">
+                <span className="text-navy-900">{sub.label}</span>
+                <span className="font-bold text-navy-900">{formatGYD(sub.monthly)} / month</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-xs text-slate-500">
+            Prepaid monthly. Registered vehicle, standard condition allowance. Confirmed when you set up the plan.
+          </p>
+        </div>
+      )}
+
+      {result.recurringNote && (
+        <p className="mt-4 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-800">
+          {result.recurringNote}
+        </p>
+      )}
+
+      {result.noteExtra && (
+        <p className="mt-4 text-xs leading-relaxed text-slate-500">{result.noteExtra}</p>
       )}
 
       {estimatorNotes.trim() && (
@@ -1109,6 +1154,7 @@ function LeadForm(
   const jobSummaryText = useMemo(
     () =>
       questions
+        .filter((q) => isQuestionVisible(q, answers))
         .map((q) => [q.label, formatAnswer(q, answers[q.id])] as const)
         .filter(([, v]) => v !== "")
         .map(([l, v]) => `${l}: ${v}`)
@@ -1178,6 +1224,7 @@ function LeadForm(
           trackEvent("estimator_quote_requested", {
             service_category: service.category,
             service_id: service.id,
+            ...result.analytics,
             outcome: result.kind,
           });
           trackEvent("generate_lead", { service: service.label, frequency: "estimator" });

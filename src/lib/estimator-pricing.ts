@@ -1,21 +1,32 @@
 // ---------------------------------------------------------------------------
-// CDCS estimator — centralized pricing configuration and calculation engine.
+// CDCS ESTIMATOR — MASTER PRICING ENGINE
 //
-// ALL prices are maintained here and nowhere else. Every monetary value is in
-// Guyanese dollars (GYD) and is a plain whole number (e.g. 25000 -> "GYD $25,000").
+// Every rate lives in the `pricing` object below (all values GYD). Nothing in
+// the UI carries a price. The engine (`computeEstimate`) dispatches by service
+// group to a dedicated pricer and returns one of four outcomes:
 //
-// IMPORTANT: no real CDCS rates are known yet. Every profile below is set to
-// `manualQuoteRequired: true` with null rates, so the estimator produces a
-// structured "Site Assessment Required" outcome for every service until
-// management supplies figures. The calculation engine is fully implemented and
-// will start returning prices/ranges as soon as the nulls are filled in.
+//   estimated_price     — high confidence, single figure
+//   estimated_range     — condition / scope creates reasonable uncertainty
+//   photo_assessment    — visual condition must be seen (photos suffice)
+//   site_assessment     — large / commercial / complex; needs a walkthrough
 //
-// To switch a service group on:
-//   1. Fill in the rate fields it needs (basePrice, squareFootRate, …).
-//   2. Fill in addOnPrices for that group.
-//   3. Set manualQuoteRequired: false.
-// Per-service tuning (e.g. a different base for "Sofa Cleaning" vs "Carpet
-// Cleaning") goes in `serviceOverrides` keyed by the service id.
+// PRICING SOURCE
+//   APPROVED (CDCS management-approved rates, §2–§11 of the brief):
+//     - washbay & mobile vehicle wash rates
+//     - fleet & heavy-duty one-off rates + heavy-equipment starting prices
+//     - vehicle extraction, chairs, mattresses, sofas
+//     - carpet 25–35 GYD/sq ft framework
+//   PROVISIONAL (marked `PROVISIONAL` — reasonable bands pending CDCS sign-off,
+//   only ever shown as a RANGE, never an exact price):
+//     - pressure washing bands & minimum
+//     - deep / residential cleaning bands
+//     - post-construction bands
+//     - janitorial one-time & monthly bands
+//   Every PROVISIONAL value is listed in the task's final report.
+//
+// SAFETY: all outputs pass through guards — no NaN, no negative, no zero-price
+// bookings; discounts are capped; severe/unknown conditions never receive a
+// misleading exact price.
 // ---------------------------------------------------------------------------
 
 import type { EstimatorGroupId } from "./estimator-data";
@@ -27,114 +38,235 @@ export function formatGYD(amount: number): string {
   return `${CURRENCY} $${Math.round(amount).toLocaleString("en-US")}`;
 }
 
-export type ConditionKey =
-  | "Light"
-  | "Moderate"
-  | "Heavy"
-  | "Very heavy"
-  | "Severe"
-  | "Light dirt"
-  | "Heavy dirt"
-  | "Heavy algae / mould / oil";
-
-export interface PricingProfile {
-  /** Flat starting price for the job before modifiers. */
-  basePrice: number | null;
-  /** The job is never quoted below this. */
-  minimumCharge: number | null;
-  /** Generic per-unit rate (floors, washrooms, workstations…). */
-  unitRate: number | null;
-  /** Per square foot. */
-  squareFootRate: number | null;
-  /** Per item / per vehicle / per fleet vehicle. */
-  quantityRate: number | null;
-  /** Multiplier by vehicle type, e.g. { Car: 1, SUV: 1.2, Truck: 1.8 }. */
-  vehicleTypeMultipliers: Record<string, number> | null;
-  /** Multiplier by condition answer. */
-  conditionMultipliers: Record<string, number> | null;
-  /** Fractional discount by frequency answer, e.g. { "5x weekly": 0.15 }. */
-  frequencyDiscounts: Record<string, number> | null;
-  /** Flat surcharge added by access answer, e.g. { "Difficult access": 15000 }. */
-  accessSurcharge: Record<string, number> | null;
-  /** Price of each add-on offered for this group (keyed by add-on id). */
-  addOnPrices: Record<string, number | null>;
-  /**
-   * How wide an "estimated range" is around the computed midpoint, as a
-   * fraction (0.2 = ±20%). Used when the group produces a range rather than a
-   * single figure.
-   */
-  rangeSpread: number;
-  /** These groups always produce a range rather than a fixed price. */
-  alwaysRange: boolean;
-  /** True for jobs a person must scope regardless of rates. */
-  inspectionRequired: boolean;
-  /**
-   * Which non-priced outcome this group falls back to. "photo_assessment" for
-   * ordinary consumer / condition-driven jobs that can be quoted from photos;
-   * "site_assessment" for large, commercial, industrial, or complex jobs that
-   * genuinely need a walkthrough. Individual answers can still escalate a
-   * "photo_assessment" group to "site_assessment" (see forcesAssessment).
-   */
-  manualOutcome: "photo_assessment" | "site_assessment";
-  /**
-   * Master switch. While true, this group NEVER shows a number and returns
-   * `manualOutcome`. Set false only once real rates are in place.
-   */
-  manualQuoteRequired: boolean;
+/**
+ * Round a customer-facing figure to a commercially sensible increment:
+ * nearest 500 below 20k, nearest 1,000 to 100k, nearest 5,000 above.
+ */
+export function roundCommercial(n: number): number {
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  const step = n < 20000 ? 500 : n < 100000 ? 1000 : 5000;
+  return Math.round(n / step) * step;
 }
 
-/** A profile with every rate blank — the starting point for every group. */
-function blankProfile(overrides: Partial<PricingProfile> = {}): PricingProfile {
-  return {
-    basePrice: null,
-    minimumCharge: null,
-    unitRate: null,
-    squareFootRate: null,
-    quantityRate: null,
-    vehicleTypeMultipliers: null,
-    conditionMultipliers: null,
-    frequencyDiscounts: null,
-    accessSurcharge: null,
-    addOnPrices: {},
-    rangeSpread: 0.2,
-    alwaysRange: true,
-    inspectionRequired: false,
-    manualOutcome: "photo_assessment",
-    manualQuoteRequired: true,
-    ...overrides,
-  };
-}
-
-/**
- * The single source of truth for estimator pricing. One profile per question
- * group. Every value is a placeholder pending CDCS management input.
- */
-export const servicePricingConfig: Record<EstimatorGroupId, PricingProfile> = {
-  janitorial: blankProfile({ inspectionRequired: true, manualOutcome: "site_assessment" }),
-  deep_residential: blankProfile({ manualOutcome: "photo_assessment" }),
-  post_construction: blankProfile({ inspectionRequired: true, manualOutcome: "site_assessment" }),
-  pressure_washing: blankProfile({ manualOutcome: "photo_assessment" }),
-  mobile_detailing: blankProfile({ alwaysRange: false, manualOutcome: "photo_assessment" }),
-  fleet_washing: blankProfile({ inspectionRequired: true, manualOutcome: "site_assessment" }),
-  carpet_upholstery: blankProfile({ alwaysRange: false, manualOutcome: "photo_assessment" }),
-  custom: blankProfile({ inspectionRequired: true, manualOutcome: "site_assessment" }),
-};
-
-/**
- * Optional per-service tuning, layered on top of the group profile. Empty for
- * now; add entries keyed by EstimatorService id when rates differ within a
- * group (e.g. "sofa-cleaning" vs "mattress-cleaning").
- */
-export const serviceOverrides: Record<string, Partial<PricingProfile>> = {};
-
-export function getPricingProfile(serviceId: string, group: EstimatorGroupId): PricingProfile {
-  const base = servicePricingConfig[group];
-  const override = serviceOverrides[serviceId];
-  return override ? { ...base, ...override, addOnPrices: { ...base.addOnPrices, ...override.addOnPrices } } : base;
+function roundRangeBounds(low: number, high: number): [number, number] {
+  const step = high < 20000 ? 500 : high < 100000 ? 1000 : 5000;
+  return [Math.max(0, Math.floor(low / step) * step), Math.ceil(high / step) * step];
 }
 
 // ---------------------------------------------------------------------------
-// Calculation engine
+// MASTER PRICING CONFIG (GYD)
+// ---------------------------------------------------------------------------
+
+export const pricing = {
+  /** Discounts (frequency + volume + promo) can never exceed this in total. */
+  maxTotalDiscount: 0.2,
+  /** Mobile jobs are never quoted below this within the standard service area. */
+  mobileMinimum: 6000,
+
+  // --- §2 WASHBAY (drop-off at CDCS) ---
+  washbay: {
+    interior_exterior: {
+      "Small car / sedan": 2500,
+      SUV: 3000,
+      Pickup: 4000,
+      "Large SUV / 7-seater": 4000,
+      "Canter / light commercial": 5000,
+    } as Record<string, number>,
+    exterior_only: {
+      "Small car / sedan": 1500,
+      SUV: 2000,
+      Pickup: 2500,
+      "Large SUV / 7-seater": 3000,
+      "Canter / light commercial": 3500,
+    } as Record<string, number>,
+  },
+
+  // --- §3 MOBILE vehicle wash (mobilization within standard service area included) ---
+  mobileWash: {
+    interior_exterior: {
+      "Small car / sedan": 5000,
+      SUV: 6000,
+      Pickup: 6000,
+      "Large SUV / 7-seater": 7000,
+      "Canter / light commercial": 7000,
+    } as Record<string, number>,
+    // No approved mobile "exterior only" rates — handled as photo assessment.
+    exterior_only: {} as Record<string, number>,
+  },
+
+  // --- §2/§3 vehicle condition ---
+  vehicleCondition: { Normal: 1, Moderate: 1.15, Heavy: 1.3 } as Record<string, number>,
+  // (Severe -> photo assessment)
+
+  // --- §4 FLEET & HEAVY-DUTY one-off mobile, normal condition ---
+  fleet: {
+    "Canter / light commercial": { Exterior: 7000, "Exterior + Engine": 10000, "Exterior + Bottom": 10000, "Exterior + Engine + Bottom": 13000 },
+    "Medium truck": { Exterior: 10000, "Exterior + Engine": 13000, "Exterior + Bottom": 14000, "Exterior + Engine + Bottom": 17000 },
+    "Hauler / prime mover": { Exterior: 12000, "Exterior + Engine": 16000, "Exterior + Bottom": 16000, "Exterior + Engine + Bottom": 20000 },
+    "Side loader / garbage truck": { Exterior: 12000, "Exterior + Engine": 16000, "Exterior + Bottom": 17000, "Exterior + Engine + Bottom": 21000 },
+    "Bus / large commercial vehicle": { Exterior: 10000, "Exterior + Engine": 13000, "Exterior + Bottom": 14000, "Exterior + Engine + Bottom": 17000 },
+    "Trailer only": { Exterior: 8000, "Exterior + Bottom": 11000 },
+    "Hauler + trailer": { Exterior: 18000, "Exterior + Engine": 22000, "Exterior + Bottom": 23000, "Exterior + Engine + Bottom": 27000 },
+  } as Record<string, Record<string, number>>,
+
+  // --- §4 heavy-duty condition ---
+  fleetCondition: {
+    "Normal operating dirt": 0,
+    "Heavy mud / grease": 0.15,
+    "Severe buildup": 0.25,
+  } as Record<string, number>,
+  // ("Exceptional / unknown contamination" -> assessment)
+
+  // --- §5 HEAVY EQUIPMENT starting preliminary prices ---
+  heavyEquipment: {
+    "Skid steer / mini equipment": 12000,
+    "Backhoe / small loader": 18000,
+    "Medium excavator / loader": 25000,
+    "Large excavator / bulldozer": 35000,
+  } as Record<string, number>,
+  // ("Very large mining / construction equipment" -> site/photo assessment)
+
+  // --- §6 FLEET QUANTITY bands (similar units, one location) ---
+  fleetQuantityBands: [
+    { min: 1, max: 2, discount: 0, label: "1-2" },
+    { min: 3, max: 5, discount: 0.05, label: "3-5" },
+    { min: 6, max: 10, discount: 0.1, label: "6-10" },
+    { min: 11, max: 20, discount: 0.13, label: "11-20" },
+    { min: 21, max: Infinity, discount: null, label: "20+", custom: true },
+  ] as { min: number; max: number; discount: number | null; label: string; custom?: boolean }[],
+
+  // --- §7 VEHICLE EXTRACTION / steam cleaning ---
+  vehicleExtraction: {
+    "Single vehicle seat": 3000,
+    "2 seats": 5000,
+    "Rear bench": 6000,
+    "Front + rear seats": 10000,
+    "Seats + vehicle carpet": 14000,
+    "Full vehicle extraction": 16000, // "from"
+  } as Record<string, number>,
+  vehicleExtractionFrom: new Set(["Full vehicle extraction"]),
+
+  // --- §8 CHAIRS (per chair) ---
+  chairs: {
+    "Dining / standard upholstered chair": 2000,
+    "Office chair": 2500,
+    "Large padded / executive chair": 3500,
+  } as Record<string, number>,
+  chairLargeQtyThreshold: 20, // above this -> range / official quotation
+
+  // --- §9 MATTRESSES ---
+  mattresses: { Single: 7000, Double: 9000, Queen: 11000, King: 13000 } as Record<string, number>,
+
+  // --- §10 SOFAS ---
+  sofas: {
+    "1-seater": 5000,
+    "2-seater": 8000,
+    "3-seater": 11000,
+    "2-1-1 set": 16000,
+    "3-2-1 set": 20000,
+    "Large sectional": 22000, // "from"
+  } as Record<string, number>,
+  sofaFrom: new Set(["Large sectional"]),
+
+  // --- §11 EXTRACTION condition ---
+  extractionCondition: { "Light / normal": 1, Moderate: 1.1, Heavy: 1.25 } as Record<string, number>,
+  // (Severe -> photo assessment)
+
+  // --- §11 EXTRACTION add-ons ---
+  extractionAddOns: {
+    "stain-treatment": { min: 2000, max: 4000 }, // variable -> pushes result to a range
+    "odor-treatment": 3000,
+    "pet-treatment": 3000, // pet hair / light pet contamination
+    "fabric-protection": null, // no approved rate -> "Available on request"
+  } as Record<string, number | { min: number; max: number } | null>,
+
+  // --- §12 CARPET / commercial extraction (25–35 GYD/sq ft framework) ---
+  carpet: {
+    minimum: 6000,
+    // volume bands within the 25–35 framework
+    bands: [
+      { maxSqFt: 500, rate: 35 },
+      { maxSqFt: 1500, rate: 32 },
+      { maxSqFt: 3000, rate: 28 },
+      { maxSqFt: 6000, rate: 25 },
+    ],
+    largeCommercialSqFt: 6000, // above this -> site assessment
+    commercialUplift: 1.1, // commercial carpet: access / obstruction / scheduling
+    obstructionUplift: 1.1,
+  },
+
+  // --- §17 CONSUMER SUBSCRIPTIONS (mobile interior+exterior full wash) ---
+  subscription: {
+    twoPerMonthFactor: 0.92, // of (2 x one-time)
+    fourPerMonthFactor: 0.85, // of (4 x one-time)
+    marginFloorFactor: 0.8, // never below this share of (visits x one-time)
+  },
+
+  // ======================================================================
+  // PROVISIONAL bands — reasonable, pending CDCS confirmation. Only ever
+  // shown as a RANGE. Listed in the final report.
+  // ======================================================================
+
+  // --- §13 PRESSURE WASHING (PROVISIONAL) ---
+  pressure: {
+    minimumMobile: 8000, // PROVISIONAL premium mobile minimum
+    // straightforward ground-level concrete/pavement/parking, light–moderate:
+    bands: [
+      { maxSqFt: 400, low: 8000, high: 16000 },
+      { maxSqFt: 1200, low: 16000, high: 35000 },
+      { maxSqFt: 3000, low: 35000, high: 70000 },
+    ],
+    largeSqFt: 3000, // above this, or roof/height/difficult/fragile -> assessment
+    conditionUplift: { "Light dirt": 0, Moderate: 0.15, "Heavy dirt": 0.3 } as Record<string, number>,
+  },
+
+  // --- §14 DEEP / RESIDENTIAL CLEANING (PROVISIONAL) ---
+  deep: {
+    // one-time residential, condition not "Very heavy", predictable scope:
+    bedroomBands: [
+      { maxBeds: 2, low: 25000, high: 45000 },
+      { maxBeds: 3, low: 40000, high: 70000 },
+      { maxBeds: 5, low: 60000, high: 100000 },
+    ],
+    vacantUplift: 0.15, // vacant / move-in-out
+    largeSqFt: 4000, // above this -> site assessment
+    largeBeds: 5,
+  },
+
+  // --- §15 POST-CONSTRUCTION (PROVISIONAL) ---
+  postConstruction: {
+    // small, predictable final/detailed cleans only:
+    smallMaxSqFt: 3000,
+    smallMaxFloors: 2,
+    smallBand: { low: 45000, high: 110000 },
+    // everything else -> site assessment
+  },
+
+  // --- §16 COMMERCIAL / JANITORIAL (PROVISIONAL) ---
+  janitorial: {
+    oneTimeSmallMaxSqFt: 4000,
+    oneTimeSmallBand: { low: 35000, high: 80000 },
+    // monthly programme bands by size, before frequency:
+    monthlyBands: [
+      { maxSqFt: 3000, low: 90000, high: 180000 },
+      { maxSqFt: 8000, low: 160000, high: 340000 },
+      { maxSqFt: 15000, low: 320000, high: 650000 },
+    ],
+    frequencyFactor: {
+      "One time": 0,
+      Daily: 1,
+      "2x weekly": 0.45,
+      "3x weekly": 0.65,
+      "5x weekly": 1,
+      "6x weekly": 1.15,
+      "7x weekly": 1.3,
+    } as Record<string, number>,
+    largeSqFt: 15000, // above this -> site assessment
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Result types
 // ---------------------------------------------------------------------------
 
 export type EstimateResultKind =
@@ -148,208 +280,697 @@ export interface EstimateLineItem {
   amount: number;
 }
 
+export interface SubscriptionOption {
+  label: string;
+  monthly: number;
+}
+
 export interface EstimateResult {
   kind: EstimateResultKind;
-  /** Present for "estimated_price". */
   amount?: number;
-  /** Present for "estimated_range". */
   low?: number;
   high?: number;
-  /** Add-on total, when any priced add-ons were selected. */
   addOnsTotal?: number;
-  /** Human-readable subtotal string, when a figure is shown. */
   subtotalLabel?: string;
-  /** Why an assessment is needed, when kind is "photo_assessment" / "site_assessment". */
   reason?: string;
-  /** Named contributions to the figure, for the result screen. */
   lineItems?: EstimateLineItem[];
+  /** Recurring consumer plan options (mobile vehicle washing). */
+  subscriptions?: SubscriptionOption[];
+  /** e.g. "Recurring Fleet Program Available". */
+  recurringNote?: string;
+  /** Extra customer-facing caveat (stain disclaimer, add-ons on request…). */
+  noteExtra?: string;
+  /** Non-PII attributes for analytics. */
+  analytics?: Record<string, string | number>;
 }
+
+// ---------------------------------------------------------------------------
+// Shared helpers
+// ---------------------------------------------------------------------------
 
 type AnswerMap = Record<string, string | string[] | number | boolean | undefined>;
 
-const num = (v: unknown): number => {
-  const n = typeof v === "number" ? v : parseFloat(String(v ?? ""));
-  return Number.isFinite(n) && n >= 0 ? n : 0;
+const s = (v: unknown): string => (typeof v === "string" ? v : v == null ? "" : String(v));
+const n = (v: unknown): number => {
+  const x = typeof v === "number" ? v : parseFloat(String(v ?? ""));
+  return Number.isFinite(x) && x >= 0 ? x : 0;
 };
 
-interface ForcedOutcome {
-  kind: "photo_assessment" | "site_assessment";
-  reason: string;
-}
-
-/**
- * Answers that route to a human even when rates exist. Large / commercial /
- * complex jobs escalate to "site_assessment"; ordinary jobs whose condition
- * simply needs to be seen escalate only to "photo_assessment".
- */
-function forcesAssessment(group: EstimatorGroupId, answers: AnswerMap): ForcedOutcome | null {
-  if (group === "custom") {
-    return { kind: "site_assessment", reason: "Custom requirements are always scoped individually so nothing is missed." };
-  }
-  if (group === "post_construction") {
-    return { kind: "site_assessment", reason: "Post-construction scope depends on site conditions at handover and is confirmed on inspection." };
-  }
-  if (group === "janitorial" && (num(answers.squareFootage) > 15000 || num(answers.floors) > 3)) {
-    return { kind: "site_assessment", reason: "Larger multi-floor facilities are scoped on a walkthrough for an accurate contract price." };
-  }
-  if (group === "fleet_washing" && num(answers.fleetSize) > 10) {
-    return { kind: "site_assessment", reason: "Fleet programs are priced per vehicle type and frequency after a short depot assessment." };
-  }
-  if (group === "pressure_washing" && (String(answers.access) === "Difficult access" || num(answers.area) > 8000)) {
-    return { kind: "site_assessment", reason: "Large or hard-to-access exterior work is quoted after a site visit." };
-  }
-  if (group === "carpet_upholstery" && answers.petContamination === true) {
-    return { kind: "photo_assessment", reason: "Pet contamination needs a look at the item so we can quote the right treatment — a few photos are enough." };
-  }
-  const condition = String(answers.condition ?? answers.vehicleCondition ?? "");
-  if (condition === "Very heavy" || condition === "Severe") {
-    return { kind: "photo_assessment", reason: "Very heavy soiling varies job to job — send a few photos and we'll price it from those." };
-  }
-  return null;
-}
-
-const PHOTO_ASSESSMENT_REASON =
-  "The right price for this job depends on the condition of the item. Send a few photos with your quote request and a CDCS estimator will price it from those — no site visit needed.";
-const SITE_ASSESSMENT_REASON =
+const PHOTO_REASON =
+  "The right price depends on the condition of the item. Send a few photos with your quote request and a CDCS estimator will price it from those — no site visit needed.";
+const SITE_REASON =
   "This job is scoped in person so the quotation is accurate. Send your details through and a CDCS estimator will arrange a walkthrough and follow up with your official quotation.";
 
-/**
- * Compute an estimate outcome:
- *   - "estimated_price" / "estimated_range" once rates are in place
- *   - "photo_assessment" for condition-driven jobs with no rates yet
- *   - "site_assessment" for large / commercial / complex jobs
- * A missing rate needed for the maths falls back to the group's manualOutcome.
- */
+const photoAssessment = (reason = PHOTO_REASON, analytics?: EstimateResult["analytics"]): EstimateResult => ({
+  kind: "photo_assessment",
+  reason,
+  analytics: { ...analytics, outcome: "photo_assessment" },
+});
+const siteAssessment = (reason = SITE_REASON, analytics?: EstimateResult["analytics"]): EstimateResult => ({
+  kind: "site_assessment",
+  reason,
+  analytics: { ...analytics, outcome: "site_assessment" },
+});
+
+interface OutOpts {
+  lineItems?: EstimateLineItem[];
+  addOnsTotal?: number;
+  subscriptions?: SubscriptionOption[];
+  recurringNote?: string;
+  noteExtra?: string;
+  analytics?: EstimateResult["analytics"];
+}
+
+/** Finalize a single-figure estimate with all safety guards. */
+function priceOut(amount: number, opts: OutOpts = {}): EstimateResult {
+  if (!Number.isFinite(amount) || amount <= 0) return siteAssessment(SITE_REASON, opts.analytics);
+  const rounded = roundCommercial(amount);
+  if (rounded <= 0) return siteAssessment(SITE_REASON, opts.analytics);
+  return {
+    kind: "estimated_price",
+    amount: rounded,
+    subtotalLabel: formatGYD(rounded),
+    lineItems: opts.lineItems,
+    addOnsTotal: opts.addOnsTotal || undefined,
+    subscriptions: opts.subscriptions,
+    recurringNote: opts.recurringNote,
+    noteExtra: opts.noteExtra,
+    analytics: { ...opts.analytics, outcome: "estimated_price" },
+  };
+}
+
+/** Finalize a range estimate with all safety guards. */
+function rangeOut(low: number, high: number, opts: OutOpts = {}): EstimateResult {
+  if (!Number.isFinite(low) || !Number.isFinite(high) || high <= 0) {
+    return siteAssessment(SITE_REASON, opts.analytics);
+  }
+  let lo = Math.max(0, Math.min(low, high));
+  let hi = Math.max(low, high);
+  [lo, hi] = roundRangeBounds(lo, hi);
+  if (lo <= 0) lo = roundCommercial(hi * 0.6);
+  if (hi <= lo) hi = lo + (lo < 20000 ? 500 : 1000);
+  return {
+    kind: "estimated_range",
+    low: lo,
+    high: hi,
+    subtotalLabel: `${formatGYD(lo)} – ${formatGYD(hi)}`,
+    lineItems: opts.lineItems,
+    addOnsTotal: opts.addOnsTotal || undefined,
+    subscriptions: opts.subscriptions,
+    recurringNote: opts.recurringNote,
+    noteExtra: opts.noteExtra,
+    analytics: { ...opts.analytics, outcome: "estimated_range" },
+  };
+}
+
+/** Clamp a total discount fraction to the configured maximum. */
+function cappedDiscount(...fractions: number[]): number {
+  const total = fractions.reduce((a, b) => a + (Number.isFinite(b) && b > 0 ? b : 0), 0);
+  return Math.min(total, pricing.maxTotalDiscount);
+}
+
+// ---------------------------------------------------------------------------
+// §2 / §3 / §17 — VEHICLE WASHING (mobile_detailing group)
+// ---------------------------------------------------------------------------
+
+function priceVehicleWash(a: AnswerMap, addOns: string[]): EstimateResult {
+  const focus = s(a.focusService) || "Full wash / detail";
+  const vClass = s(a.vehicleClass);
+  const mode = s(a.serviceMode);
+  const isWashbay = mode.startsWith("Washbay");
+  const analytics = {
+    service_mode: isWashbay ? "washbay" : "mobile",
+    vehicle_type: vClass || "unspecified",
+    subscription_interest: s(a.subscriptionInterest) || "none",
+  };
+
+  if (focus !== "Full wash / detail") {
+    return photoAssessment(
+      `${focus.replace(/ only$/, "")} is priced with your specific vehicle. Send a photo, or book it alongside a wash, and CDCS will confirm the price.`,
+      analytics,
+    );
+  }
+
+  const cond = s(a.vehicleCondition);
+  if (cond === "Severe") {
+    return photoAssessment(
+      "Severe condition varies a lot vehicle to vehicle — send a few photos and CDCS will price it from those.",
+      analytics,
+    );
+  }
+  if (!vClass || vClass === "Other") {
+    return photoAssessment("Send a photo of the vehicle and CDCS will confirm the right price for it.", analytics);
+  }
+
+  const pkgKey = s(a.washPackage) === "Exterior only" ? "exterior_only" : "interior_exterior";
+  const table = isWashbay ? pricing.washbay : pricing.mobileWash;
+  const base = table[pkgKey]?.[vClass];
+  if (base == null) {
+    return photoAssessment(
+      "CDCS will confirm the exact price for this vehicle and service — send a photo or contact us.",
+      analytics,
+    );
+  }
+
+  const condMult = pricing.vehicleCondition[cond] ?? 1;
+  let amount = base * condMult;
+  if (!isWashbay) amount = Math.max(amount, pricing.mobileMinimum);
+  const washFigure = roundCommercial(amount);
+
+  const lineItems: EstimateLineItem[] = [
+    {
+      label: `${s(a.washPackage) || "Interior + exterior"} — ${vClass}${
+        condMult !== 1 ? ` (+${Math.round((condMult - 1) * 100)}% ${cond})` : ""
+      } · ${isWashbay ? "washbay" : "mobile"}`,
+      amount: washFigure,
+    },
+  ];
+
+  // Fixed add-ons — never scaled by condition.
+  let addTotal = 0;
+  const onRequest: string[] = [];
+  const addPrices: Record<string, number | null> = {
+    "pet-hair": 3000,
+    "odor-treatment": 3000,
+    "engine-bay": null,
+    undercarriage: null,
+    "headlight-restoration": null,
+    "buff-polish": null,
+  };
+  for (const id of addOns) {
+    if (!(id in addPrices)) continue;
+    const p = addPrices[id];
+    if (p == null) {
+      onRequest.push(id.replace(/-/g, " "));
+    } else {
+      addTotal += p;
+      lineItems.push({ label: `Add-on: ${id.replace(/-/g, " ")}`, amount: p });
+    }
+  }
+  amount = washFigure + addTotal;
+
+  // Subscriptions — mobile interior+exterior full wash only.
+  let subscriptions: SubscriptionOption[] | undefined;
+  if (!isWashbay && pkgKey === "interior_exterior") {
+    const oneTime = Math.max(base, pricing.mobileMinimum);
+    const two = clampSub(oneTime, 2, pricing.subscription.twoPerMonthFactor);
+    const four = clampSub(oneTime, 4, pricing.subscription.fourPerMonthFactor);
+    subscriptions = [
+      { label: "2 washes / month", monthly: two },
+      { label: "4 washes / month", monthly: four },
+    ];
+  }
+
+  const noteExtra = onRequest.length
+    ? `Also requested (confirmed with your vehicle): ${onRequest.join(", ")}.`
+    : undefined;
+
+  return priceOut(amount, {
+    lineItems,
+    addOnsTotal: addTotal,
+    subscriptions,
+    noteExtra,
+    analytics,
+  });
+}
+
+function clampSub(oneTime: number, visits: number, factor: number): number {
+  const raw = oneTime * visits * factor;
+  const floor = oneTime * visits * pricing.subscription.marginFloorFactor;
+  return roundCommercial(Math.max(raw, floor));
+}
+
+// ---------------------------------------------------------------------------
+// §4 / §5 / §6 — FLEET & HEAVY-DUTY (fleet_washing group)
+// ---------------------------------------------------------------------------
+
+function fleetBand(size: number) {
+  return pricing.fleetQuantityBands.find((b) => size >= b.min && size <= b.max) ?? pricing.fleetQuantityBands[0];
+}
+
+function priceFleet(a: AnswerMap): EstimateResult {
+  const vClass = s(a.vehicleClass);
+  const size = Math.max(1, Math.round(n(a.fleetSize) || 1));
+  const band = fleetBand(size);
+  const analytics = { vehicle_type: vClass || "unspecified", fleet_quantity_band: band.label };
+
+  if (vClass === "Heavy equipment") return priceHeavyEquipment(a, size, band, analytics);
+
+  if (band.custom) {
+    return siteAssessment(
+      "A fleet of this size is set up as a custom CDCS Fleet Service Agreement with program pricing — contact CDCS to arrange it.",
+      analytics,
+    );
+  }
+  if (!vClass || vClass === "Mixed / other") {
+    return siteAssessment("A mixed fleet is priced per vehicle type after a short depot assessment.", analytics);
+  }
+
+  const cond = s(a.condition);
+  if (cond === "Exceptional / unknown contamination") {
+    return siteAssessment(
+      "Unusual or unknown contamination is confirmed on inspection before pricing.",
+      analytics,
+    );
+  }
+
+  const scope = s(a.washScope) || "Exterior";
+  const perUnitBase = pricing.fleet[vClass]?.[scope];
+  if (perUnitBase == null) {
+    return siteAssessment("CDCS will confirm the rate for this unit and wash scope at the depot.", analytics);
+  }
+
+  const condUplift = pricing.fleetCondition[cond] ?? 0;
+  const perUnit = perUnitBase * (1 + condUplift);
+  const discount = cappedDiscount(band.discount ?? 0);
+  const perUnitAfter = perUnit * (1 - discount);
+  const total = perUnitAfter * size;
+
+  const recurring = ["Weekly", "Biweekly", "Monthly"].includes(s(a.frequency))
+    ? "Recurring Fleet Program Available — CDCS can prepare a Fleet Service Agreement with scheduled program pricing."
+    : undefined;
+
+  const lineItems: EstimateLineItem[] = [
+    {
+      label: `${scope} — ${vClass}${condUplift ? ` (+${Math.round(condUplift * 100)}% ${cond})` : ""}`,
+      amount: roundCommercial(perUnit),
+    },
+  ];
+  if (size > 1) {
+    lineItems.push({
+      label: `× ${size} units${discount ? ` (−${Math.round(discount * 100)}% volume)` : ""}`,
+      amount: roundCommercial(total),
+    });
+  }
+
+  return priceOut(total, { lineItems, recurringNote: recurring, analytics });
+}
+
+function priceHeavyEquipment(
+  a: AnswerMap,
+  size: number,
+  band: ReturnType<typeof fleetBand>,
+  analytics: EstimateResult["analytics"],
+): EstimateResult {
+  const eClass = s(a.equipmentClass);
+  if (!eClass || eClass === "Very large mining / construction equipment") {
+    return siteAssessment(
+      "Large mining and construction equipment is scoped on site — track and undercarriage complexity, grease level, and size are confirmed before pricing.",
+      analytics,
+    );
+  }
+  const cond = s(a.condition);
+  if (cond === "Exceptional / unknown contamination") {
+    return siteAssessment("Unusual contamination on heavy equipment is confirmed on inspection.", analytics);
+  }
+  const base = pricing.heavyEquipment[eClass];
+  if (base == null) return siteAssessment(SITE_REASON, analytics);
+  if (band.custom) {
+    return siteAssessment("Equipment fleets of this size are set up as a Fleet Service Agreement.", analytics);
+  }
+
+  const condUplift = pricing.fleetCondition[cond] ?? 0;
+  const discount = cappedDiscount(band.discount ?? 0);
+  const perUnit = base * (1 + condUplift) * (1 - discount);
+  const total = perUnit * size;
+  // Heavy equipment carries real variability — always a range, anchored on the
+  // approved starting price.
+  return rangeOut(total, total * 1.35, {
+    lineItems: [{ label: `${eClass}${size > 1 ? ` × ${size}` : ""} — from`, amount: roundCommercial(total) }],
+    analytics,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// §7–§12 — EXTRACTION / UPHOLSTERY / CARPET (carpet_upholstery group)
+// ---------------------------------------------------------------------------
+
+function priceExtraction(a: AnswerMap, addOns: string[]): EstimateResult {
+  const itemType = s(a.itemType);
+  const mode = s(a.serviceMode);
+  const isMobile = mode.startsWith("Mobile");
+  const cond = s(a.condition);
+  const analytics = {
+    item_type: itemType || "unspecified",
+    service_mode: isMobile ? "mobile" : "dropoff",
+  };
+
+  if (cond === "Severe") {
+    return photoAssessment(
+      "Severe soiling is confirmed from photos before pricing — send a few and CDCS will follow up.",
+      analytics,
+    );
+  }
+  if (a.petContamination === true) {
+    return photoAssessment(
+      "Pet contamination needs a look before we quote the right treatment — a few photos are enough. Severe urine or biological contamination is assessed on site.",
+      analytics,
+    );
+  }
+
+  const condMult = pricing.extractionCondition[cond] ?? 1;
+
+  // --- resolve the base by item type ---
+  let base: number | null = null;
+  let label = itemType;
+  let isFrom = false;
+  let forceRange = false;
+
+  if (itemType === "Sofa") {
+    const cfg = s(a.sofaConfig);
+    base = pricing.sofas[cfg] ?? null;
+    label = cfg || "Sofa";
+    isFrom = pricing.sofaFrom.has(cfg);
+    const qty = Math.max(1, Math.round(n(a.quantity) || 1));
+    if (base != null && qty > 1) {
+      base *= qty;
+      label = `${cfg} × ${qty}`;
+    }
+    if (s(a.material) && /leather|delicate|silk|antique|suede/i.test(s(a.material))) {
+      return photoAssessment(
+        "Delicate or unusual materials (leather, silk, suede, antique) are checked from a photo before pricing.",
+        analytics,
+      );
+    }
+  } else if (itemType === "Mattress") {
+    base = pricing.mattresses[s(a.mattressSize)] ?? null;
+    label = `${s(a.mattressSize)} mattress`;
+    const qty = Math.max(1, Math.round(n(a.quantity) || 1));
+    if (base != null && qty > 1) {
+      base *= qty;
+      label = `${s(a.mattressSize)} mattress × ${qty}`;
+    }
+  } else if (itemType === "Armchair / dining chair" || itemType === "Office chair") {
+    const t = s(a.chairType) || (itemType === "Office chair" ? "Office chair" : "Dining / standard upholstered chair");
+    const each = pricing.chairs[t];
+    const qty = Math.max(1, Math.round(n(a.chairQty) || 1));
+    if (each == null) return photoAssessment(PHOTO_REASON, analytics);
+    if (qty > pricing.chairLargeQtyThreshold) {
+      // commercial quantity — modest volume band, always a range, official quote
+      const lo = each * qty * (1 - cappedDiscount(0.1));
+      const hi = each * qty;
+      return rangeOut(lo * condMult, hi * condMult, {
+        noteExtra: "Large chair orders are confirmed with an official quotation.",
+        lineItems: [{ label: `${qty} × ${t}`, amount: roundCommercial(hi) }],
+        analytics,
+      });
+    }
+    base = each * qty;
+    label = `${qty} × ${t}`;
+  } else if (itemType === "Carpet" || itemType === "Rug") {
+    const area = n(a.carpetArea);
+    if (area <= 0) {
+      return photoAssessment(
+        "Tell us the approximate carpet area (sq ft), or send a photo, and CDCS will confirm the price.",
+        analytics,
+      );
+    }
+    if (area > pricing.carpet.largeCommercialSqFt) {
+      return siteAssessment(
+        "Large carpet areas are measured and scoped on site so the quotation is accurate.",
+        analytics,
+      );
+    }
+    const rateBand = pricing.carpet.bands.find((b) => area <= b.maxSqFt);
+    if (!rateBand) return siteAssessment(SITE_REASON, analytics);
+    const rate = rateBand.rate;
+    let mult = 1;
+    if (s(a.carpetSetting) === "Commercial") mult *= pricing.carpet.commercialUplift;
+    if (a.furnitureObstruction === true) mult *= pricing.carpet.obstructionUplift;
+    base = area * rate * mult;
+    label = `Carpet ${area.toLocaleString("en-US")} sq ft @ ${rate}/sq ft${
+      mult !== 1 ? ` (+${Math.round((mult - 1) * 100)}% access/obstruction)` : ""
+    }`;
+    // carpet always carries condition + spread uncertainty -> range
+    forceRange = true;
+  } else if (itemType === "Vehicle seats / interior") {
+    const pkg = s(a.extractionPackage);
+    base = pricing.vehicleExtraction[pkg] ?? null;
+    label = pkg || "Vehicle extraction";
+    isFrom = pricing.vehicleExtractionFrom.has(pkg);
+  }
+
+  if (base == null || !Number.isFinite(base) || base <= 0) {
+    return photoAssessment("Send a photo of the item and CDCS will confirm the price.", analytics);
+  }
+
+  let amount = base * condMult;
+  if (isMobile) amount = Math.max(amount, pricing.mobileMinimum);
+  const coreFigure = roundCommercial(amount);
+
+  const lineItems: EstimateLineItem[] = [
+    { label: `${label}${condMult !== 1 ? ` (+${Math.round((condMult - 1) * 100)}% ${cond})` : ""}`, amount: coreFigure },
+  ];
+
+  // --- extraction add-ons (fixed, not condition-scaled) ---
+  let addFixed = 0;
+  let rangeSpan = 0;
+  const onRequest: string[] = [];
+  for (const id of addOns) {
+    const spec = pricing.extractionAddOns[id as keyof typeof pricing.extractionAddOns];
+    if (spec === undefined) continue;
+    if (spec === null) {
+      onRequest.push(id.replace(/-/g, " "));
+    } else if (typeof spec === "number") {
+      addFixed += spec;
+      lineItems.push({ label: `Add-on: ${id.replace(/-/g, " ")}`, amount: spec });
+    } else {
+      // variable range add-on (stain treatment)
+      addFixed += spec.min;
+      rangeSpan += spec.max - spec.min;
+      lineItems.push({ label: `Add-on: ${id.replace(/-/g, " ")}`, amount: spec.min });
+    }
+  }
+  amount = coreFigure + addFixed;
+
+  const disclaimerBits: string[] = [];
+  if (addOns.includes("stain-treatment") || a.stains === true) {
+    disclaimerBits.push("Stain treatment improves results but complete stain removal cannot be guaranteed.");
+  }
+  if (onRequest.length) {
+    disclaimerBits.push(`Available on request: ${onRequest.join(", ")} (priced with the job).`);
+  }
+  const noteExtra = disclaimerBits.join(" ") || undefined;
+
+  if (isFrom || forceRange || rangeSpan > 0) {
+    const lo = amount;
+    const hi = amount + rangeSpan + (isFrom ? amount * 0.35 : 0) + (forceRange ? amount * 0.2 : 0);
+    return rangeOut(lo, hi, { lineItems, addOnsTotal: addFixed, noteExtra, analytics });
+  }
+
+  return priceOut(amount, { lineItems, addOnsTotal: addFixed, noteExtra, analytics });
+}
+
+// ---------------------------------------------------------------------------
+// §13 — PRESSURE WASHING (PROVISIONAL — range / assessment only)
+// ---------------------------------------------------------------------------
+
+function pricePressure(a: AnswerMap): EstimateResult {
+  const surface = s(a.surfaceType);
+  const access = s(a.access);
+  const cond = s(a.condition);
+  const area = n(a.area);
+  const analytics = { surface_type: surface || "unspecified" };
+
+  if (surface === "Roof") {
+    return siteAssessment(
+      "Roof washing is quoted after a site visit — pitch, material fragility, height and access all affect the price and the method.",
+      analytics,
+    );
+  }
+  if (access === "Elevated" || access === "Difficult access") {
+    return siteAssessment(
+      "Elevated or hard-to-access exterior work is quoted after a site visit for safety and accuracy.",
+      analytics,
+    );
+  }
+  if (cond === "Heavy algae / mould / oil") {
+    return photoAssessment(
+      "Heavy algae, mould, or oil staining varies a lot — send a photo and CDCS will price it from that.",
+      analytics,
+    );
+  }
+  if (area > pricing.pressure.largeSqFt) {
+    return siteAssessment("Large exterior areas are measured on site for an accurate price.", analytics);
+  }
+  if (area <= 0) {
+    return rangeOut(pricing.pressure.minimumMobile, pricing.pressure.minimumMobile * 3, {
+      noteExtra: "Give an approximate area (sq ft) for a closer estimate.",
+      analytics,
+    });
+  }
+
+  const band = pricing.pressure.bands.find((b) => area <= b.maxSqFt) ?? pricing.pressure.bands[pricing.pressure.bands.length - 1];
+  const uplift = pricing.pressure.conditionUplift[cond] ?? 0;
+  const lo = Math.max(pricing.pressure.minimumMobile, band.low * (1 + uplift));
+  const hi = band.high * (1 + uplift);
+  return rangeOut(lo, hi, {
+    lineItems: [{ label: `${surface || "Exterior surface"} ~${area.toLocaleString("en-US")} sq ft${uplift ? ` (${cond})` : ""}`, amount: roundCommercial((lo + hi) / 2) }],
+    noteExtra: "Preliminary range — confirmed after CDCS checks surface, water supply and access.",
+    analytics,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// §14 — DEEP / RESIDENTIAL CLEANING (PROVISIONAL — range / assessment only)
+// ---------------------------------------------------------------------------
+
+function priceDeep(a: AnswerMap): EstimateResult {
+  const propertyType = s(a.propertyType);
+  const sqft = n(a.squareFootage);
+  const beds = n(a.bedrooms);
+  const cond = s(a.condition);
+  const isCommercial = propertyType === "Office" || propertyType === "Commercial space";
+  const analytics = { property_type: propertyType || "unspecified" };
+
+  if (cond === "Very heavy") {
+    return photoAssessment(
+      "Very heavy condition is confirmed from photos before pricing — send a few and CDCS will follow up.",
+      analytics,
+    );
+  }
+  if (isCommercial) {
+    if (sqft > 0 && sqft <= pricing.deep.largeSqFt) {
+      return rangeOut(
+        pricing.deep.bedroomBands[pricing.deep.bedroomBands.length - 1].low,
+        pricing.deep.bedroomBands[pricing.deep.bedroomBands.length - 1].high * 1.4,
+        { noteExtra: "Commercial deep clean — preliminary range, confirmed on a walkthrough.", analytics },
+      );
+    }
+    return siteAssessment("Commercial deep cleaning is scoped on a walkthrough for an accurate quotation.", analytics);
+  }
+  if (sqft > pricing.deep.largeSqFt || beds > pricing.deep.largeBeds) {
+    return siteAssessment("Large residences are scoped on a walkthrough for an accurate quotation.", analytics);
+  }
+
+  const band =
+    pricing.deep.bedroomBands.find((b) => (beds || 1) <= b.maxBeds) ??
+    pricing.deep.bedroomBands[pricing.deep.bedroomBands.length - 1];
+  const vacant = a.moveInOut === true || s(a.occupancy) === "Vacant";
+  const mult = vacant ? 1 + pricing.deep.vacantUplift : 1;
+  return rangeOut(band.low * mult, band.high * mult, {
+    lineItems: [{ label: `${propertyType || "Home"} deep clean${vacant ? " (vacant / move-in-out)" : ""}`, amount: roundCommercial(((band.low + band.high) / 2) * mult) }],
+    noteExtra: "Preliminary range — confirmed after CDCS checks condition, access and final scope. Add-ons (windows, cupboards, appliances) quoted with the job.",
+    analytics,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// §15 — POST-CONSTRUCTION (PROVISIONAL — small range, else site assessment)
+// ---------------------------------------------------------------------------
+
+function pricePostConstruction(a: AnswerMap): EstimateResult {
+  const sqft = n(a.squareFootage);
+  const floors = n(a.floors);
+  const stage = s(a.constructionStage);
+  const debris = s(a.debrisLevel);
+  const analytics = { stage: stage || "unspecified" };
+
+  const small =
+    sqft > 0 &&
+    sqft <= pricing.postConstruction.smallMaxSqFt &&
+    (floors || 1) <= pricing.postConstruction.smallMaxFloors &&
+    stage !== "Rough clean" &&
+    debris !== "Very heavy";
+
+  if (!small) {
+    return siteAssessment(
+      "Post-construction scope depends on site conditions at handover — floor area, debris, residues and finishes are confirmed on inspection before pricing.",
+      analytics,
+    );
+  }
+  return rangeOut(pricing.postConstruction.smallBand.low, pricing.postConstruction.smallBand.high, {
+    lineItems: [{ label: `${stage} · ~${sqft.toLocaleString("en-US")} sq ft`, amount: roundCommercial((pricing.postConstruction.smallBand.low + pricing.postConstruction.smallBand.high) / 2) }],
+    noteExtra: "Preliminary range for a small, predictable final clean — confirmed after CDCS reviews the site.",
+    analytics,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// §16 — COMMERCIAL / JANITORIAL (PROVISIONAL — never a fixed contract price)
+// ---------------------------------------------------------------------------
+
+function priceJanitorial(a: AnswerMap): EstimateResult {
+  const sqft = n(a.squareFootage);
+  const floors = n(a.floors);
+  const frequency = s(a.frequency);
+  const analytics = { facility_type: s(a.facilityType) || "unspecified", frequency: frequency || "unspecified" };
+
+  if (sqft > pricing.janitorial.largeSqFt || floors > 4) {
+    return siteAssessment(
+      "Larger multi-floor facilities are scoped on a walkthrough. Recurring janitorial contracts are finalised with an official CDCS quotation.",
+      analytics,
+    );
+  }
+
+  if (frequency === "One time") {
+    if (sqft > 0 && sqft <= pricing.janitorial.oneTimeSmallMaxSqFt) {
+      return rangeOut(pricing.janitorial.oneTimeSmallBand.low, pricing.janitorial.oneTimeSmallBand.high, {
+        noteExtra: "Preliminary range for a one-time office clean — confirmed on a walkthrough.",
+        analytics,
+      });
+    }
+    return siteAssessment("A one-time clean of this size is scoped on a walkthrough.", analytics);
+  }
+
+  // Recurring programme -> PRELIMINARY MONTHLY RANGE + official quotation.
+  const band = pricing.janitorial.monthlyBands.find((b) => sqft > 0 && sqft <= b.maxSqFt);
+  const freqFactor = pricing.janitorial.frequencyFactor[frequency] ?? 0;
+  if (!band || freqFactor <= 0) {
+    return siteAssessment(
+      "Recurring janitorial pricing is built on a walkthrough and finalised with an official CDCS quotation.",
+      analytics,
+    );
+  }
+  return rangeOut(band.low * freqFactor, band.high * freqFactor, {
+    lineItems: [{ label: `Preliminary monthly programme · ~${sqft.toLocaleString("en-US")} sq ft · ${frequency}`, amount: roundCommercial(((band.low + band.high) / 2) * freqFactor) }],
+    noteExtra: "PRELIMINARY MONTHLY RANGE only. Recurring janitorial contracts require a site walkthrough and an official CDCS quotation.",
+    recurringNote: "Recurring janitorial programme — finalised with an official quotation.",
+    analytics,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Dispatch
+// ---------------------------------------------------------------------------
+
 export function computeEstimate(params: {
   serviceId: string;
   group: EstimatorGroupId;
   answers: AnswerMap;
   selectedAddOnIds: string[];
 }): EstimateResult {
-  const { serviceId, group, answers, selectedAddOnIds } = params;
-  const profile = getPricingProfile(serviceId, group);
-
-  const manualFallback = (): EstimateResult =>
-    profile.manualOutcome === "photo_assessment"
-      ? { kind: "photo_assessment", reason: PHOTO_ASSESSMENT_REASON }
-      : { kind: "site_assessment", reason: SITE_ASSESSMENT_REASON };
-
-  if (profile.manualQuoteRequired) {
-    return manualFallback();
-  }
-
-  const forced = forcesAssessment(group, answers);
-  if (forced) return { kind: forced.kind, reason: forced.reason };
-
-  // ---- Build the figure from whatever rates the profile provides ----
-  const lineItems: EstimateLineItem[] = [];
-  let subtotal = 0;
-
-  if (profile.basePrice != null) {
-    subtotal += profile.basePrice;
-    lineItems.push({ label: "Base service", amount: profile.basePrice });
-  }
-
-  const area = num(answers.squareFootage) || num(answers.area);
-  if (area > 0) {
-    if (profile.squareFootRate == null) {
-      return manualFallback();
+  const { group, answers, selectedAddOnIds } = params;
+  try {
+    switch (group) {
+      case "mobile_detailing":
+        return priceVehicleWash(answers, selectedAddOnIds);
+      case "fleet_washing":
+        return priceFleet(answers);
+      case "carpet_upholstery":
+        return priceExtraction(answers, selectedAddOnIds);
+      case "pressure_washing":
+        return pricePressure(answers);
+      case "deep_residential":
+        return priceDeep(answers);
+      case "post_construction":
+        return pricePostConstruction(answers);
+      case "janitorial":
+        return priceJanitorial(answers);
+      case "custom":
+      default:
+        return siteAssessment(
+          "Custom requirements are always scoped individually so nothing is missed.",
+        );
     }
-    const areaCost = area * profile.squareFootRate;
-    subtotal += areaCost;
-    lineItems.push({ label: `Area (${area.toLocaleString("en-US")} sq ft)`, amount: areaCost });
+  } catch {
+    // Any unexpected failure -> safe assessment, never a broken figure.
+    return siteAssessment(SITE_REASON);
   }
-
-  const qty = num(answers.quantity) || num(answers.fleetSize);
-  if (qty > 0 && profile.quantityRate != null) {
-    const qtyCost = qty * profile.quantityRate;
-    subtotal += qtyCost;
-    lineItems.push({ label: `Quantity (${qty})`, amount: qtyCost });
-  }
-
-  // Vehicle-type multiplier
-  const vehicleType = String(answers.vehicleType ?? "");
-  if (vehicleType && profile.vehicleTypeMultipliers) {
-    const m = profile.vehicleTypeMultipliers[vehicleType];
-    if (typeof m === "number" && m > 0) subtotal *= m;
-  }
-
-  // Condition multiplier
-  const conditionKey = String(answers.condition ?? answers.vehicleCondition ?? answers.debrisLevel ?? "");
-  if (conditionKey && profile.conditionMultipliers) {
-    const m = profile.conditionMultipliers[conditionKey];
-    if (typeof m === "number" && m > 0) subtotal *= m;
-  }
-
-  // Access surcharge
-  const accessKey = String(answers.access ?? "");
-  if (accessKey && profile.accessSurcharge) {
-    const s = profile.accessSurcharge[accessKey];
-    if (typeof s === "number" && s > 0) {
-      subtotal += s;
-      lineItems.push({ label: `Access (${accessKey})`, amount: s });
-    }
-  }
-
-  // Frequency discount
-  const freqKey = String(answers.frequency ?? "");
-  if (freqKey && profile.frequencyDiscounts) {
-    const d = profile.frequencyDiscounts[freqKey];
-    if (typeof d === "number" && d > 0 && d < 1) {
-      const discount = -subtotal * d;
-      subtotal += discount;
-      lineItems.push({ label: `Frequency discount (${freqKey})`, amount: discount });
-    }
-  }
-
-  // Add-ons
-  let addOnsTotal = 0;
-  for (const id of selectedAddOnIds) {
-    const price = profile.addOnPrices[id];
-    if (price == null) {
-      // A selected add-on has no price yet — fall back rather than guess.
-      return manualFallback();
-    }
-    addOnsTotal += price;
-  }
-  subtotal += addOnsTotal;
-
-  // Guards: nothing to price, or a broken figure -> assessment.
-  if (subtotal <= 0 || !Number.isFinite(subtotal)) {
-    return manualFallback();
-  }
-
-  if (profile.minimumCharge != null) {
-    subtotal = Math.max(subtotal, profile.minimumCharge);
-  }
-  subtotal = Math.round(subtotal);
-
-  if (profile.alwaysRange) {
-    const spread = Math.min(Math.max(profile.rangeSpread, 0), 0.9);
-    const low = Math.max(profile.minimumCharge ?? 0, Math.round(subtotal * (1 - spread)));
-    const high = Math.round(subtotal * (1 + spread));
-    return {
-      kind: "estimated_range",
-      low,
-      high,
-      addOnsTotal: addOnsTotal || undefined,
-      subtotalLabel: `${formatGYD(low)} – ${formatGYD(high)}`,
-      lineItems,
-    };
-  }
-
-  return {
-    kind: "estimated_price",
-    amount: subtotal,
-    addOnsTotal: addOnsTotal || undefined,
-    subtotalLabel: formatGYD(subtotal),
-    lineItems,
-  };
 }
 
 /**
- * Estimate reference number, e.g. CDCS-EST-20260910-4821. Generated on the
- * client when the customer reaches the estimate screen.
+ * Estimate reference number, e.g. CDCS-EST-20260910-4821.
  */
 export function makeEstimateReference(date: Date = new Date()): string {
   const y = date.getFullYear();

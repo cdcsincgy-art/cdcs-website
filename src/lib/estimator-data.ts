@@ -82,12 +82,12 @@ export const estimatorServices: EstimatorService[] = [
   { id: "kitchen-deep", label: "Kitchen Deep Cleaning", category: "Residential & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
 
   // --- Carpet, Upholstery & Extraction ---
-  { id: "carpet-cleaning", label: "Carpet Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Carpet"] } },
+  { id: "carpet-cleaning", label: "Carpet Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: "Carpet" } },
   { id: "upholstery-extraction", label: "Upholstery & Fabric Extraction", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction" },
-  { id: "office-chair-cleaning", label: "Office Chair Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Office chair"] } },
-  { id: "sofa-cleaning", label: "Sofa Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Sofa"] } },
-  { id: "mattress-cleaning", label: "Mattress Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Mattress"] } },
-  { id: "vehicle-seat-extraction", label: "Vehicle Seat Extraction / Steam Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Vehicle seat"] } },
+  { id: "office-chair-cleaning", label: "Office Chair Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: "Office chair", chairType: "Office chair" } },
+  { id: "sofa-cleaning", label: "Sofa Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: "Sofa" } },
+  { id: "mattress-cleaning", label: "Mattress Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: "Mattress" } },
+  { id: "vehicle-seat-extraction", label: "Vehicle Seat Extraction / Steam Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: "Vehicle seats / interior" } },
 
   // --- Pressure & Exterior Cleaning ---
   { id: "pressure-washing", label: "Pressure Washing", category: "Pressure & Exterior Cleaning", group: "pressure_washing", servicePageSlug: "pressure-washing" },
@@ -99,18 +99,18 @@ export const estimatorServices: EstimatorService[] = [
 
   // --- Vehicle Detailing ---
   { id: "mobile-detailing", label: "Mobile Vehicle Detailing", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
-  { id: "exterior-vehicle-wash", label: "Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Exterior wash"] } },
-  { id: "interior-exterior-wash", label: "Interior & Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Interior + exterior"] } },
-  { id: "engine-wash", label: "Engine Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Engine wash"] } },
-  { id: "undercarriage-wash", label: "Vehicle Bottom / Undercarriage Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Bottom wash"] } },
-  { id: "headlight-restoration", label: "Headlight Restoration", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Headlight restoration"] } },
-  { id: "buffing-polishing", label: "Buffing & Polishing", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Buff & polish"] } },
-  { id: "odor-treatment", label: "Odor Treatment / Elimination", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Odor treatment"] } },
+  { id: "exterior-vehicle-wash", label: "Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { washPackage: "Exterior only" } },
+  { id: "interior-exterior-wash", label: "Interior & Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { washPackage: "Interior + exterior" } },
+  { id: "engine-wash", label: "Engine Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Engine wash only" } },
+  { id: "undercarriage-wash", label: "Vehicle Bottom / Undercarriage Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Undercarriage wash only" } },
+  { id: "headlight-restoration", label: "Headlight Restoration", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Headlight restoration only" } },
+  { id: "buffing-polishing", label: "Buffing & Polishing", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Buffing & polishing only" } },
+  { id: "odor-treatment", label: "Odor Treatment / Elimination", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { focusService: "Odor treatment only" } },
 
   // --- Fleet & Heavy-Duty Washing ---
   { id: "fleet-washing", label: "Fleet & Truck Washing", category: "Fleet & Heavy-Duty Washing", group: "fleet_washing", servicePageSlug: "fleet-washing" },
   { id: "commercial-vehicle-washing", label: "Commercial Vehicle Washing", category: "Fleet & Heavy-Duty Washing", group: "fleet_washing", servicePageSlug: "fleet-washing" },
-  { id: "equipment-washing", label: "Equipment / Heavy-Duty Machinery Washing", category: "Fleet & Heavy-Duty Washing", group: "fleet_washing", servicePageSlug: "fleet-washing", presetAnswers: { vehicleTypes: ["Heavy equipment"] } },
+  { id: "equipment-washing", label: "Equipment / Heavy-Duty Machinery Washing", category: "Fleet & Heavy-Duty Washing", group: "fleet_washing", servicePageSlug: "fleet-washing", presetAnswers: { vehicleClass: "Heavy equipment" } },
 
   // --- Other ---
   { id: "custom", label: "Other / Custom Cleaning Requirement", category: "Other", group: "custom", servicePageSlug: null },
@@ -160,10 +160,26 @@ export interface EstimatorQuestion {
   optional?: boolean;
   /** When set, the answer is used to pre-fill the lead-capture "location". */
   fillsLocation?: boolean;
+  /**
+   * Only show this question when another answer matches. Used so item-specific
+   * detail (sofa size, mattress size, extraction package…) appears only when
+   * relevant. A hidden question is skipped for validation and pricing.
+   */
+  showWhen?: { questionId: string; equalsAny: string[] };
+}
+
+/** True if a question should be shown given the current answers. */
+export function isQuestionVisible(
+  q: EstimatorQuestion,
+  answers: Record<string, unknown>,
+): boolean {
+  if (!q.showWhen) return true;
+  const v = answers[q.showWhen.questionId];
+  const have = Array.isArray(v) ? v.map(String) : [String(v ?? "")];
+  return q.showWhen.equalsAny.some((want) => have.includes(want));
 }
 
 const CONDITION_4 = ["Light", "Moderate", "Heavy", "Very heavy"];
-const CONDITION_SEVERE = ["Light", "Moderate", "Heavy", "Severe"];
 
 export const questionSets: Record<EstimatorGroupId, EstimatorQuestion[]> = {
   janitorial: [
@@ -218,35 +234,47 @@ export const questionSets: Record<EstimatorGroupId, EstimatorQuestion[]> = {
   ],
 
   mobile_detailing: [
-    { id: "vehicleType", label: "Vehicle type", type: "select", options: ["Car", "SUV", "Pickup", "Van", "Bus", "Truck", "Other"] },
-    { id: "serviceRequired", label: "Service required", type: "multiselect", options: ["Exterior wash", "Interior cleaning", "Interior + exterior", "Deep interior detail", "Full detailing", "Seat extraction", "Carpet extraction", "Engine wash", "Bottom wash", "Buff & polish", "Headlight restoration", "Odor treatment"] },
-    { id: "vehicleCondition", label: "Vehicle condition", type: "select", options: CONDITION_SEVERE },
+    { id: "serviceMode", label: "Where will the wash happen?", type: "select", options: ["Mobile (we come to you)", "Washbay (drop-off at CDCS)"] },
+    { id: "vehicleClass", label: "Vehicle type", type: "select", options: ["Small car / sedan", "SUV", "Pickup", "Large SUV / 7-seater", "Canter / light commercial", "Other"] },
+    { id: "washPackage", label: "Wash package", type: "select", options: ["Interior + exterior", "Exterior only"] },
+    { id: "focusService", label: "Anything specific instead of a full wash?", type: "select", options: ["Full wash / detail", "Engine wash only", "Undercarriage wash only", "Headlight restoration only", "Buffing & polishing only", "Odor treatment only"], optional: true },
+    { id: "vehicleCondition", label: "Vehicle condition", type: "select", options: ["Normal", "Moderate", "Heavy", "Severe"] },
+    { id: "subscriptionInterest", label: "Interested in a recurring plan?", type: "select", options: ["One-time only", "2 washes per month", "4 washes per month"], optional: true },
     { id: "petHair", label: "Pet hair", type: "boolean" },
-    { id: "heavyStains", label: "Heavy stains", type: "boolean" },
-    { id: "mud", label: "Mud", type: "boolean" },
-    { id: "odor", label: "Odor", type: "boolean" },
-    { id: "serviceLocation", label: "Mobile service location", type: "text", placeholder: "e.g. Georgetown, Region 4", fillsLocation: true },
+    { id: "heavyStains", label: "Heavy interior stains", type: "boolean" },
+    { id: "odor", label: "Odor to treat", type: "boolean" },
+    { id: "serviceLocation", label: "Vehicle location (or 'CDCS washbay')", type: "text", placeholder: "e.g. Georgetown, Region 4", fillsLocation: true },
   ],
 
   fleet_washing: [
-    { id: "fleetSize", label: "Fleet size", type: "number", min: 1 },
-    { id: "vehicleTypes", label: "Vehicle types", type: "multiselect", options: ["Trucks", "Prime movers", "Trailers", "Side loaders", "Vans", "Buses", "Pickups", "Heavy equipment", "Mixed fleet"] },
-    { id: "service", label: "Service", type: "multiselect", options: ["Exterior wash", "Engine wash", "Bottom wash", "Detailed wash", "Full combination"] },
-    { id: "frequency", label: "Frequency", type: "select", options: ["One time", "Weekly", "Biweekly", "Monthly", "Custom"] },
+    { id: "vehicleClass", label: "Vehicle / unit type", type: "select", options: ["Canter / light commercial", "Medium truck", "Hauler / prime mover", "Side loader / garbage truck", "Bus / large commercial vehicle", "Trailer only", "Hauler + trailer", "Heavy equipment", "Mixed / other"] },
+    { id: "equipmentClass", label: "Equipment type", type: "select", options: ["Skid steer / mini equipment", "Backhoe / small loader", "Medium excavator / loader", "Large excavator / bulldozer", "Very large mining / construction equipment"], showWhen: { questionId: "vehicleClass", equalsAny: ["Heavy equipment"] } },
+    { id: "washScope", label: "Wash scope", type: "select", options: ["Exterior", "Exterior + Engine", "Exterior + Bottom", "Exterior + Engine + Bottom"] },
+    { id: "fleetSize", label: "How many similar units at one location?", type: "number", min: 1 },
+    { id: "condition", label: "Condition", type: "select", options: ["Normal operating dirt", "Heavy mud / grease", "Severe buildup", "Exceptional / unknown contamination"] },
+    { id: "frequency", label: "Frequency", type: "select", options: ["One time", "Weekly", "Biweekly", "Monthly"] },
     { id: "depotLocation", label: "Depot / yard location", type: "text", placeholder: "e.g. Ruimveldt, Georgetown", fillsLocation: true },
-    { id: "waterAvailability", label: "Water available at the depot", type: "boolean" },
-    { id: "spaceForMobileWashing", label: "Space available for on-site washing", type: "boolean" },
   ],
 
   carpet_upholstery: [
-    { id: "itemType", label: "Item type", type: "multiselect", options: ["Carpet", "Office carpet", "Rug", "Sofa", "Chair", "Office chair", "Mattress", "Vehicle seat", "Vehicle carpet"] },
-    { id: "quantity", label: "Quantity", type: "number", min: 1 },
-    { id: "dimensions", label: "Approximate dimensions (where applicable)", type: "text", placeholder: "e.g. 12 ft x 15 ft carpet, 3-seat sofa", optional: true },
+    { id: "serviceMode", label: "Where will the cleaning happen?", type: "select", options: ["Mobile (we come to you)", "Drop-off at CDCS"] },
+    { id: "itemType", label: "What are we cleaning?", type: "select", options: ["Carpet", "Rug", "Sofa", "Armchair / dining chair", "Office chair", "Mattress", "Vehicle seats / interior"] },
+    { id: "sofaConfig", label: "Sofa configuration", type: "select", options: ["1-seater", "2-seater", "3-seater", "2-1-1 set", "3-2-1 set", "Large sectional"], showWhen: { questionId: "itemType", equalsAny: ["Sofa"] } },
+    { id: "mattressSize", label: "Mattress size", type: "select", options: ["Single", "Double", "Queen", "King"], showWhen: { questionId: "itemType", equalsAny: ["Mattress"] } },
+    { id: "chairType", label: "Chair type", type: "select", options: ["Dining / standard upholstered chair", "Office chair", "Large padded / executive chair"], showWhen: { questionId: "itemType", equalsAny: ["Armchair / dining chair", "Office chair"] } },
+    { id: "chairQty", label: "How many chairs?", type: "number", min: 1, showWhen: { questionId: "itemType", equalsAny: ["Armchair / dining chair", "Office chair"] } },
+    { id: "carpetArea", label: "Approximate carpet area", type: "number", unit: "sq ft", showWhen: { questionId: "itemType", equalsAny: ["Carpet", "Rug"] } },
+    { id: "carpetSetting", label: "Residential or commercial", type: "select", options: ["Residential", "Commercial"], showWhen: { questionId: "itemType", equalsAny: ["Carpet", "Rug"] } },
+    { id: "carpetAreas", label: "Number of separate areas / rooms", type: "number", min: 1, optional: true, showWhen: { questionId: "itemType", equalsAny: ["Carpet"] } },
+    { id: "furnitureObstruction", label: "Furniture needs moving", type: "boolean", showWhen: { questionId: "itemType", equalsAny: ["Carpet"] } },
+    { id: "extractionPackage", label: "Extraction package", type: "select", options: ["Single vehicle seat", "2 seats", "Rear bench", "Front + rear seats", "Seats + vehicle carpet", "Full vehicle extraction"], showWhen: { questionId: "itemType", equalsAny: ["Vehicle seats / interior"] } },
+    { id: "quantity", label: "How many (sofas / mattresses / rugs)?", type: "number", min: 1, optional: true, showWhen: { questionId: "itemType", equalsAny: ["Sofa", "Mattress", "Rug"] } },
+    { id: "condition", label: "Condition", type: "select", options: ["Light / normal", "Moderate", "Heavy", "Severe"] },
     { id: "material", label: "Fabric / material (if known)", type: "text", placeholder: "e.g. microfibre, wool, leather", optional: true },
-    { id: "condition", label: "Condition", type: "select", options: CONDITION_SEVERE },
-    { id: "stains", label: "Stains present", type: "boolean" },
+    { id: "stains", label: "Visible stains", type: "boolean" },
     { id: "odor", label: "Odor present", type: "boolean" },
     { id: "petContamination", label: "Pet contamination", type: "boolean" },
+    { id: "serviceLocation", label: "Service location (or 'CDCS')", type: "text", placeholder: "e.g. Georgetown, Region 4", fillsLocation: true },
   ],
 
   custom: [
