@@ -53,8 +53,8 @@ export default function HomePage() {
               <Button href="/quote/" variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>
                 Request a Quote
               </Button>
-              <Button href="/services/" variant="outline" size="lg">
-                Explore Our Services
+              <Button href="/estimate/" variant="outline" size="lg">
+                Get an Estimate
               </Button>
             </div>
             <a

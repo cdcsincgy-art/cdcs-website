@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/our-work/",
     "/about/",
     "/insights/",
+    "/estimate/",
     "/quote/",
     "/contact/",
   ];
@@ -29,7 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority:
       route === ""
         ? 1
-        : route === "/quote/"
+        : route === "/quote/" || route === "/estimate/"
           ? 0.9
           : route.startsWith("/insights/") && route !== "/insights/"
             ? 0.6
