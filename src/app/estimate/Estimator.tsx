@@ -288,11 +288,17 @@ export function Estimator() {
   const whatsappHref = useMemo(() => {
     const outcome = describeOutcome(result);
     const location = locationFromAnswers(questions, state.answers) || "To be confirmed";
+    const figureLine =
+      result?.kind === "estimated_range"
+        ? `Estimated Range: ${outcome}`
+        : result?.kind === "estimated_price"
+          ? `Preliminary Estimate: ${outcome}`
+          : `Estimate: ${outcome}`;
     const msg =
       `Hello CDCS Inc. I completed the website estimator and would like an official quotation.\n\n` +
       `Estimate Reference: ${state.reference ?? "(pending)"}\n` +
       `Service: ${service?.label ?? "-"}\n` +
-      `Estimated Range: ${outcome}\n` +
+      `${figureLine}\n` +
       `Location: ${location}\n` +
       `Preferred Date: Flexible`;
     return siteConfig.contact.whatsappHrefWithMessage(msg);
@@ -886,37 +892,49 @@ function JobSummaryList({ questions, answers }: { questions: EstimatorQuestion[]
   );
 }
 
+/**
+ * The result headline. For a calculated price or range this is the hero of the
+ * screen — a large, unmistakable figure. For an assessment outcome it states
+ * clearly what CDCS needs next.
+ */
 function OutcomeBlock({ result }: { result: EstimateResult }) {
   if (result.kind === "site_assessment") {
     return (
-      <div className="rounded-xl border-2 border-navy-800 bg-navy-950 p-6 text-center text-white">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent-400">Site Assessment Required</p>
+      <div className="rounded-xl border-2 border-navy-800 bg-navy-950 p-6 text-center text-white sm:p-8">
+        <p className="text-sm font-extrabold uppercase tracking-[0.16em] text-accent-400">Site Assessment Required</p>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-200">{result.reason}</p>
       </div>
     );
   }
   if (result.kind === "photo_assessment") {
     return (
-      <div className="rounded-xl border-2 border-brand-600 bg-brand-50 p-6 text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">Photo Assessment Required</p>
+      <div className="rounded-xl border-2 border-brand-600 bg-brand-50 p-6 text-center sm:p-8">
+        <p className="text-sm font-extrabold uppercase tracking-[0.16em] text-brand-700">Photo Assessment Required</p>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-700">{result.reason}</p>
       </div>
     );
   }
-  if (result.kind === "estimated_range") {
-    return (
-      <div className="rounded-xl border-2 border-brand-600 bg-brand-50 p-6 text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">Estimated Range</p>
-        <p className="mt-2 text-2xl font-extrabold text-navy-900 sm:text-3xl">
-          {formatGYD(result.low ?? 0)} <span className="text-slate-400">–</span> {formatGYD(result.high ?? 0)}
-        </p>
-      </div>
-    );
-  }
+
+  const isRange = result.kind === "estimated_range";
+  const figure = isRange ? (
+    <>
+      {formatGYD(result.low ?? 0)}
+      <span className="mx-2 font-normal text-slate-400">–</span>
+      {formatGYD(result.high ?? 0)}
+    </>
+  ) : (
+    formatGYD(result.amount ?? 0)
+  );
+
   return (
-    <div className="rounded-xl border-2 border-brand-600 bg-brand-50 p-6 text-center">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">Estimated Price</p>
-      <p className="mt-2 text-2xl font-extrabold text-navy-900 sm:text-3xl">{formatGYD(result.amount ?? 0)}</p>
+    <div className="rounded-xl border-2 border-brand-600 bg-white p-6 text-center shadow-sm sm:p-8">
+      <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand-700">
+        {isRange ? "Estimated Range" : "Preliminary Estimate"}
+      </p>
+      <p className="mt-2 text-3xl font-black leading-tight text-navy-900 sm:text-[2.6rem]">{figure}</p>
+      {result.lineItems && result.lineItems[0] && (
+        <p className="mx-auto mt-2 max-w-sm text-xs text-slate-500">{result.lineItems[0].label}</p>
+      )}
     </div>
   );
 }
@@ -941,130 +959,36 @@ function ResultScreen(
     photoError,
   } = props;
   const servicePage = service.servicePageSlug ? getServiceBySlug(service.servicePageSlug) : undefined;
+  const hasFigure = result.kind === "estimated_price" || result.kind === "estimated_range";
 
   return (
     <div>
       <div className="flex items-center justify-between gap-4">
         <Logo />
         {reference && (
-          <span className="rounded-md bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
-            {reference}
-          </span>
+          <span className="rounded-md bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">{reference}</span>
         )}
       </div>
 
-      <h2 className="mt-6 text-xl font-bold text-navy-900 sm:text-2xl">Preliminary Estimate</h2>
-
-      <div className="mt-4">
+      {/* ===== 1. The figure / outcome — the hero of this screen ===== */}
+      <div className="mt-6">
         <OutcomeBlock result={result} />
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <InfoCard label="Service">{service.label}</InfoCard>
-        <InfoCard label="Customer type">{customerTypeLabel}</InfoCard>
-      </div>
-
-      <h3 className="mt-6 text-sm font-bold uppercase tracking-wider text-navy-900">Job summary</h3>
-      <div className="mt-3">
-        <JobSummaryList questions={questions} answers={answers} />
-      </div>
-
-      {addOnLabels.length > 0 && (
-        <>
-          <h3 className="mt-6 text-sm font-bold uppercase tracking-wider text-navy-900">Selected add-ons</h3>
-          <ul className="mt-3 space-y-1.5 text-sm text-slate-700">
-            {addOnLabels.map((a) => (
-              <li key={a} className="flex items-start gap-2">
-                <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-                {a}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {(result.kind === "estimated_price" || result.kind === "estimated_range") && result.lineItems && result.lineItems.length > 0 && (
-        <div className="mt-4 rounded-lg border border-slate-200">
-          <dl className="divide-y divide-slate-200">
-            {result.lineItems.map((li, i) => (
-              <div key={li.label + i} className="flex justify-between gap-4 px-4 py-2 text-sm">
-                <dt className="text-slate-500">{li.label}</dt>
-                <dd className="text-right font-semibold text-navy-900">
-                  {li.amount < 0 ? `−${formatGYD(-li.amount)}` : formatGYD(li.amount)}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      )}
-
-      {(result.kind === "estimated_price" || result.kind === "estimated_range") && result.subtotalLabel && (
-        <p className="mt-3 text-sm text-slate-600">
-          Estimated {result.kind === "estimated_range" ? "range" : "subtotal"}:{" "}
-          <span className="font-bold text-navy-900">{result.subtotalLabel}</span>
+      {/* ===== 2. Disclaimer (immediately under the figure) ===== */}
+      {hasFigure ? (
+        <p className="mt-4 text-center text-xs leading-relaxed text-slate-500">
+          This estimate is provided for planning purposes only. Final pricing is subject to
+          confirmation of scope, condition, location, access and service requirements.
+        </p>
+      ) : (
+        <p className="mt-4 text-center text-xs leading-relaxed text-slate-500">
+          This is a preliminary read, not a quotation. CDCS confirms the price after reviewing what
+          you send.
         </p>
       )}
 
-      {result.subscriptions && result.subscriptions.length > 0 && (
-        <div className="mt-5 rounded-lg border-2 border-brand-200 bg-brand-50 p-4">
-          <p className="text-xs font-bold uppercase tracking-wider text-brand-700">Recurring plan options</p>
-          <ul className="mt-2 space-y-1.5 text-sm">
-            {result.subscriptions.map((sub) => (
-              <li key={sub.label} className="flex justify-between gap-4">
-                <span className="text-navy-900">{sub.label}</span>
-                <span className="font-bold text-navy-900">{formatGYD(sub.monthly)} / month</span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-2 text-xs text-slate-500">
-            Prepaid monthly. Registered vehicle, standard condition allowance. Confirmed when you set up the plan.
-          </p>
-        </div>
-      )}
-
-      {result.recurringNote && (
-        <p className="mt-4 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-800">
-          {result.recurringNote}
-        </p>
-      )}
-
-      {result.noteExtra && (
-        <p className="mt-4 text-xs leading-relaxed text-slate-500">{result.noteExtra}</p>
-      )}
-
-      {estimatorNotes.trim() && (
-        <p className="mt-4 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-600">
-          <span className="font-semibold text-navy-900">Your notes: </span>
-          {estimatorNotes}
-        </p>
-      )}
-
-      <div className="mt-6">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-navy-900">
-          {result.kind === "photo_assessment" ? "Add photos of the condition" : "Add photos (optional)"}
-        </h3>
-        <p className="mt-1 mb-3 text-xs text-slate-500">
-          Photos you add here are carried straight into your quote request.
-        </p>
-        <PhotoUpload
-          photos={photos}
-          onAddPhotos={onAddPhotos}
-          onRemovePhoto={onRemovePhoto}
-          photoError={photoError}
-          hint={
-            result.kind === "photo_assessment"
-              ? "We'll price your job from these — no site visit needed."
-              : "Speeds up your official quotation."
-          }
-        />
-      </div>
-
-      <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
-        <strong>This estimate is provided for planning purposes only.</strong> Final pricing is
-        subject to confirmation of scope, condition, measurements, access, location and service
-        requirements.
-      </div>
-
+      {/* ===== 3. Actions (above the fold, above all the detail) ===== */}
       <div className="mt-6 flex flex-col gap-3">
         <button
           type="button"
@@ -1101,16 +1025,117 @@ function ResultScreen(
       </div>
 
       {servicePage && (
-        <p className="mt-6 text-sm text-slate-600">
-          Learn more about this service:{" "}
-          <Link
-            href={`/services/${servicePage.slug}/`}
-            className="font-semibold text-brand-600 hover:underline"
-          >
+        <p className="mt-4 text-center text-sm text-slate-600">
+          More about this service:{" "}
+          <Link href={`/services/${servicePage.slug}/`} className="font-semibold text-brand-600 hover:underline">
             {servicePage.title}
           </Link>
         </p>
       )}
+
+      {/* ===== 4. Recurring plans (when calculated) ===== */}
+      {result.subscriptions && result.subscriptions.length > 0 && (
+        <div className="mt-6 rounded-lg border-2 border-brand-200 bg-brand-50 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-brand-700">Recurring plan options</p>
+          <ul className="mt-2 space-y-1.5 text-sm">
+            {result.subscriptions.map((sub) => (
+              <li key={sub.label} className="flex justify-between gap-4">
+                <span className="text-navy-900">{sub.label}</span>
+                <span className="font-bold text-navy-900">{formatGYD(sub.monthly)} / month</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-xs text-slate-500">
+            Prepaid monthly. Registered vehicle, standard condition allowance. Confirmed when you set up the plan.
+          </p>
+        </div>
+      )}
+
+      {result.recurringNote && (
+        <p className="mt-4 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-800">
+          {result.recurringNote}
+        </p>
+      )}
+
+      <hr className="my-8 border-slate-200" />
+
+      {/* ===== 5. Your estimate details ===== */}
+      <h3 className="text-sm font-bold uppercase tracking-wider text-navy-900">Your estimate details</h3>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <InfoCard label="Service">{service.label}</InfoCard>
+        <InfoCard label="Customer type">{customerTypeLabel}</InfoCard>
+      </div>
+
+      <h4 className="mt-6 text-xs font-bold uppercase tracking-wider text-slate-500">Job summary</h4>
+      <div className="mt-2">
+        <JobSummaryList questions={questions} answers={answers} />
+      </div>
+
+      {hasFigure && result.lineItems && result.lineItems.length > 0 && (
+        <>
+          <h4 className="mt-6 text-xs font-bold uppercase tracking-wider text-slate-500">How it&apos;s made up</h4>
+          <div className="mt-2 rounded-lg border border-slate-200">
+            <dl className="divide-y divide-slate-200">
+              {result.lineItems.map((li, i) => (
+                <div key={li.label + i} className="flex justify-between gap-4 px-4 py-2 text-sm">
+                  <dt className="text-slate-500">{li.label}</dt>
+                  <dd className="text-right font-semibold text-navy-900">
+                    {li.amount < 0 ? `−${formatGYD(-li.amount)}` : formatGYD(li.amount)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+          {result.subtotalLabel && (
+            <p className="mt-2 text-sm text-slate-600">
+              {result.kind === "estimated_range" ? "Estimated range" : "Estimated total"}:{" "}
+              <span className="font-bold text-navy-900">{result.subtotalLabel}</span>
+            </p>
+          )}
+        </>
+      )}
+
+      {addOnLabels.length > 0 && (
+        <>
+          <h4 className="mt-6 text-xs font-bold uppercase tracking-wider text-slate-500">Selected add-ons</h4>
+          <ul className="mt-2 space-y-1.5 text-sm text-slate-700">
+            {addOnLabels.map((a) => (
+              <li key={a} className="flex items-start gap-2">
+                <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                {a}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {result.noteExtra && <p className="mt-4 text-xs leading-relaxed text-slate-500">{result.noteExtra}</p>}
+
+      {estimatorNotes.trim() && (
+        <p className="mt-4 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-600">
+          <span className="font-semibold text-navy-900">Your notes: </span>
+          {estimatorNotes}
+        </p>
+      )}
+
+      <div className="mt-6">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+          {result.kind === "photo_assessment" ? "Add photos of the condition" : "Add photos (optional)"}
+        </h4>
+        <p className="mt-1 mb-3 text-xs text-slate-500">Photos you add here are carried straight into your quote request.</p>
+        <PhotoUpload
+          photos={photos}
+          onAddPhotos={onAddPhotos}
+          onRemovePhoto={onRemovePhoto}
+          photoError={photoError}
+          hint={
+            result.kind === "photo_assessment"
+              ? "We'll price your job from these — no site visit needed."
+              : "Speeds up your official quotation."
+          }
+        />
+      </div>
     </div>
   );
 }
