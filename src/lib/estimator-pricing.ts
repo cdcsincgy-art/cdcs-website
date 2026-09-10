@@ -231,6 +231,12 @@ export const pricing = {
     vacantUplift: 0.15, // vacant / move-in-out
     largeSqFt: 4000, // above this -> site assessment
     largeBeds: 5,
+    // single-room deep cleans are priced on their own small band, not the
+    // whole-home bedroom bands:
+    standalone: {
+      "washroom-deep": { low: 12000, high: 28000 },
+      "kitchen-deep": { low: 15000, high: 35000 },
+    } as Record<string, { low: number; high: number }>,
   },
 
   // --- §15 POST-CONSTRUCTION (PROVISIONAL) ---
@@ -424,7 +430,14 @@ function priceVehicleWash(a: AnswerMap, addOns: string[]): EstimateResult {
 
   const pkgKey = s(a.washPackage) === "Exterior only" ? "exterior_only" : "interior_exterior";
   const table = isWashbay ? pricing.washbay : pricing.mobileWash;
-  const base = table[pkgKey]?.[vClass];
+  let base = table[pkgKey]?.[vClass];
+  // There is no standalone mobile "exterior only" rate. Anchor on the approved
+  // washbay exterior-only rate for the class; the 6,000 mobile minimum then
+  // applies, so a mobile exterior-only wash still shows a firm figure rather
+  // than falling back to an assessment.
+  if (base == null && !isWashbay && pkgKey === "exterior_only") {
+    base = pricing.washbay.exterior_only[vClass];
+  }
   if (base == null) {
     return photoAssessment(
       "CDCS will confirm the exact price for this vehicle and service — send a photo or contact us.",
@@ -815,7 +828,7 @@ function pricePressure(a: AnswerMap): EstimateResult {
 // §14 — DEEP / RESIDENTIAL CLEANING (PROVISIONAL — range / assessment only)
 // ---------------------------------------------------------------------------
 
-function priceDeep(a: AnswerMap): EstimateResult {
+function priceDeep(serviceId: string, a: AnswerMap): EstimateResult {
   const propertyType = s(a.propertyType);
   const sqft = n(a.squareFootage);
   const beds = n(a.bedrooms);
@@ -829,6 +842,20 @@ function priceDeep(a: AnswerMap): EstimateResult {
       analytics,
     );
   }
+
+  // Single-room deep cleans (washroom, kitchen) are priced on their own small
+  // band, not the whole-home bedroom bands.
+  const standalone = pricing.deep.standalone[serviceId];
+  if (standalone && !isCommercial) {
+    const vacant = a.moveInOut === true || s(a.occupancy) === "Vacant";
+    const mult = vacant ? 1 + pricing.deep.vacantUplift : 1;
+    return rangeOut(standalone.low * mult, standalone.high * mult, {
+      lineItems: [{ label: serviceId === "kitchen-deep" ? "Kitchen deep clean" : "Washroom deep clean", amount: roundCommercial(((standalone.low + standalone.high) / 2) * mult) }],
+      noteExtra: "Preliminary range — confirmed after CDCS checks the room, its condition and access.",
+      analytics,
+    });
+  }
+
   if (isCommercial) {
     if (sqft > 0 && sqft <= pricing.deep.largeSqFt) {
       return rangeOut(
@@ -952,7 +979,7 @@ export function computeEstimate(params: {
       case "pressure_washing":
         return pricePressure(answers);
       case "deep_residential":
-        return priceDeep(answers);
+        return priceDeep(params.serviceId, answers);
       case "post_construction":
         return pricePostConstruction(answers);
       case "janitorial":

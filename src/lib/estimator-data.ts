@@ -263,7 +263,7 @@ export const questionSets: Record<EstimatorGroupId, EstimatorQuestion[]> = {
     { id: "mattressSize", label: "Mattress size", type: "select", options: ["Single", "Double", "Queen", "King"], showWhen: { questionId: "itemType", equalsAny: ["Mattress"] } },
     { id: "chairType", label: "Chair type", type: "select", options: ["Dining / standard upholstered chair", "Office chair", "Large padded / executive chair"], showWhen: { questionId: "itemType", equalsAny: ["Armchair / dining chair", "Office chair"] } },
     { id: "chairQty", label: "How many chairs?", type: "number", min: 1, showWhen: { questionId: "itemType", equalsAny: ["Armchair / dining chair", "Office chair"] } },
-    { id: "carpetArea", label: "Approximate carpet area", type: "number", unit: "sq ft", showWhen: { questionId: "itemType", equalsAny: ["Carpet", "Rug"] } },
+    { id: "carpetArea", label: "Approximate carpet area", type: "number", unit: "sq ft", min: 1, showWhen: { questionId: "itemType", equalsAny: ["Carpet", "Rug"] } },
     { id: "carpetSetting", label: "Residential or commercial", type: "select", options: ["Residential", "Commercial"], showWhen: { questionId: "itemType", equalsAny: ["Carpet", "Rug"] } },
     { id: "carpetAreas", label: "Number of separate areas / rooms", type: "number", min: 1, optional: true, showWhen: { questionId: "itemType", equalsAny: ["Carpet"] } },
     { id: "furnitureObstruction", label: "Furniture needs moving", type: "boolean", showWhen: { questionId: "itemType", equalsAny: ["Carpet"] } },
