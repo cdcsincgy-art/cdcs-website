@@ -1042,7 +1042,7 @@ function ResultScreen(
       {/* ===== 4. Recurring plans (when calculated) ===== */}
       {result.subscriptions && result.subscriptions.length > 0 && (
         <div className="mt-6 rounded-lg border-2 border-brand-200 bg-brand-50 p-4">
-          <p className="text-xs font-bold uppercase tracking-wider text-brand-700">Recurring plan options</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-brand-700">CDCS WashCare Mobile — recurring plan options</p>
           <ul className="mt-2 space-y-1.5 text-sm">
             {result.subscriptions.map((sub) => (
               <li key={sub.label} className="flex justify-between gap-4">
@@ -1052,7 +1052,7 @@ function ResultScreen(
             ))}
           </ul>
           <p className="mt-2 text-xs text-slate-500">
-            Prepaid monthly. Registered vehicle, standard condition allowance. Confirmed when you set up the plan.
+            Scheduled monthly maintenance plan. Additional detailing or severe-condition cleaning is charged separately.
           </p>
         </div>
       )}

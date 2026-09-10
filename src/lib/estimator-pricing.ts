@@ -90,8 +90,14 @@ export const pricing = {
       "Large SUV / 7-seater": 7000,
       "Canter / light commercial": 7000,
     } as Record<string, number>,
-    // No approved mobile "exterior only" rates — handled as photo assessment.
-    exterior_only: {} as Record<string, number>,
+    // §F mobile exterior-only prices (standard service area; mobilisation included)
+    exterior_only: {
+      "Small car / sedan": 6000,
+      SUV: 6000,
+      Pickup: 6500,
+      "Large SUV / 7-seater": 7000,
+      "Canter / light commercial": 8000,
+    } as Record<string, number>,
   },
 
   // --- §2/§3 vehicle condition ---
@@ -133,7 +139,7 @@ export const pricing = {
       base: 5000,
       sizeUplift: false,
       range: true,
-      rangeFactor: 1.6,
+      rangeFactor: 1.4,
       severeMessage:
         "Severe smoke, biological contamination, urine, or an unknown source is assessed (photos or in person) before pricing.",
       note: "Starting price for a standard odor treatment.",
@@ -268,36 +274,85 @@ export const pricing = {
   // shown as a RANGE. Listed in the final report.
   // ======================================================================
 
-  // --- §13 PRESSURE WASHING (PROVISIONAL) ---
+  // --- §13 PRESSURE WASHING — PRICING ENGINE V2 (per-surface sq-ft rates) ---
   pressure: {
-    minimumMobile: 8000, // PROVISIONAL premium mobile minimum
-    // straightforward ground-level concrete/pavement/parking, light–moderate:
-    bands: [
-      { maxSqFt: 400, low: 8000, high: 16000 },
-      { maxSqFt: 1200, low: 16000, high: 35000 },
-      { maxSqFt: 3000, low: 35000, high: 70000 },
-    ],
-    largeSqFt: 3000, // above this, or roof/height/difficult/fragile -> assessment
-    conditionUplift: { "Light dirt": 0, Moderate: 0.15, "Heavy dirt": 0.3 } as Record<string, number>,
+    minimumMobile: 8000, // §B / §E — no pressure job below this
+    rangeSpread: 0.15, // shown as calc -> calc x1.15
+    maxSqFt: 3000, // §B / §N — above this -> site assessment
+    conditionMult: { "Light dirt": 1.0, Moderate: 1.15, "Heavy dirt": 1.3 } as Record<string, number>,
+    // ("Heavy algae / mould / oil" -> photo assessment)
+    // rate tiers by surface family (GYD per sq ft)
+    surfaceRates: {
+      concrete: [
+        { maxSqFt: 500, rate: 30 },
+        { maxSqFt: 1500, rate: 26 },
+        { maxSqFt: 3000, rate: 22 },
+      ],
+      wall: [
+        { maxSqFt: 500, rate: 35 },
+        { maxSqFt: 1500, rate: 30 },
+        { maxSqFt: 3000, rate: 25 },
+      ],
+      fence: [
+        { maxSqFt: 500, rate: 30 },
+        { maxSqFt: 1500, rate: 26 },
+        { maxSqFt: 3000, rate: 22 },
+      ],
+      parking: [
+        { maxSqFt: 500, rate: 28 },
+        { maxSqFt: 1500, rate: 24 },
+        { maxSqFt: 3000, rate: 20 },
+      ],
+    } as Record<string, { maxSqFt: number; rate: number }[]>,
+    // map the surfaceType question options onto a rate family
+    surfaceFamily: {
+      Concrete: "concrete",
+      Pavement: "concrete",
+      Pavers: "concrete",
+      Yard: "concrete",
+      Other: "concrete",
+      Fence: "fence",
+      Wall: "wall",
+      "Building exterior": "wall",
+      "Parking area": "parking",
+    } as Record<string, string>,
   },
 
-  // --- §14 DEEP / RESIDENTIAL CLEANING (PROVISIONAL) ---
+  // --- §14 DEEP / RESIDENTIAL CLEANING — PRICING ENGINE V2 ---
   deep: {
-    // one-time residential, condition not "Very heavy", predictable scope:
-    bedroomBands: [
-      { maxBeds: 2, low: 25000, high: 45000 },
-      { maxBeds: 3, low: 40000, high: 70000 },
-      { maxBeds: 5, low: 60000, high: 100000 },
-    ],
-    vacantUplift: 0.15, // vacant / move-in-out
-    largeSqFt: 4000, // above this -> site assessment
-    largeBeds: 5,
-    // single-room deep cleans are priced on their own small band, not the
-    // whole-home bedroom bands:
-    standalone: {
-      "washroom-deep": { low: 12000, high: 28000 },
-      "kitchen-deep": { low: 15000, high: 35000 },
+    rangeStyle: "band", // the base is already a low/high band; modifiers scale it
+    largeSqFt: 4000, // §C / §N — above this -> site assessment
+    maxBeds: 5, // §C — above this -> photo/site assessment
+    // whole-home deep-clean base ranges by bedroom count
+    bedroomBands: {
+      1: { low: 25000, high: 35000 },
+      2: { low: 35000, high: 50000 },
+      3: { low: 50000, high: 70000 },
+      4: { low: 70000, high: 90000 },
+      5: { low: 90000, high: 120000 },
+    } as Record<number, { low: number; high: number }>,
+    // §C condition
+    conditionMult: { Light: 1.0, Moderate: 1.1, Heavy: 1.25 } as Record<string, number>,
+    // (Very heavy -> photo assessment)
+    vacantMult: 1.1, // vacant / move-in / move-out
+    furnishedMult: 1.05,
+    cupboardsMult: 1.05,
+    appliancesMult: 1.05,
+    windowsMult: 1.05,
+    petHairMult: 1.1, // light / manageable
+    heavyGreaseMult: 1.1,
+    mouldMult: 1.1, // light surface-level (mould + Heavy condition -> site assessment)
+    // single-room deep cleans
+    singleRoom: {
+      "washroom-deep": { low: 12000, high: 20000 },
+      "kitchen-deep": { low: 18000, high: 30000 },
     } as Record<string, { low: number; high: number }>,
+    // commercial deep cleaning (office / commercial space) by sq ft
+    commercialBands: [
+      { maxSqFt: 1500, low: 45000, high: 75000 },
+      { maxSqFt: 3000, low: 70000, high: 120000 },
+      { maxSqFt: 4000, low: 100000, high: 160000 },
+    ],
   },
 
   // --- §15 POST-CONSTRUCTION — PRICING ENGINE V2 (sq-ft primary; CDCS
@@ -541,14 +596,7 @@ function priceVehicleWash(a: AnswerMap, addOns: string[]): EstimateResult {
 
   const pkgKey = s(a.washPackage) === "Exterior only" ? "exterior_only" : "interior_exterior";
   const table = isWashbay ? pricing.washbay : pricing.mobileWash;
-  let base = table[pkgKey]?.[vClass];
-  // There is no standalone mobile "exterior only" rate. Anchor on the approved
-  // washbay exterior-only rate for the class; the 6,000 mobile minimum then
-  // applies, so a mobile exterior-only wash still shows a firm figure rather
-  // than falling back to an assessment.
-  if (base == null && !isWashbay && pkgKey === "exterior_only") {
-    base = pricing.washbay.exterior_only[vClass];
-  }
+  const base = table[pkgKey]?.[vClass];
   if (base == null) {
     return photoAssessment(
       "CDCS will confirm the exact price for this vehicle and service — send a photo or contact us.",
@@ -770,13 +818,18 @@ function priceHeavyEquipment(
   }
 
   const condUplift = pricing.fleetCondition[cond] ?? 0;
-  const discount = cappedDiscount(band.discount ?? 0);
-  const perUnit = base * (1 + condUplift) * (1 - discount);
+  // §I — no automatic quantity discount on heavy machinery. Multiple units show
+  // a preliminary total but recommend an official quotation.
+  const perUnit = base * (1 + condUplift);
   const total = perUnit * size;
-  // Heavy equipment carries real variability — always a range, anchored on the
-  // approved starting price.
+  // Heavy equipment carries real variability — always a range (§H, x1.35),
+  // anchored on the approved starting price.
   return rangeOut(total, total * 1.35, {
     lineItems: [{ label: `${eClass}${size > 1 ? ` × ${size}` : ""} — from`, amount: roundCommercial(total) }],
+    recurringNote:
+      size > 1
+        ? "Multiple heavy-equipment units — this is a preliminary total. An official CDCS quotation is recommended for equipment of this scale."
+        : undefined,
     analytics,
   });
 }
@@ -850,7 +903,7 @@ function priceExtraction(a: AnswerMap, addOns: string[]): EstimateResult {
       const lo = each * qty * (1 - cappedDiscount(0.1));
       const hi = each * qty;
       return rangeOut(lo * condMult, hi * condMult, {
-        noteExtra: "Large chair orders are confirmed with an official quotation.",
+        noteExtra: "Official quotation recommended for large-volume chair cleaning.",
         lineItems: [{ label: `${qty} × ${t}`, amount: roundCommercial(hi) }],
         analytics,
       });
@@ -933,8 +986,10 @@ function priceExtraction(a: AnswerMap, addOns: string[]): EstimateResult {
   const noteExtra = disclaimerBits.join(" ") || undefined;
 
   if (isFrom || forceRange || rangeSpan > 0) {
+    // §H — "from" items (full extraction, large sectional): base -> base x1.30.
+    //      carpet (forceRange): calculated price -> +15%.
     const lo = amount;
-    const hi = amount + rangeSpan + (isFrom ? amount * 0.35 : 0) + (forceRange ? amount * 0.2 : 0);
+    const hi = amount + rangeSpan + (isFrom ? amount * 0.3 : 0) + (forceRange ? amount * 0.15 : 0);
     return rangeOut(lo, hi, { lineItems, addOnsTotal: addFixed, noteExtra, analytics });
   }
 
@@ -942,10 +997,15 @@ function priceExtraction(a: AnswerMap, addOns: string[]): EstimateResult {
 }
 
 // ---------------------------------------------------------------------------
-// §13 — PRESSURE WASHING (PROVISIONAL — range / assessment only)
+// §13 — PRESSURE WASHING — PRICING ENGINE V2 (per-surface sq-ft rates)
+//
+// area × surface tier rate × condition multiplier -> range (calc -> calc x1.15),
+// GYD 8,000 minimum, commercial rounding. Roof / elevated / difficult / large
+// / heavy-algae route to assessment.
 // ---------------------------------------------------------------------------
 
 function pricePressure(a: AnswerMap): EstimateResult {
+  const P = pricing.pressure;
   const surface = s(a.surfaceType);
   const access = s(a.access);
   const cond = s(a.condition);
@@ -966,85 +1026,157 @@ function pricePressure(a: AnswerMap): EstimateResult {
   }
   if (cond === "Heavy algae / mould / oil") {
     return photoAssessment(
-      "Heavy algae, mould, or oil staining varies a lot — send a photo and CDCS will price it from that.",
+      "Heavy algae, mould, or oil staining varies a lot — send a photo and CDCS will price it from that. Severe oil or chemical contamination is scoped on a site visit.",
       analytics,
     );
   }
-  if (area > pricing.pressure.largeSqFt) {
-    return siteAssessment("Large exterior areas are measured on site for an accurate price.", analytics);
+  if (area > P.maxSqFt) {
+    return siteAssessment("Exterior areas over 3,000 sq ft are measured on site for an accurate price.", analytics);
   }
   if (area <= 0) {
-    return rangeOut(pricing.pressure.minimumMobile, pricing.pressure.minimumMobile * 3, {
-      noteExtra: "Give an approximate area (sq ft) for a closer estimate.",
-      analytics,
-    });
+    return siteAssessment("Give the approximate area in square feet, or arrange a site visit, for a preliminary pressure-washing estimate.", analytics);
   }
 
-  const band = pricing.pressure.bands.find((b) => area <= b.maxSqFt) ?? pricing.pressure.bands[pricing.pressure.bands.length - 1];
-  const uplift = pricing.pressure.conditionUplift[cond] ?? 0;
-  const lo = Math.max(pricing.pressure.minimumMobile, band.low * (1 + uplift));
-  const hi = band.high * (1 + uplift);
+  const family = P.surfaceFamily[surface] ?? "concrete";
+  const tiers = P.surfaceRates[family];
+  const tier = tiers.find((t) => area <= t.maxSqFt) ?? tiers[tiers.length - 1];
+  const condMult = P.conditionMult[cond] ?? 1;
+
+  const calc = area * tier.rate * condMult;
+  // pre-round so the low never drops below the calculated figure or the minimum
+  const lo = Math.max(P.minimumMobile, roundCommercial(calc));
+  const hi = Math.max(lo, roundCommercial(calc * (1 + P.rangeSpread)));
+
+  if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo <= 0) {
+    return siteAssessment(SITE_REASON, analytics);
+  }
+
+  const notes = [
+    "Based on the surface, area and condition provided. Final pricing is subject to confirmation of surface, water supply and access.",
+  ];
+  if (a.waterOnSite === false) {
+    notes.push("Water supply on site will be confirmed with CDCS before the visit.");
+  }
+
   return rangeOut(lo, hi, {
-    lineItems: [{ label: `${surface || "Exterior surface"} ~${area.toLocaleString("en-US")} sq ft${uplift ? ` (${cond})` : ""}`, amount: roundCommercial((lo + hi) / 2) }],
-    noteExtra: "Preliminary range — confirmed after CDCS checks surface, water supply and access.",
+    headline: "Preliminary Estimate",
+    lineItems: [
+      {
+        label: `${surface || "Exterior surface"} · ~${area.toLocaleString("en-US")} sq ft @ ${formatGYD(tier.rate)}/sq ft${
+          condMult !== 1 ? ` · ${cond} (+${Math.round((condMult - 1) * 100)}%)` : ""
+        }`,
+        amount: roundCommercial(calc),
+      },
+    ],
+    noteExtra: notes.join(" "),
     analytics,
   });
 }
 
 // ---------------------------------------------------------------------------
-// §14 — DEEP / RESIDENTIAL CLEANING (PROVISIONAL — range / assessment only)
+// §14 — DEEP / RESIDENTIAL CLEANING — PRICING ENGINE V2
+//
+// Whole-home: bedroom base range × condition × occupancy × furnishing ×
+// cupboards × appliances × windows × pet × grease × mould (multiplicative).
+// Single-room and commercial deep cleans are separate tracks.
 // ---------------------------------------------------------------------------
 
 function priceDeep(serviceId: string, a: AnswerMap): EstimateResult {
+  const D = pricing.deep;
   const propertyType = s(a.propertyType);
   const sqft = n(a.squareFootage);
-  const beds = n(a.bedrooms);
+  const beds = Math.max(1, Math.round(n(a.bedrooms) || 1));
   const cond = s(a.condition);
   const isCommercial = propertyType === "Office" || propertyType === "Commercial space";
   const analytics = { property_type: propertyType || "unspecified" };
 
+  // --- §C / §N assessment triggers ---
   if (cond === "Very heavy") {
     return photoAssessment(
       "Very heavy condition is confirmed from photos before pricing — send a few and CDCS will follow up.",
       analytics,
     );
   }
+  if (a.mould === true && cond === "Heavy") {
+    return siteAssessment(
+      "Extensive mould or mildew is confirmed on a site visit — specialist treatment may be required and is quoted separately.",
+      analytics,
+    );
+  }
 
-  // Single-room deep cleans (washroom, kitchen) are priced on their own small
-  // band, not the whole-home bedroom bands.
-  const standalone = pricing.deep.standalone[serviceId];
-  if (standalone && !isCommercial) {
-    const vacant = a.moveInOut === true || s(a.occupancy) === "Vacant";
-    const mult = vacant ? 1 + pricing.deep.vacantUplift : 1;
-    return rangeOut(standalone.low * mult, standalone.high * mult, {
-      lineItems: [{ label: serviceId === "kitchen-deep" ? "Kitchen deep clean" : "Washroom deep clean", amount: roundCommercial(((standalone.low + standalone.high) / 2) * mult) }],
-      noteExtra: "Preliminary range — confirmed after CDCS checks the room, its condition and access.",
+  // --- single-room deep cleans (washroom, kitchen) ---
+  const room = D.singleRoom[serviceId];
+  if (room && !isCommercial) {
+    return rangeOut(room.low, room.high, {
+      headline: "Preliminary Estimate",
+      lineItems: [{ label: serviceId === "kitchen-deep" ? "Kitchen deep clean" : "Washroom / bathroom deep clean", amount: roundCommercial((room.low + room.high) / 2) }],
+      noteExtra:
+        "Based on a single-room deep clean. Final pricing is subject to confirmation of the room, its condition and access.",
       analytics,
     });
   }
 
+  // --- commercial deep cleaning (office / commercial space) ---
   if (isCommercial) {
-    if (sqft > 0 && sqft <= pricing.deep.largeSqFt) {
-      return rangeOut(
-        pricing.deep.bedroomBands[pricing.deep.bedroomBands.length - 1].low,
-        pricing.deep.bedroomBands[pricing.deep.bedroomBands.length - 1].high * 1.4,
-        { noteExtra: "Commercial deep clean — preliminary range, confirmed on a walkthrough.", analytics },
-      );
+    if (sqft <= 0) {
+      return siteAssessment("Give the approximate floor area for a preliminary commercial deep-clean estimate.", analytics);
     }
-    return siteAssessment("Commercial deep cleaning is scoped on a walkthrough for an accurate quotation.", analytics);
-  }
-  if (sqft > pricing.deep.largeSqFt || beds > pricing.deep.largeBeds) {
-    return siteAssessment("Large residences are scoped on a walkthrough for an accurate quotation.", analytics);
+    if (sqft > D.largeSqFt) {
+      return siteAssessment("Commercial deep cleaning over 4,000 sq ft is scoped on a walkthrough for an accurate quotation.", analytics);
+    }
+    const cb = D.commercialBands.find((b) => sqft <= b.maxSqFt);
+    if (!cb) return siteAssessment(SITE_REASON, analytics);
+    const condMult = D.conditionMult[cond] ?? 1;
+    return rangeOut(cb.low * condMult, cb.high * condMult, {
+      headline: "Preliminary Estimate",
+      lineItems: [{ label: `Commercial deep clean · ~${sqft.toLocaleString("en-US")} sq ft${condMult !== 1 ? ` · ${cond}` : ""}`, amount: roundCommercial(((cb.low + cb.high) / 2) * condMult) }],
+      noteExtra:
+        "Based on the floor area and condition provided. Final pricing is subject to confirmation of scope, condition and access on a walkthrough.",
+      analytics,
+    });
   }
 
-  const band =
-    pricing.deep.bedroomBands.find((b) => (beds || 1) <= b.maxBeds) ??
-    pricing.deep.bedroomBands[pricing.deep.bedroomBands.length - 1];
+  // --- whole-home deep clean ---
+  if (sqft > D.largeSqFt || beds > D.maxBeds) {
+    return siteAssessment(
+      "Large residences (over 4,000 sq ft or more than 5 bedrooms) are scoped on a walkthrough for an accurate quotation.",
+      analytics,
+    );
+  }
+  const band = D.bedroomBands[beds];
+  if (!band) return siteAssessment(SITE_REASON, analytics);
+
+  const condMult = D.conditionMult[cond] ?? 1;
   const vacant = a.moveInOut === true || s(a.occupancy) === "Vacant";
-  const mult = vacant ? 1 + pricing.deep.vacantUplift : 1;
-  return rangeOut(band.low * mult, band.high * mult, {
-    lineItems: [{ label: `${propertyType || "Home"} deep clean${vacant ? " (vacant / move-in-out)" : ""}`, amount: roundCommercial(((band.low + band.high) / 2) * mult) }],
-    noteExtra: "Preliminary range — confirmed after CDCS checks condition, access and final scope. Add-ons (windows, cupboards, appliances) quoted with the job.",
+
+  let factor = condMult;
+  const applied: string[] = [];
+  if (condMult !== 1) applied.push(`${cond.toLowerCase()} condition (+${Math.round((condMult - 1) * 100)}%)`);
+  if (vacant) { factor *= D.vacantMult; applied.push(`vacant / move-in-out (+${Math.round((D.vacantMult - 1) * 100)}%)`); }
+  if (s(a.furnishing) === "Furnished") { factor *= D.furnishedMult; applied.push(`furnished (+${Math.round((D.furnishedMult - 1) * 100)}%)`); }
+  if (a.insideCupboards === true) { factor *= D.cupboardsMult; applied.push(`inside cupboards (+${Math.round((D.cupboardsMult - 1) * 100)}%)`); }
+  if (a.insideAppliances === true) { factor *= D.appliancesMult; applied.push(`inside appliances (+${Math.round((D.appliancesMult - 1) * 100)}%)`); }
+  if (a.windows === true) { factor *= D.windowsMult; applied.push(`windows (+${Math.round((D.windowsMult - 1) * 100)}%)`); }
+  if (a.petHair === true) { factor *= D.petHairMult; applied.push(`pet hair (+${Math.round((D.petHairMult - 1) * 100)}%)`); }
+  if (a.heavyGrease === true) { factor *= D.heavyGreaseMult; applied.push(`heavy grease (+${Math.round((D.heavyGreaseMult - 1) * 100)}%)`); }
+  if (a.mould === true) { factor *= D.mouldMult; applied.push(`mould / mildew (+${Math.round((D.mouldMult - 1) * 100)}%)`); }
+
+  const lo = band.low * factor;
+  const hi = band.high * factor;
+  if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo <= 0 || hi < lo) {
+    return siteAssessment(SITE_REASON, analytics);
+  }
+
+  return rangeOut(lo, hi, {
+    headline: "Preliminary Estimate",
+    lineItems: [{ label: `${propertyType || "Home"} deep clean · ${beds} bedroom${beds > 1 ? "s" : ""}`, amount: roundCommercial(((band.low + band.high) / 2) * factor) }],
+    noteExtra: [
+      "Based on the property size and condition information provided.",
+      applied.length ? `Applied: ${applied.join(", ")}.` : "",
+      "Final pricing is subject to confirmation of condition, access and final scope.",
+    ]
+      .filter(Boolean)
+      .join(" "),
     analytics,
   });
 }
