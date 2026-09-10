@@ -309,26 +309,51 @@ export const pricing = {
     // everything else -> site assessment
   },
 
-  // --- §16 COMMERCIAL / JANITORIAL (PROVISIONAL) ---
+  // --- §16 COMMERCIAL / JANITORIAL — PRICING ENGINE V2 (CDCS management-approved
+  //     preliminary commercial ranges; not binding quotations) ---
   janitorial: {
-    oneTimeSmallMaxSqFt: 4000,
-    oneTimeSmallBand: { low: 35000, high: 80000 },
-    // monthly programme bands by size, before frequency:
-    monthlyBands: [
-      { maxSqFt: 3000, low: 90000, high: 180000 },
-      { maxSqFt: 8000, low: 160000, high: 340000 },
-      { maxSqFt: 15000, low: 320000, high: 650000 },
+    // §A base monthly ranges at ~5 cleaning visits per week
+    baseMonthlyBands: [
+      { maxSqFt: 1500, low: 110000, high: 160000 },
+      { maxSqFt: 3000, low: 160000, high: 240000 },
+      { maxSqFt: 5000, low: 240000, high: 350000 },
+      { maxSqFt: 8000, low: 350000, high: 500000 },
+      { maxSqFt: 12000, low: 500000, high: 720000 },
+      { maxSqFt: 15000, low: 700000, high: 950000 },
     ],
+    maxSqFt: 15000, // above -> site assessment
+    maxFloors: 4, // above -> site assessment
+    // §B frequency factor by visits/week (existing UI labels are mapped to these)
     frequencyFactor: {
-      "One time": 0,
-      Daily: 1,
-      "2x weekly": 0.45,
+      "1x weekly": 0.32,
+      "2x weekly": 0.48,
       "3x weekly": 0.65,
-      "5x weekly": 1,
+      "4x weekly": 0.82,
+      "5x weekly": 1.0,
       "6x weekly": 1.15,
       "7x weekly": 1.3,
     } as Record<string, number>,
-    largeSqFt: 15000, // above this -> site assessment
+    // §G facility-type complexity factor (existing options mapped conservatively)
+    facilityFactor: {
+      Office: 1.0,
+      "Commercial building": 1.0,
+      Retail: 1.05,
+      Bank: 1.08,
+      "Government building": 1.05,
+      School: 1.1,
+      "Medical facility": 1.15,
+      Warehouse: 1.1,
+      Industrial: 1.1,
+      Other: 1.0,
+    } as Record<string, number>,
+    roundTo: 5000, // §H customer-facing monthly ranges round to nearest 5,000
+    // §K one-time commercial cleaning (kept separate from recurring)
+    oneTimeBands: [
+      { maxSqFt: 1500, low: 30000, high: 50000 },
+      { maxSqFt: 3000, low: 45000, high: 75000 },
+      { maxSqFt: 4000, low: 65000, high: 100000 },
+    ],
+    oneTimeMaxSqFt: 4000, // above -> site assessment
   },
 };
 
@@ -367,6 +392,10 @@ export interface EstimateResult {
   recurringNote?: string;
   /** Extra customer-facing caveat (stain disclaimer, add-ons on request…). */
   noteExtra?: string;
+  /** Overrides the outcome-block label (e.g. "Preliminary Monthly Estimate"). */
+  headline?: string;
+  /** Unit shown after the figure, e.g. "/ month". */
+  unitSuffix?: string;
   /** Non-PII attributes for analytics. */
   analytics?: Record<string, string | number>;
 }
@@ -405,6 +434,8 @@ interface OutOpts {
   subscriptions?: SubscriptionOption[];
   recurringNote?: string;
   noteExtra?: string;
+  headline?: string;
+  unitSuffix?: string;
   analytics?: EstimateResult["analytics"];
 }
 
@@ -422,6 +453,8 @@ function priceOut(amount: number, opts: OutOpts = {}): EstimateResult {
     subscriptions: opts.subscriptions,
     recurringNote: opts.recurringNote,
     noteExtra: opts.noteExtra,
+    headline: opts.headline,
+    unitSuffix: opts.unitSuffix,
     analytics: { ...opts.analytics, outcome: "estimated_price" },
   };
 }
@@ -440,12 +473,14 @@ function rangeOut(low: number, high: number, opts: OutOpts = {}): EstimateResult
     kind: "estimated_range",
     low: lo,
     high: hi,
-    subtotalLabel: `${formatGYD(lo)} – ${formatGYD(hi)}`,
+    subtotalLabel: `${formatGYD(lo)} – ${formatGYD(hi)}${opts.unitSuffix ? ` ${opts.unitSuffix}` : ""}`,
     lineItems: opts.lineItems,
     addOnsTotal: opts.addOnsTotal || undefined,
     subscriptions: opts.subscriptions,
     recurringNote: opts.recurringNote,
     noteExtra: opts.noteExtra,
+    headline: opts.headline,
+    unitSuffix: opts.unitSuffix,
     analytics: { ...opts.analytics, outcome: "estimated_range" },
   };
 }
@@ -1028,45 +1063,189 @@ function pricePostConstruction(a: AnswerMap): EstimateResult {
 }
 
 // ---------------------------------------------------------------------------
-// §16 — COMMERCIAL / JANITORIAL (PROVISIONAL — never a fixed contract price)
+// §16 — COMMERCIAL / JANITORIAL — PRICING ENGINE V2
+//
+// Recurring: base monthly band (by sq ft) applied SEQUENTIALLY / MULTIPLICATIVELY
+// by frequency, facility type, washrooms, kitchens, workstations and floors —
+// never by adding the percentages together. One-time commercial cleaning is a
+// separate track. No promo / subscription / lead-gen discounting.
 // ---------------------------------------------------------------------------
 
-function priceJanitorial(a: AnswerMap): EstimateResult {
-  const sqft = n(a.squareFootage);
-  const floors = n(a.floors);
-  const frequency = s(a.frequency);
-  const analytics = { facility_type: s(a.facilityType) || "unspecified", frequency: frequency || "unspecified" };
+const round5k = (x: number): number => Math.round(x / pricing.janitorial.roundTo) * pricing.janitorial.roundTo;
 
-  if (sqft > pricing.janitorial.largeSqFt || floors > 4) {
+/** Map the existing frequency UI labels onto visits-per-week keys. */
+function janitorialFrequencyKey(label: string): string {
+  const map: Record<string, string> = {
+    Daily: "5x weekly", // every working day
+    "1x weekly": "1x weekly",
+    "2x weekly": "2x weekly",
+    "3x weekly": "3x weekly",
+    "4x weekly": "4x weekly",
+    "5x weekly": "5x weekly",
+    "6x weekly": "6x weekly",
+    "7x weekly": "7x weekly",
+  };
+  return map[label] ?? label;
+}
+
+function janitorialSqftBand(sqft: number): string {
+  if (sqft <= 0) return "unspecified";
+  const b = pricing.janitorial.baseMonthlyBands.find((x) => sqft <= x.maxSqFt);
+  return b ? `<=${b.maxSqFt}` : ">15000";
+}
+
+function priceJanitorial(a: AnswerMap): EstimateResult {
+  const J = pricing.janitorial;
+  const sqft = n(a.squareFootage);
+  const floors = Math.max(1, Math.round(n(a.floors) || 1));
+  const washrooms = Math.round(n(a.washrooms));
+  const kitchens = Math.round(n(a.kitchens));
+  const workstations = Math.round(n(a.workstations));
+  const facilityType = s(a.facilityType);
+  const frequency = s(a.frequency);
+  const condition = s(a.condition);
+  const analytics = {
+    facility_type: facilityType || "unspecified",
+    frequency: frequency || "unspecified",
+    sqft_band: janitorialSqftBand(sqft),
+  };
+
+  // --- §L assessment escalation ---
+  if (condition === "Very heavy") {
     return siteAssessment(
-      "Larger multi-floor facilities are scoped on a walkthrough. Recurring janitorial contracts are finalised with an official CDCS quotation.",
+      "Heavy or unusual contamination in a commercial facility is confirmed on a site walkthrough before pricing.",
+      analytics,
+    );
+  }
+  if (floors > J.maxFloors) {
+    return siteAssessment(
+      "Facilities over 4 floors are scoped on a site walkthrough, and the recurring contract is finalised with an official CDCS quotation.",
       analytics,
     );
   }
 
+  // --- §K one-time commercial cleaning (separate from recurring) ---
   if (frequency === "One time") {
-    if (sqft > 0 && sqft <= pricing.janitorial.oneTimeSmallMaxSqFt) {
-      return rangeOut(pricing.janitorial.oneTimeSmallBand.low, pricing.janitorial.oneTimeSmallBand.high, {
-        noteExtra: "Preliminary range for a one-time office clean — confirmed on a walkthrough.",
+    if (sqft <= 0 || sqft > J.oneTimeMaxSqFt) {
+      return siteAssessment(
+        "A one-time commercial clean of this size is scoped on a site walkthrough for an official quotation.",
         analytics,
-      });
+      );
     }
-    return siteAssessment("A one-time clean of this size is scoped on a walkthrough.", analytics);
+    const otBand = J.oneTimeBands.find((b) => sqft <= b.maxSqFt);
+    if (!otBand) return siteAssessment(SITE_REASON, analytics);
+    return rangeOut(round5k(otBand.low), round5k(otBand.high), {
+      headline: "Preliminary Estimate",
+      lineItems: [
+        {
+          label: `One-time commercial clean · ~${sqft.toLocaleString("en-US")} sq ft`,
+          amount: round5k((otBand.low + otBand.high) / 2),
+        },
+      ],
+      noteExtra:
+        "One-time commercial clean — not a recurring programme. Preliminary range, confirmed after CDCS reviews the space.",
+      analytics,
+    });
   }
 
-  // Recurring programme -> PRELIMINARY MONTHLY RANGE + official quotation.
-  const band = pricing.janitorial.monthlyBands.find((b) => sqft > 0 && sqft <= b.maxSqFt);
-  const freqFactor = pricing.janitorial.frequencyFactor[frequency] ?? 0;
-  if (!band || freqFactor <= 0) {
+  // --- recurring programme ---
+  if (sqft <= 0) {
+    return siteAssessment(
+      "Give the approximate facility size, or arrange a walkthrough, for a preliminary monthly estimate.",
+      analytics,
+    );
+  }
+  if (sqft > J.maxSqFt) {
+    return siteAssessment(
+      "Facilities over 15,000 sq ft are scoped on a site walkthrough and an official CDCS quotation. Contact CDCS to arrange it.",
+      analytics,
+    );
+  }
+  const band = J.baseMonthlyBands.find((b) => sqft <= b.maxSqFt);
+  if (!band) return siteAssessment(SITE_REASON, analytics);
+
+  const freqKey = janitorialFrequencyKey(frequency);
+  const freqFactor = J.frequencyFactor[freqKey];
+  if (freqFactor == null || freqFactor <= 0) {
     return siteAssessment(
       "Recurring janitorial pricing is built on a walkthrough and finalised with an official CDCS quotation.",
       analytics,
     );
   }
-  return rangeOut(band.low * freqFactor, band.high * freqFactor, {
-    lineItems: [{ label: `Preliminary monthly programme · ~${sqft.toLocaleString("en-US")} sq ft · ${frequency}`, amount: roundCommercial(((band.low + band.high) / 2) * freqFactor) }],
-    noteExtra: "PRELIMINARY MONTHLY RANGE only. Recurring janitorial contracts require a site walkthrough and an official CDCS quotation.",
-    recurringNote: "Recurring janitorial programme — finalised with an official quotation.",
+  const facilityFactor = J.facilityFactor[facilityType] ?? 1;
+
+  const scopeNotes: string[] = [];
+
+  // §C washrooms — first 2 included
+  let washFactor = 1;
+  if (washrooms >= 3 && washrooms <= 4) washFactor = 1.05;
+  else if (washrooms >= 5 && washrooms <= 6) washFactor = 1.1;
+  else if (washrooms >= 7 && washrooms <= 10) washFactor = 1.15;
+  else if (washrooms > 10) {
+    washFactor = 1.2;
+    scopeNotes.push("Final pricing requires scope confirmation for the number of washrooms.");
+  }
+
+  // §D kitchens / breakrooms — first 1 included
+  let kitchenFactor = 1;
+  if (kitchens === 2) kitchenFactor = 1.03;
+  else if (kitchens >= 3 && kitchens <= 4) kitchenFactor = 1.06;
+  else if (kitchens >= 5) {
+    kitchenFactor = 1.1;
+    scopeNotes.push("Scope confirmation is recommended for the number of kitchens / breakrooms.");
+  }
+
+  // §E workstations — workload modifier only, up to 20 included
+  let wsFactor = 1;
+  if (workstations >= 21 && workstations <= 50) wsFactor = 1.03;
+  else if (workstations >= 51 && workstations <= 100) wsFactor = 1.06;
+  else if (workstations >= 101 && workstations <= 200) wsFactor = 1.1;
+  else if (workstations > 200) {
+    wsFactor = 1.15;
+    scopeNotes.push("A site assessment is recommended for a facility with this many workstations.");
+  }
+
+  // §F floors
+  const floorFactor = floors <= 1 ? 1 : floors === 2 ? 1.03 : floors === 3 ? 1.06 : 1.1;
+
+  // §H sequential / multiplicative — NOT additive
+  const factor = freqFactor * facilityFactor * washFactor * kitchenFactor * wsFactor * floorFactor;
+  const lo = round5k(band.low * factor);
+  const hi = round5k(band.high * factor);
+
+  // §I / safety — never below the frequency-adjusted base, never broken
+  const freqBaseLo = round5k(band.low * freqFactor);
+  if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo <= 0 || hi < lo || lo < freqBaseLo) {
+    if (!Number.isFinite(lo) || lo <= 0 || hi < lo) return siteAssessment(SITE_REASON, analytics);
+  }
+  const safeLo = Math.max(lo, freqBaseLo);
+  const safeHi = Math.max(hi, safeLo);
+
+  const applied: string[] = [`${freqKey} frequency`];
+  if (facilityFactor !== 1) applied.push(`${facilityType.toLowerCase()} facility (+${Math.round((facilityFactor - 1) * 100)}%)`);
+  if (washFactor !== 1) applied.push(`washrooms (+${Math.round((washFactor - 1) * 100)}%)`);
+  if (kitchenFactor !== 1) applied.push(`kitchens / breakrooms (+${Math.round((kitchenFactor - 1) * 100)}%)`);
+  if (wsFactor !== 1) applied.push(`workstations (+${Math.round((wsFactor - 1) * 100)}%)`);
+  if (floorFactor !== 1) applied.push(`${floors} floors (+${Math.round((floorFactor - 1) * 100)}%)`);
+
+  return rangeOut(safeLo, safeHi, {
+    headline: "Preliminary Monthly Estimate",
+    unitSuffix: "/ month",
+    lineItems: [
+      {
+        label: `Recurring programme · ~${sqft.toLocaleString("en-US")} sq ft · ${freqKey}${
+          facilityFactor !== 1 ? ` · ${facilityType}` : ""
+        }`,
+        amount: round5k((safeLo + safeHi) / 2),
+      },
+    ],
+    recurringNote:
+      "Recurring janitorial programmes require a site walkthrough and final scope confirmation before an official CDCS quotation or service agreement is issued.",
+    noteExtra: [
+      "Based on the facility information provided and the selected cleaning frequency.",
+      `Applied: ${applied.join(", ")}.`,
+      ...scopeNotes,
+    ].join(" "),
     analytics,
   });
 }

@@ -288,8 +288,9 @@ export function Estimator() {
   const whatsappHref = useMemo(() => {
     const outcome = describeOutcome(result);
     const location = locationFromAnswers(questions, state.answers) || "To be confirmed";
-    const figureLine =
-      result?.kind === "estimated_range"
+    const figureLine = result?.headline
+      ? `${result.headline}: ${outcome}`
+      : result?.kind === "estimated_range"
         ? `Estimated Range: ${outcome}`
         : result?.kind === "estimated_price"
           ? `Preliminary Estimate: ${outcome}`
@@ -929,9 +930,14 @@ function OutcomeBlock({ result }: { result: EstimateResult }) {
   return (
     <div className="rounded-xl border-2 border-brand-600 bg-white p-6 text-center shadow-sm sm:p-8">
       <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand-700">
-        {isRange ? "Estimated Range" : "Preliminary Estimate"}
+        {result.headline ?? (isRange ? "Estimated Range" : "Preliminary Estimate")}
       </p>
-      <p className="mt-2 text-3xl font-black leading-tight text-navy-900 sm:text-[2.6rem]">{figure}</p>
+      <p className="mt-2 text-3xl font-black leading-tight text-navy-900 sm:text-[2.6rem]">
+        {figure}
+        {result.unitSuffix && (
+          <span className="ml-1.5 text-lg font-bold text-slate-400 sm:text-xl">{result.unitSuffix}</span>
+        )}
+      </p>
       {result.lineItems && result.lineItems[0] && (
         <p className="mx-auto mt-2 max-w-sm text-xs text-slate-500">{result.lineItems[0].label}</p>
       )}
@@ -1486,6 +1492,9 @@ function describeOutcome(result: EstimateResult | null): string {
   if (!result) return "Pending";
   if (result.kind === "site_assessment") return "Site assessment required";
   if (result.kind === "photo_assessment") return "Photo assessment required";
-  if (result.kind === "estimated_range") return `${formatGYD(result.low ?? 0)} – ${formatGYD(result.high ?? 0)}`;
-  return formatGYD(result.amount ?? 0);
+  const suffix = result.unitSuffix ? ` ${result.unitSuffix}` : "";
+  if (result.kind === "estimated_range") {
+    return `${formatGYD(result.low ?? 0)} – ${formatGYD(result.high ?? 0)}${suffix}`;
+  }
+  return `${formatGYD(result.amount ?? 0)}${suffix}`;
 }
