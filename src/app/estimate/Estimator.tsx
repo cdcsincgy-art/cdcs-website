@@ -20,9 +20,11 @@ import {
   estimatorCategories,
   getEstimatorService,
   groupLabels,
+  presetQuestionIds,
   questionSets,
   servicesInCategory,
   type EstimatorQuestion,
+  type EstimatorService,
 } from "@/lib/estimator-data";
 import { getServiceBySlug } from "@/lib/services-data";
 import {
@@ -104,8 +106,33 @@ export function Estimator() {
   const [state, setState] = useState<WizardState>(loadInitialState);
   const [mounted, setMounted] = useState(false);
   const [stepError, setStepError] = useState<string>("");
+  const [openCategory, setOpenCategory] = useState<string | null>(
+    () => getEstimatorService(state.serviceId)?.category ?? null,
+  );
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [photoError, setPhotoError] = useState<string>("");
   const startedRef = useRef(false);
   const topRef = useRef<HTMLDivElement>(null);
+
+  const addPhotos = useCallback((list: FileList | null) => {
+    if (!list) return;
+    const problems: string[] = [];
+    const accepted: File[] = [];
+    for (const f of Array.from(list)) {
+      if (f.size > MAX_FILE_BYTES) problems.push(`${f.name} is over 10MB`);
+      else if (!f.type.startsWith("image/") && f.type !== "application/pdf") problems.push(`${f.name} is not an image or PDF`);
+      else accepted.push(f);
+    }
+    setPhotoError(problems.join("; "));
+    setPhotos((prev) => {
+      const seen = new Set(prev.map((p) => p.name + p.size));
+      return [...prev, ...accepted.filter((f) => !seen.has(f.name + f.size))];
+    });
+  }, []);
+
+  const removePhoto = useCallback((idx: number) => {
+    setPhotos((prev) => prev.filter((_, i) => i !== idx));
+  }, []);
 
   // Single mount flag so the prerendered markup and the first client render
   // match (both show the skeleton) before any restored progress is painted.
@@ -135,6 +162,12 @@ export function Estimator() {
   const group = service?.group ?? null;
   const questions = useMemo(() => (group ? questionSets[group] : []), [group]);
   const groupAddOns = useMemo(() => (group ? addOnsByGroup[group] : []), [group]);
+  // Questions fixed by the chosen service — seeded, not asked.
+  const hiddenIds = useMemo(() => presetQuestionIds(service), [service]);
+  const visibleQuestions = useMemo(
+    () => questions.filter((q) => !hiddenIds.includes(q.id)),
+    [questions, hiddenIds],
+  );
 
   const result: EstimateResult | null = useMemo(() => {
     if (!service || !group) return null;
@@ -166,7 +199,7 @@ export function Estimator() {
     if (state.step === 1 && !state.customerType) return "Choose a customer type to continue.";
     if (state.step === 2 && !state.serviceId) return "Choose the service you need an estimate for.";
     if (state.step === 3) {
-      for (const q of questions) {
+      for (const q of visibleQuestions) {
         if (q.optional) continue;
         const v = state.answers[q.id];
         if (q.type === "boolean") continue; // defaults to "No"
@@ -224,12 +257,25 @@ export function Estimator() {
     }
     setState(INITIAL_STATE);
     setStepError("");
+    setOpenCategory(null);
+    setPhotos([]);
+    setPhotoError("");
     scrollToTop();
   }
 
   function selectService(id: string) {
     const svc = getEstimatorService(id);
-    patch({ serviceId: id, answers: {}, addOns: [], reference: null });
+    // Seed the answers this specific service fixes, and clear everything else
+    // so a value from a previously-chosen service can never carry over.
+    patch({
+      serviceId: id,
+      answers: { ...(svc?.presetAnswers ?? {}) },
+      addOns: [],
+      reference: null,
+    });
+    setOpenCategory(svc?.category ?? null);
+    setPhotos([]);
+    setPhotoError("");
     trackEvent("estimator_service_selected", {
       service_category: svc?.category,
       service_id: svc?.id,
@@ -280,28 +326,57 @@ export function Estimator() {
         )}
 
         {state.step === 2 && (
-          <StepShell title="Which service do you need?" subtitle="Pick the closest match — you can add detail on the next step.">
-            <div className="space-y-6">
-              {estimatorCategories.map((category) => (
-                <fieldset key={category}>
-                  <legend className="mb-2.5 text-xs font-bold uppercase tracking-[0.14em] text-brand-600">
-                    {category}
-                  </legend>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {servicesInCategory(category).map((s) => (
-                      <OptionButton
-                        key={s.id}
-                        selected={state.serviceId === s.id}
-                        onClick={() => selectService(s.id)}
-                        small
-                      >
-                        {s.label}
-                      </OptionButton>
-                    ))}
-                  </div>
-                </fieldset>
-              ))}
-            </div>
+          <StepShell
+            title="Which service do you need?"
+            subtitle={
+              openCategory
+                ? "Pick the closest match — you can add detail on the next step."
+                : "Choose a service family first, then the specific service."
+            }
+          >
+            {!openCategory ? (
+              <div className="grid gap-2.5 sm:grid-cols-2">
+                {estimatorCategories.map((category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setOpenCategory(category)}
+                    className="flex items-center justify-between gap-3 rounded-lg border-2 border-slate-200 px-4 py-4 text-left text-sm font-bold text-navy-900 transition-colors hover:border-brand-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                  >
+                    <span>{category}</span>
+                    <span className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+                      {servicesInCategory(category).length}
+                      <IconArrowRight className="h-4 w-4 text-brand-600" />
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setOpenCategory(null)}
+                  className="mb-4 inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 hover:underline"
+                >
+                  <span aria-hidden>&larr;</span> All service families
+                </button>
+                <p className="mb-2.5 text-xs font-bold uppercase tracking-[0.14em] text-brand-600">
+                  {openCategory}
+                </p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {servicesInCategory(openCategory).map((s) => (
+                    <OptionButton
+                      key={s.id}
+                      selected={state.serviceId === s.id}
+                      onClick={() => selectService(s.id)}
+                      small
+                    >
+                      {s.label}
+                    </OptionButton>
+                  ))}
+                </div>
+              </div>
+            )}
           </StepShell>
         )}
 
@@ -310,8 +385,13 @@ export function Estimator() {
             title={`Job details — ${service.label}`}
             subtitle={`A few questions about this ${groupLabels[service.group].toLowerCase()} job. Only what's relevant is shown.`}
           >
+            {hiddenIds.length > 0 && (
+              <p className="mb-4 rounded-lg bg-brand-50 px-4 py-2.5 text-sm text-brand-800">
+                This estimate is for <strong>{presetSummary(service)}</strong> — set by your service choice.
+              </p>
+            )}
             <div className="space-y-5">
-              {questions.map((q) => (
+              {visibleQuestions.map((q) => (
                 <QuestionField
                   key={q.id}
                   question={q}
@@ -388,6 +468,10 @@ export function Estimator() {
             estimatorNotes={state.estimatorNotes}
             result={result}
             whatsappHref={whatsappHref}
+            photos={photos}
+            onAddPhotos={addPhotos}
+            onRemovePhoto={removePhoto}
+            photoError={photoError}
             onRequestQuote={() => {
               patch({ step: 6 });
               scrollToTop();
@@ -407,6 +491,10 @@ export function Estimator() {
             result={result}
             defaultLocation={locationFromAnswers(questions, state.answers)}
             whatsappHref={whatsappHref}
+            photos={photos}
+            onAddPhotos={addPhotos}
+            onRemovePhoto={removePhoto}
+            photoError={photoError}
           />
         )}
 
@@ -548,11 +636,11 @@ function OptionButton({
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`flex items-center justify-between gap-2 rounded-lg border-2 text-left font-semibold transition-colors ${
+      className={`flex min-h-[44px] items-center justify-between gap-2 rounded-lg border-2 text-left font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 ${
         small ? "px-3.5 py-2.5 text-sm" : "px-4 py-3.5 text-sm"
       } ${
         selected
-          ? "border-brand-600 bg-brand-50 text-brand-700"
+          ? "border-brand-600 bg-brand-50 text-brand-700 ring-1 ring-brand-600"
           : "border-slate-200 text-navy-900 hover:border-slate-300"
       }`}
     >
@@ -592,9 +680,9 @@ function QuestionField({
               type="button"
               onClick={() => onChange(opt.val)}
               aria-pressed={v === opt.val}
-              className={`min-w-[72px] rounded-md border-2 px-4 py-2 text-sm font-bold transition-colors ${
+              className={`min-h-[44px] min-w-[84px] rounded-md border-2 px-5 py-2.5 text-sm font-bold transition-colors ${
                 v === opt.val
-                  ? "border-brand-600 bg-brand-50 text-brand-700"
+                  ? "border-brand-600 bg-brand-50 text-brand-700 ring-1 ring-brand-600"
                   : "border-slate-200 text-slate-600 hover:border-slate-300"
               }`}
             >
@@ -642,9 +730,9 @@ function QuestionField({
                 type="button"
                 onClick={() => onChange(on ? arr.filter((x) => x !== o) : [...arr, o])}
                 aria-pressed={on}
-                className={`rounded-full border-2 px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+                className={`min-h-[40px] rounded-full border-2 px-4 py-2 text-sm font-semibold transition-colors ${
                   on
-                    ? "border-brand-600 bg-brand-50 text-brand-700"
+                    ? "border-brand-600 bg-brand-50 text-brand-700 ring-1 ring-brand-600"
                     : "border-slate-200 text-slate-600 hover:border-slate-300"
                 }`}
               >
@@ -714,12 +802,68 @@ function QuestionField({
 interface SummaryProps {
   reference: string | null;
   customerTypeLabel: string;
-  service: NonNullable<ReturnType<typeof getEstimatorService>>;
+  service: EstimatorService;
   questions: EstimatorQuestion[];
   answers: Answers;
   addOnLabels: string[];
   estimatorNotes: string;
   result: EstimateResult;
+}
+
+interface PhotoProps {
+  photos: File[];
+  onAddPhotos: (list: FileList | null) => void;
+  onRemovePhoto: (idx: number) => void;
+  photoError: string;
+}
+
+function PhotoUpload({
+  photos,
+  onAddPhotos,
+  onRemovePhoto,
+  photoError,
+  hint,
+}: PhotoProps & { hint: string }) {
+  return (
+    <div>
+      <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center transition-colors hover:border-brand-400">
+        <IconUpload className="h-6 w-6 text-slate-400" />
+        <span className="text-sm font-semibold text-slate-600">Add photos</span>
+        <span className="text-xs text-slate-400">{hint}</span>
+        <span className="text-[11px] text-slate-400">JPG, PNG, or PDF — up to 10MB each, multiple allowed</span>
+        <input
+          type="file"
+          accept="image/*,.pdf"
+          multiple
+          className="hidden"
+          onChange={(e) => {
+            onAddPhotos(e.target.files);
+            e.target.value = "";
+          }}
+        />
+      </label>
+      {photoError && <span className="mt-1 block text-xs font-semibold text-red-600">{photoError}</span>}
+      {photos.length > 0 && (
+        <ul className="mt-2 space-y-1.5">
+          {photos.map((f, i) => (
+            <li
+              key={f.name + f.size + i}
+              className="flex items-center justify-between gap-3 rounded-md bg-slate-50 px-3 py-2 text-xs"
+            >
+              <span className="truncate text-slate-700">{f.name}</span>
+              <button
+                type="button"
+                onClick={() => onRemovePhoto(i)}
+                className="shrink-0 font-bold text-red-600 hover:underline"
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 function JobSummaryList({ questions, answers }: { questions: EstimatorQuestion[]; answers: Answers }) {
@@ -748,6 +892,14 @@ function OutcomeBlock({ result }: { result: EstimateResult }) {
       </div>
     );
   }
+  if (result.kind === "photo_assessment") {
+    return (
+      <div className="rounded-xl border-2 border-brand-600 bg-brand-50 p-6 text-center">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-700">Photo Assessment Required</p>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-700">{result.reason}</p>
+      </div>
+    );
+  }
   if (result.kind === "estimated_range") {
     return (
       <div className="rounded-xl border-2 border-brand-600 bg-brand-50 p-6 text-center">
@@ -767,9 +919,24 @@ function OutcomeBlock({ result }: { result: EstimateResult }) {
 }
 
 function ResultScreen(
-  props: SummaryProps & { whatsappHref: string; onRequestQuote: () => void },
+  props: SummaryProps & PhotoProps & { whatsappHref: string; onRequestQuote: () => void },
 ) {
-  const { service, result, reference, customerTypeLabel, questions, answers, addOnLabels, estimatorNotes, whatsappHref, onRequestQuote } = props;
+  const {
+    service,
+    result,
+    reference,
+    customerTypeLabel,
+    questions,
+    answers,
+    addOnLabels,
+    estimatorNotes,
+    whatsappHref,
+    onRequestQuote,
+    photos,
+    onAddPhotos,
+    onRemovePhoto,
+    photoError,
+  } = props;
   const servicePage = service.servicePageSlug ? getServiceBySlug(service.servicePageSlug) : undefined;
 
   return (
@@ -826,6 +993,26 @@ function ResultScreen(
           {estimatorNotes}
         </p>
       )}
+
+      <div className="mt-6">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-navy-900">
+          {result.kind === "photo_assessment" ? "Add photos of the condition" : "Add photos (optional)"}
+        </h3>
+        <p className="mt-1 mb-3 text-xs text-slate-500">
+          Photos you add here are carried straight into your quote request.
+        </p>
+        <PhotoUpload
+          photos={photos}
+          onAddPhotos={onAddPhotos}
+          onRemovePhoto={onRemovePhoto}
+          photoError={photoError}
+          hint={
+            result.kind === "photo_assessment"
+              ? "We'll price your job from these — no site visit needed."
+              : "Speeds up your official quotation."
+          }
+        />
+      </div>
 
       <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
         <strong>This estimate is provided for planning purposes only.</strong> Final pricing is
@@ -897,14 +1084,27 @@ function InfoCard({ label, children }: { label: string; children: ReactNode }) {
 // ---------------------------------------------------------------------------
 
 function LeadForm(
-  props: SummaryProps & { defaultLocation: string; whatsappHref: string },
+  props: SummaryProps & PhotoProps & { defaultLocation: string; whatsappHref: string },
 ) {
-  const { reference, customerTypeLabel, service, questions, answers, addOnLabels, estimatorNotes, result, defaultLocation, whatsappHref } = props;
+  const {
+    reference,
+    customerTypeLabel,
+    service,
+    questions,
+    answers,
+    addOnLabels,
+    estimatorNotes,
+    result,
+    defaultLocation,
+    whatsappHref,
+    photos,
+    onAddPhotos,
+    onRemovePhoto,
+    photoError,
+  } = props;
 
   const [status, setStatus] = useState<LeadStatus>("idle");
   const [error, setError] = useState("");
-  const [files, setFiles] = useState<File[]>([]);
-  const [fileError, setFileError] = useState("");
 
   const jobSummaryText = useMemo(
     () =>
@@ -916,27 +1116,6 @@ function LeadForm(
     [questions, answers],
   );
   const outcomeText = describeOutcome(result);
-
-  function addFiles(list: FileList | null) {
-    if (!list) return;
-    const incoming = Array.from(list);
-    const problems: string[] = [];
-    const ok: File[] = [];
-    for (const f of incoming) {
-      if (f.size > MAX_FILE_BYTES) {
-        problems.push(`${f.name} is over 10MB`);
-      } else if (!f.type.startsWith("image/") && f.type !== "application/pdf") {
-        problems.push(`${f.name} is not an image or PDF`);
-      } else {
-        ok.push(f);
-      }
-    }
-    setFileError(problems.join("; "));
-    setFiles((prev) => {
-      const names = new Set(prev.map((p) => p.name + p.size));
-      return [...prev, ...ok.filter((f) => !names.has(f.name + f.size))];
-    });
-  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -977,7 +1156,7 @@ function LeadForm(
     data.set("jobSummary", jobSummaryText);
     data.set("addOns", addOnLabels.join(", "));
     data.set("estimatorNotes", estimatorNotes);
-    files.forEach((f, i) => data.append(`photo_${i + 1}`, f, f.name));
+    photos.forEach((f, i) => data.append(`photo_${i + 1}`, f, f.name));
 
     const endpoint = siteConfig.quoteFormEndpoint;
 
@@ -1039,7 +1218,7 @@ function LeadForm(
       `Service Location: ${location}`,
       `Preferred Service Date: ${String(data.get("preferredDate") ?? "") || "—"}`,
       `Notes: ${String(data.get("notes") ?? "") || "—"}`,
-      files.length ? `\nNote: please attach your ${files.length} photo(s) to this email before sending.` : "",
+      photos.length ? `\nNote: please attach your ${photos.length} photo(s) to this email before sending.` : "",
     ];
     window.location.href = `mailto:${siteConfig.contact.email}?subject=${encodeURIComponent(
       `Estimator quote request — ${reference ?? "CDCS"}`,
@@ -1107,38 +1286,13 @@ function LeadForm(
         </div>
 
         <LeadField label="Photos (optional)">
-          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-7 text-center transition-colors hover:border-brand-400">
-            <IconUpload className="h-6 w-6 text-slate-400" />
-            <span className="text-sm font-semibold text-slate-600">Click to add photos of the space, vehicle, or issue</span>
-            <span className="text-xs text-slate-400">JPG, PNG, or PDF — up to 10MB each, multiple allowed</span>
-            <input
-              type="file"
-              accept="image/*,.pdf"
-              multiple
-              className="hidden"
-              onChange={(e) => {
-                addFiles(e.target.files);
-                e.target.value = "";
-              }}
-            />
-          </label>
-          {fileError && <span className="mt-1 block text-xs font-semibold text-red-600">{fileError}</span>}
-          {files.length > 0 && (
-            <ul className="mt-2 space-y-1.5">
-              {files.map((f, i) => (
-                <li key={f.name + i} className="flex items-center justify-between gap-3 rounded-md bg-slate-50 px-3 py-2 text-xs">
-                  <span className="truncate text-slate-700">{f.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => setFiles((prev) => prev.filter((_, idx) => idx !== i))}
-                    className="shrink-0 font-bold text-red-600 hover:underline"
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          <PhotoUpload
+            photos={photos}
+            onAddPhotos={onAddPhotos}
+            onRemovePhoto={onRemovePhoto}
+            photoError={photoError}
+            hint="Photos of the space, vehicle, or issue help us quote accurately."
+          />
         </LeadField>
 
         <LeadField label="Describe anything else we should know">
@@ -1250,9 +1404,16 @@ function locationFromAnswers(questions: EstimatorQuestion[], answers: Answers): 
   return typeof v === "string" ? v.trim() : "";
 }
 
+/** Human-readable list of the answers a specialized service fixes. */
+function presetSummary(service: EstimatorService | undefined): string {
+  if (!service?.presetAnswers) return "";
+  return Object.values(service.presetAnswers).flat().join(", ");
+}
+
 function describeOutcome(result: EstimateResult | null): string {
   if (!result) return "Pending";
   if (result.kind === "site_assessment") return "Site assessment required";
+  if (result.kind === "photo_assessment") return "Photo assessment required";
   if (result.kind === "estimated_range") return `${formatGYD(result.low ?? 0)} – ${formatGYD(result.high ?? 0)}`;
   return formatGYD(result.amount ?? 0);
 }

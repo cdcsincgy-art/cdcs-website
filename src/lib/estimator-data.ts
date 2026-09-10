@@ -49,53 +49,68 @@ export interface EstimatorService {
   group: EstimatorGroupId;
   /** Canonical CDCS service page to link back to (null = general/custom). */
   servicePageSlug: string | null;
+  /**
+   * Answers that are fixed by this specific service. They are seeded when the
+   * service is chosen and their questions are NOT shown on the Job Details
+   * step, so the job summary can never contradict the selected service (e.g.
+   * "Sofa Cleaning" always records item type "Sofa"). Broad services such as
+   * "Upholstery & Fabric Extraction" carry no presets and let the customer
+   * choose. Keys must be question ids in the service's question group; values
+   * must be valid options for those questions.
+   */
+  presetAnswers?: Record<string, string | string[]>;
 }
 
-/** Order here is also the display order within each category. */
+/**
+ * Every estimator service. `category` groups them on step 2; `group` selects
+ * the question set and pricing profile; `presetAnswers` locks in the answers a
+ * specialized service implies so the job summary always matches the selection.
+ * Order here is the display order within each category.
+ */
 export const estimatorServices: EstimatorService[] = [
   // --- Commercial & Facility Cleaning ---
   { id: "commercial-janitorial", label: "Commercial & Janitorial Cleaning", category: "Commercial & Facility Cleaning", group: "janitorial", servicePageSlug: "commercial-janitorial-cleaning" },
   { id: "commercial-facility", label: "Commercial Facility Cleaning", category: "Commercial & Facility Cleaning", group: "janitorial", servicePageSlug: "commercial-facility-cleaning" },
-  { id: "office-cleaning", label: "Office Cleaning", category: "Commercial & Facility Cleaning", group: "janitorial", servicePageSlug: "commercial-janitorial-cleaning" },
+  { id: "office-cleaning", label: "Office Cleaning", category: "Commercial & Facility Cleaning", group: "janitorial", servicePageSlug: "commercial-janitorial-cleaning", presetAnswers: { facilityType: "Office" } },
   { id: "post-construction", label: "Post-Construction Cleaning", category: "Commercial & Facility Cleaning", group: "post_construction", servicePageSlug: "post-construction-cleaning" },
 
-  // --- Home & Deep Cleaning ---
-  { id: "deep-cleaning", label: "Deep Cleaning", category: "Home & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
-  { id: "residential-cleaning", label: "Residential Cleaning", category: "Home & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
-  { id: "move-in-out", label: "Move-In / Move-Out Cleaning", category: "Home & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
-  { id: "washroom-deep", label: "Washroom / Bathroom Deep Cleaning", category: "Home & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
-  { id: "kitchen-deep", label: "Kitchen Deep Cleaning", category: "Home & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
+  // --- Residential & Deep Cleaning ---
+  { id: "deep-cleaning", label: "Deep Cleaning", category: "Residential & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
+  { id: "residential-cleaning", label: "Residential Cleaning", category: "Residential & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
+  { id: "move-in-out", label: "Move-In / Move-Out Cleaning", category: "Residential & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
+  { id: "washroom-deep", label: "Washroom / Bathroom Deep Cleaning", category: "Residential & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
+  { id: "kitchen-deep", label: "Kitchen Deep Cleaning", category: "Residential & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
 
-  // --- Pressure Washing & Exterior ---
-  { id: "pressure-washing", label: "Pressure Washing", category: "Pressure Washing & Exterior", group: "pressure_washing", servicePageSlug: "pressure-washing" },
-  { id: "concrete-cleaning", label: "Concrete / Pavement Cleaning", category: "Pressure Washing & Exterior", group: "pressure_washing", servicePageSlug: "pressure-washing" },
-  { id: "building-wall-washing", label: "Building / Wall Washing", category: "Pressure Washing & Exterior", group: "pressure_washing", servicePageSlug: "pressure-washing" },
-  { id: "fence-washing", label: "Fence Washing", category: "Pressure Washing & Exterior", group: "pressure_washing", servicePageSlug: "pressure-washing" },
-  { id: "roof-washing", label: "Roof Washing", category: "Pressure Washing & Exterior", group: "pressure_washing", servicePageSlug: "pressure-washing" },
-  { id: "parking-area-cleaning", label: "Parking Area Cleaning", category: "Pressure Washing & Exterior", group: "pressure_washing", servicePageSlug: "pressure-washing" },
+  // --- Carpet, Upholstery & Extraction ---
+  { id: "carpet-cleaning", label: "Carpet Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Carpet"] } },
+  { id: "upholstery-extraction", label: "Upholstery & Fabric Extraction", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction" },
+  { id: "office-chair-cleaning", label: "Office Chair Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Office chair"] } },
+  { id: "sofa-cleaning", label: "Sofa Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Sofa"] } },
+  { id: "mattress-cleaning", label: "Mattress Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Mattress"] } },
+  { id: "vehicle-seat-extraction", label: "Vehicle Seat Extraction / Steam Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: ["Vehicle seat"] } },
+
+  // --- Pressure & Exterior Cleaning ---
+  { id: "pressure-washing", label: "Pressure Washing", category: "Pressure & Exterior Cleaning", group: "pressure_washing", servicePageSlug: "pressure-washing" },
+  { id: "concrete-cleaning", label: "Concrete / Pavement Cleaning", category: "Pressure & Exterior Cleaning", group: "pressure_washing", servicePageSlug: "pressure-washing", presetAnswers: { surfaceType: "Concrete" } },
+  { id: "building-wall-washing", label: "Building / Wall Washing", category: "Pressure & Exterior Cleaning", group: "pressure_washing", servicePageSlug: "pressure-washing", presetAnswers: { surfaceType: "Wall" } },
+  { id: "fence-washing", label: "Fence Washing", category: "Pressure & Exterior Cleaning", group: "pressure_washing", servicePageSlug: "pressure-washing", presetAnswers: { surfaceType: "Fence" } },
+  { id: "roof-washing", label: "Roof Washing", category: "Pressure & Exterior Cleaning", group: "pressure_washing", servicePageSlug: "pressure-washing", presetAnswers: { surfaceType: "Roof" } },
+  { id: "parking-area-cleaning", label: "Parking Area Cleaning", category: "Pressure & Exterior Cleaning", group: "pressure_washing", servicePageSlug: "pressure-washing", presetAnswers: { surfaceType: "Parking area" } },
 
   // --- Vehicle Detailing ---
   { id: "mobile-detailing", label: "Mobile Vehicle Detailing", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
-  { id: "exterior-vehicle-wash", label: "Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
-  { id: "interior-exterior-wash", label: "Interior & Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
-  { id: "engine-wash", label: "Engine Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
-  { id: "undercarriage-wash", label: "Vehicle Bottom / Undercarriage Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
-  { id: "headlight-restoration", label: "Headlight Restoration", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
-  { id: "buffing-polishing", label: "Buffing & Polishing", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
-  { id: "odor-treatment", label: "Odor Treatment / Elimination", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing" },
+  { id: "exterior-vehicle-wash", label: "Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Exterior wash"] } },
+  { id: "interior-exterior-wash", label: "Interior & Exterior Vehicle Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Interior + exterior"] } },
+  { id: "engine-wash", label: "Engine Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Engine wash"] } },
+  { id: "undercarriage-wash", label: "Vehicle Bottom / Undercarriage Wash", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Bottom wash"] } },
+  { id: "headlight-restoration", label: "Headlight Restoration", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Headlight restoration"] } },
+  { id: "buffing-polishing", label: "Buffing & Polishing", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Buff & polish"] } },
+  { id: "odor-treatment", label: "Odor Treatment / Elimination", category: "Vehicle Detailing", group: "mobile_detailing", servicePageSlug: "mobile-detailing", presetAnswers: { serviceRequired: ["Odor treatment"] } },
 
-  // --- Fleet & Equipment Washing ---
-  { id: "fleet-washing", label: "Fleet & Truck Washing", category: "Fleet & Equipment Washing", group: "fleet_washing", servicePageSlug: "fleet-washing" },
-  { id: "commercial-vehicle-washing", label: "Commercial Vehicle Washing", category: "Fleet & Equipment Washing", group: "fleet_washing", servicePageSlug: "fleet-washing" },
-  { id: "equipment-washing", label: "Equipment / Heavy-Duty Machinery Washing", category: "Fleet & Equipment Washing", group: "fleet_washing", servicePageSlug: "fleet-washing" },
-
-  // --- Carpet, Upholstery & Extraction ---
-  { id: "carpet-cleaning", label: "Carpet Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction" },
-  { id: "upholstery-extraction", label: "Upholstery & Fabric Extraction", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction" },
-  { id: "office-chair-cleaning", label: "Office Chair Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction" },
-  { id: "sofa-cleaning", label: "Sofa Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction" },
-  { id: "mattress-cleaning", label: "Mattress Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction" },
-  { id: "vehicle-seat-extraction", label: "Vehicle Seat Extraction / Steam Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction" },
+  // --- Fleet & Heavy-Duty Washing ---
+  { id: "fleet-washing", label: "Fleet & Truck Washing", category: "Fleet & Heavy-Duty Washing", group: "fleet_washing", servicePageSlug: "fleet-washing" },
+  { id: "commercial-vehicle-washing", label: "Commercial Vehicle Washing", category: "Fleet & Heavy-Duty Washing", group: "fleet_washing", servicePageSlug: "fleet-washing" },
+  { id: "equipment-washing", label: "Equipment / Heavy-Duty Machinery Washing", category: "Fleet & Heavy-Duty Washing", group: "fleet_washing", servicePageSlug: "fleet-washing", presetAnswers: { vehicleTypes: ["Heavy equipment"] } },
 
   // --- Other ---
   { id: "custom", label: "Other / Custom Cleaning Requirement", category: "Other", group: "custom", servicePageSlug: null },
@@ -103,13 +118,18 @@ export const estimatorServices: EstimatorService[] = [
 
 export const estimatorCategories: string[] = [
   "Commercial & Facility Cleaning",
-  "Home & Deep Cleaning",
-  "Pressure Washing & Exterior",
-  "Vehicle Detailing",
-  "Fleet & Equipment Washing",
+  "Residential & Deep Cleaning",
   "Carpet, Upholstery & Extraction",
+  "Pressure & Exterior Cleaning",
+  "Vehicle Detailing",
+  "Fleet & Heavy-Duty Washing",
   "Other",
 ];
+
+/** Question ids that a service pre-fills and therefore hides on Job Details. */
+export function presetQuestionIds(service: EstimatorService | undefined): string[] {
+  return service?.presetAnswers ? Object.keys(service.presetAnswers) : [];
+}
 
 export function getEstimatorService(id: string | null | undefined): EstimatorService | undefined {
   return estimatorServices.find((s) => s.id === id);

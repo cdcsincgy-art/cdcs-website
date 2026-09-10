@@ -1,9 +1,19 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { IconWhatsapp } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 
+// Routes with their own prominent WhatsApp controls, where the floating button
+// would only overlap the page's own actions.
+const HIDDEN_ON = ["/estimate"];
+
 export function WhatsAppFloat() {
+  const pathname = usePathname();
+  if (pathname && HIDDEN_ON.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    return null;
+  }
+
   return (
     <a
       href={siteConfig.contact.whatsappHrefWithMessage("Hello CDCS, I'd like to request a quote.")}

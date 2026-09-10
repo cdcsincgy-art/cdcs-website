@@ -69,8 +69,16 @@ export interface PricingProfile {
   /** True for jobs a person must scope regardless of rates. */
   inspectionRequired: boolean;
   /**
-   * Master switch. While true, this group ALWAYS returns "site_assessment" and
-   * never shows a number. Set false only once real rates are in place.
+   * Which non-priced outcome this group falls back to. "photo_assessment" for
+   * ordinary consumer / condition-driven jobs that can be quoted from photos;
+   * "site_assessment" for large, commercial, industrial, or complex jobs that
+   * genuinely need a walkthrough. Individual answers can still escalate a
+   * "photo_assessment" group to "site_assessment" (see forcesAssessment).
+   */
+  manualOutcome: "photo_assessment" | "site_assessment";
+  /**
+   * Master switch. While true, this group NEVER shows a number and returns
+   * `manualOutcome`. Set false only once real rates are in place.
    */
   manualQuoteRequired: boolean;
 }
@@ -91,6 +99,7 @@ function blankProfile(overrides: Partial<PricingProfile> = {}): PricingProfile {
     rangeSpread: 0.2,
     alwaysRange: true,
     inspectionRequired: false,
+    manualOutcome: "photo_assessment",
     manualQuoteRequired: true,
     ...overrides,
   };
@@ -101,14 +110,14 @@ function blankProfile(overrides: Partial<PricingProfile> = {}): PricingProfile {
  * group. Every value is a placeholder pending CDCS management input.
  */
 export const servicePricingConfig: Record<EstimatorGroupId, PricingProfile> = {
-  janitorial: blankProfile({ inspectionRequired: true }),
-  deep_residential: blankProfile(),
-  post_construction: blankProfile({ inspectionRequired: true }),
-  pressure_washing: blankProfile(),
-  mobile_detailing: blankProfile({ alwaysRange: false }),
-  fleet_washing: blankProfile({ inspectionRequired: true }),
-  carpet_upholstery: blankProfile({ alwaysRange: false }),
-  custom: blankProfile({ inspectionRequired: true }),
+  janitorial: blankProfile({ inspectionRequired: true, manualOutcome: "site_assessment" }),
+  deep_residential: blankProfile({ manualOutcome: "photo_assessment" }),
+  post_construction: blankProfile({ inspectionRequired: true, manualOutcome: "site_assessment" }),
+  pressure_washing: blankProfile({ manualOutcome: "photo_assessment" }),
+  mobile_detailing: blankProfile({ alwaysRange: false, manualOutcome: "photo_assessment" }),
+  fleet_washing: blankProfile({ inspectionRequired: true, manualOutcome: "site_assessment" }),
+  carpet_upholstery: blankProfile({ alwaysRange: false, manualOutcome: "photo_assessment" }),
+  custom: blankProfile({ inspectionRequired: true, manualOutcome: "site_assessment" }),
 };
 
 /**
@@ -128,7 +137,11 @@ export function getPricingProfile(serviceId: string, group: EstimatorGroupId): P
 // Calculation engine
 // ---------------------------------------------------------------------------
 
-export type EstimateResultKind = "estimated_price" | "estimated_range" | "site_assessment";
+export type EstimateResultKind =
+  | "estimated_price"
+  | "estimated_range"
+  | "photo_assessment"
+  | "site_assessment";
 
 export interface EstimateLineItem {
   label: string;
@@ -146,7 +159,7 @@ export interface EstimateResult {
   addOnsTotal?: number;
   /** Human-readable subtotal string, when a figure is shown. */
   subtotalLabel?: string;
-  /** Why a site assessment is needed, when kind is "site_assessment". */
+  /** Why an assessment is needed, when kind is "photo_assessment" / "site_assessment". */
   reason?: string;
   /** Named contributions to the figure, for the result screen. */
   lineItems?: EstimateLineItem[];
@@ -159,46 +172,53 @@ const num = (v: unknown): number => {
   return Number.isFinite(n) && n >= 0 ? n : 0;
 };
 
+interface ForcedOutcome {
+  kind: "photo_assessment" | "site_assessment";
+  reason: string;
+}
+
 /**
- * Conditions that always route to a human even if rates exist — the job is too
- * large, too variable, or too under-specified to price from a web form.
+ * Answers that route to a human even when rates exist. Large / commercial /
+ * complex jobs escalate to "site_assessment"; ordinary jobs whose condition
+ * simply needs to be seen escalate only to "photo_assessment".
  */
-function forcesAssessment(group: EstimatorGroupId, answers: AnswerMap): string | null {
+function forcesAssessment(group: EstimatorGroupId, answers: AnswerMap): ForcedOutcome | null {
   if (group === "custom") {
-    return "Custom requirements are always scoped individually so nothing is missed.";
+    return { kind: "site_assessment", reason: "Custom requirements are always scoped individually so nothing is missed." };
+  }
+  if (group === "post_construction") {
+    return { kind: "site_assessment", reason: "Post-construction scope depends on site conditions at handover and is confirmed on inspection." };
+  }
+  if (group === "janitorial" && (num(answers.squareFootage) > 15000 || num(answers.floors) > 3)) {
+    return { kind: "site_assessment", reason: "Larger multi-floor facilities are scoped on a walkthrough for an accurate contract price." };
+  }
+  if (group === "fleet_washing" && num(answers.fleetSize) > 10) {
+    return { kind: "site_assessment", reason: "Fleet programs are priced per vehicle type and frequency after a short depot assessment." };
+  }
+  if (group === "pressure_washing" && (String(answers.access) === "Difficult access" || num(answers.area) > 8000)) {
+    return { kind: "site_assessment", reason: "Large or hard-to-access exterior work is quoted after a site visit." };
+  }
+  if (group === "carpet_upholstery" && answers.petContamination === true) {
+    return { kind: "photo_assessment", reason: "Pet contamination needs a look at the item so we can quote the right treatment — a few photos are enough." };
   }
   const condition = String(answers.condition ?? answers.vehicleCondition ?? "");
   if (condition === "Very heavy" || condition === "Severe") {
-    return "Very heavy soiling varies a lot job to job and is confirmed on inspection.";
-  }
-  if (group === "janitorial") {
-    if (num(answers.squareFootage) > 15000 || num(answers.floors) > 3) {
-      return "Larger multi-floor facilities are scoped on a walkthrough for an accurate contract price.";
-    }
-  }
-  if (group === "post_construction") {
-    return "Post-construction scope depends on site conditions at handover and is confirmed on inspection.";
-  }
-  if (group === "fleet_washing") {
-    if (num(answers.fleetSize) > 10) {
-      return "Fleet programs are priced per vehicle type and frequency after a short depot assessment.";
-    }
-  }
-  if (group === "pressure_washing") {
-    if (String(answers.access) === "Difficult access" || num(answers.area) > 8000) {
-      return "Large or hard-to-access exterior work is quoted after a site visit.";
-    }
-  }
-  if (group === "carpet_upholstery" && answers.petContamination === true) {
-    return "Pet contamination is assessed in person so the right treatment is quoted.";
+    return { kind: "photo_assessment", reason: "Very heavy soiling varies job to job — send a few photos and we'll price it from those." };
   }
   return null;
 }
 
+const PHOTO_ASSESSMENT_REASON =
+  "The right price for this job depends on the condition of the item. Send a few photos with your quote request and a CDCS estimator will price it from those — no site visit needed.";
+const SITE_ASSESSMENT_REASON =
+  "This job is scoped in person so the quotation is accurate. Send your details through and a CDCS estimator will arrange a walkthrough and follow up with your official quotation.";
+
 /**
- * Compute an estimate outcome. Returns "site_assessment" whenever the group is
- * flagged manual, the job forces an assessment, or a rate needed for the maths
- * is missing. Otherwise returns a price or a range.
+ * Compute an estimate outcome:
+ *   - "estimated_price" / "estimated_range" once rates are in place
+ *   - "photo_assessment" for condition-driven jobs with no rates yet
+ *   - "site_assessment" for large / commercial / complex jobs
+ * A missing rate needed for the maths falls back to the group's manualOutcome.
  */
 export function computeEstimate(params: {
   serviceId: string;
@@ -209,15 +229,17 @@ export function computeEstimate(params: {
   const { serviceId, group, answers, selectedAddOnIds } = params;
   const profile = getPricingProfile(serviceId, group);
 
-  const ASSESSMENT_FALLBACK =
-    "CDCS prepares every quotation from confirmed scope and site conditions. Send your details through and an estimator will follow up with your official quotation — usually within one business day.";
+  const manualFallback = (): EstimateResult =>
+    profile.manualOutcome === "photo_assessment"
+      ? { kind: "photo_assessment", reason: PHOTO_ASSESSMENT_REASON }
+      : { kind: "site_assessment", reason: SITE_ASSESSMENT_REASON };
 
   if (profile.manualQuoteRequired) {
-    return { kind: "site_assessment", reason: ASSESSMENT_FALLBACK };
+    return manualFallback();
   }
 
   const forced = forcesAssessment(group, answers);
-  if (forced) return { kind: "site_assessment", reason: forced };
+  if (forced) return { kind: forced.kind, reason: forced.reason };
 
   // ---- Build the figure from whatever rates the profile provides ----
   const lineItems: EstimateLineItem[] = [];
@@ -231,7 +253,7 @@ export function computeEstimate(params: {
   const area = num(answers.squareFootage) || num(answers.area);
   if (area > 0) {
     if (profile.squareFootRate == null) {
-      return { kind: "site_assessment", reason: ASSESSMENT_FALLBACK };
+      return manualFallback();
     }
     const areaCost = area * profile.squareFootRate;
     subtotal += areaCost;
@@ -286,7 +308,7 @@ export function computeEstimate(params: {
     const price = profile.addOnPrices[id];
     if (price == null) {
       // A selected add-on has no price yet — fall back rather than guess.
-      return { kind: "site_assessment", reason: ASSESSMENT_FALLBACK };
+      return manualFallback();
     }
     addOnsTotal += price;
   }
@@ -294,7 +316,7 @@ export function computeEstimate(params: {
 
   // Guards: nothing to price, or a broken figure -> assessment.
   if (subtotal <= 0 || !Number.isFinite(subtotal)) {
-    return { kind: "site_assessment", reason: ASSESSMENT_FALLBACK };
+    return manualFallback();
   }
 
   if (profile.minimumCharge != null) {
