@@ -114,6 +114,9 @@ export function Estimator() {
   const [photoError, setPhotoError] = useState<string>("");
   const startedRef = useRef(false);
   const topRef = useRef<HTMLDivElement>(null);
+  const washcareViewedRef = useRef<string | null>(null);
+  const washcareSelectedRef = useRef<string | null>(null);
+  const washcareCompletedRef = useRef(false);
 
   const addPhotos = useCallback((list: FileList | null) => {
     if (!list) return;
@@ -180,6 +183,42 @@ export function Estimator() {
     });
   }, [service, group, state.answers, state.addOns]);
 
+  // WashCare funnel — viewed (a subscription-eligible service is chosen) and
+  // selected (a recurring plan / frequency is picked). No PII in params.
+  useEffect(() => {
+    if (!mounted || !service) return;
+    const grp = service.group;
+    if (grp !== "mobile_detailing" && grp !== "fleet_washing") return;
+
+    if (washcareViewedRef.current !== service.id) {
+      washcareViewedRef.current = service.id;
+      trackEvent("washcare_viewed", { service_id: service.id, service_group: grp });
+    }
+
+    const planType = String(state.answers.planType ?? "");
+    const fleetFreq = String(state.answers.washFrequency ?? "");
+    const isRecurring =
+      planType === "WashCare recurring plan" || (fleetFreq !== "" && fleetFreq !== "One-time wash");
+    if (!isRecurring) return;
+
+    const channel =
+      grp === "fleet_washing"
+        ? "fleet"
+        : String(state.answers.serviceMode ?? "").toLowerCase().includes("washbay")
+          ? "bay"
+          : "mobile";
+    const freq = grp === "fleet_washing" ? fleetFreq : String(state.answers.washcareFrequency ?? "");
+    const key = `${service.id}|${channel}|${freq}`;
+    if (washcareSelectedRef.current !== key) {
+      washcareSelectedRef.current = key;
+      trackEvent("washcare_selected", {
+        service_id: service.id,
+        washcare_channel: channel,
+        washcare_frequency: freq || "unspecified",
+      });
+    }
+  }, [mounted, service, state.answers]);
+
   const patch = useCallback((next: Partial<WizardState>) => {
     setStepError("");
     setState((prev) => ({ ...prev, ...next }));
@@ -241,6 +280,18 @@ export function Estimator() {
         ...result.analytics,
         outcome: result.kind,
       });
+      if (result.washcare && !washcareCompletedRef.current) {
+        washcareCompletedRef.current = true;
+        trackEvent("washcare_estimate_completed", {
+          service_category: service?.category,
+          service_id: service?.id,
+          washcare_channel: result.washcare.channel,
+          washcare_visits: result.washcare.visits,
+          washcare_vehicles: result.washcare.vehicles,
+          washcare_monthly: result.kind === "estimated_range" ? result.low : result.amount,
+          outcome: result.kind,
+        });
+      }
     }
     scrollToTop();
   }
@@ -1001,7 +1052,7 @@ function ResultScreen(
           onClick={onRequestQuote}
           className="inline-flex items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-bold text-navy-950 transition-colors hover:bg-accent-600"
         >
-          Request Official Quotation
+          {result.washcare ? "Request WashCare Enrollment" : "Request Official Quotation"}
           <IconArrowRight className="h-5 w-5" />
         </button>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -1039,20 +1090,42 @@ function ResultScreen(
         </p>
       )}
 
-      {/* ===== 4. Recurring plans (when calculated) ===== */}
-      {result.subscriptions && result.subscriptions.length > 0 && (
-        <div className="mt-6 rounded-lg border-2 border-brand-200 bg-brand-50 p-4">
-          <p className="text-xs font-bold uppercase tracking-wider text-brand-700">CDCS WashCare Mobile — recurring plan options</p>
-          <ul className="mt-2 space-y-1.5 text-sm">
-            {result.subscriptions.map((sub) => (
-              <li key={sub.label} className="flex justify-between gap-4">
-                <span className="text-navy-900">{sub.label}</span>
-                <span className="font-bold text-navy-900">{formatGYD(sub.monthly)} / month</span>
-              </li>
-            ))}
+      {/* ===== 4. WashCare recurring plan (when calculated) ===== */}
+      {result.washcare && (
+        <div className="mt-6 rounded-lg border-2 border-brand-300 bg-brand-50 p-5">
+          <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-brand-700">
+            {result.washcare.channel} — recurring plan
+          </p>
+          <dl className="mt-3 space-y-1.5 text-sm">
+            <div className="flex justify-between gap-4">
+              <dt className="text-slate-600">Scheduled washes</dt>
+              <dd className="text-right font-semibold text-navy-900">
+                {result.washcare.visits} per month
+                {result.washcare.vehicles > 1 ? ` · ${result.washcare.vehicles} vehicles` : ""}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-slate-600">Estimated one-time equivalent</dt>
+              <dd className="text-right font-semibold text-navy-900">
+                {formatGYD(result.washcare.equivalent)} / month
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-slate-600">WashCare estimated saving</dt>
+              <dd className="text-right font-bold text-brand-700">
+                {formatGYD(result.washcare.monthlySaving)} / month ({result.washcare.savingPct}%)
+              </dd>
+            </div>
+          </dl>
+          <ul className="mt-3 list-disc space-y-1 pl-5 text-xs text-slate-600">
+            <li>Priority scheduling with a consistent CDCS crew</li>
+            <li>Locked-in monthly rate — no per-wash price changes</li>
+            <li>Vehicles kept presentation-ready all year</li>
+            <li>One consolidated monthly invoice</li>
           </ul>
-          <p className="mt-2 text-xs text-slate-500">
-            Scheduled monthly maintenance plan. Additional detailing or severe-condition cleaning is charged separately.
+          <p className="mt-3 text-xs text-slate-500">
+            Preliminary monthly plan, not a binding quotation. Additional detailing or
+            severe-condition cleaning is charged separately.
           </p>
         </div>
       )}
@@ -1233,6 +1306,19 @@ function LeadForm(
     data.set("jobSummary", jobSummaryText);
     data.set("addOns", addOnLabels.join(", "));
     data.set("estimatorNotes", estimatorNotes);
+    if (result.washcare) {
+      const monthly =
+        result.kind === "estimated_range"
+          ? `${result.low} - ${result.high}`
+          : String(result.amount ?? "");
+      data.set("washcarePlan", result.washcare.channel);
+      data.set("washcareVisitsPerMonth", String(result.washcare.visits));
+      data.set("washcareVehicles", String(result.washcare.vehicles));
+      data.set("washcareMonthly", monthly);
+      data.set("washcareOneTimeEquivalent", String(result.washcare.equivalent));
+      data.set("washcareMonthlySaving", String(result.washcare.monthlySaving));
+      data.set("washcareSavingPct", String(result.washcare.savingPct));
+    }
     photos.forEach((f, i) => data.append(`photo_${i + 1}`, f, f.name));
 
     const endpoint = siteConfig.quoteFormEndpoint;
@@ -1259,6 +1345,15 @@ function LeadForm(
             outcome: result.kind,
           });
           trackEvent("generate_lead", { service: service.label, frequency: "estimator" });
+          if (result.washcare) {
+            trackEvent("washcare_enrollment_requested", {
+              service_category: service.category,
+              service_id: service.id,
+              washcare_channel: result.washcare.channel,
+              washcare_visits: result.washcare.visits,
+              washcare_vehicles: result.washcare.vehicles,
+            });
+          }
           setStatus("success");
           return;
         }

@@ -235,11 +235,13 @@ export const questionSets: Record<EstimatorGroupId, EstimatorQuestion[]> = {
 
   mobile_detailing: [
     { id: "focusService", label: "Focus", type: "select", options: ["Full wash / detail", "Engine wash only", "Undercarriage wash only", "Headlight restoration only", "Buffing & polishing only", "Odor treatment only"], optional: true },
+    { id: "planType", label: "One-time service or a WashCare recurring plan?", type: "select", options: ["One-time service", "WashCare recurring plan"], showWhen: { questionId: "focusService", equalsAny: ["Full wash / detail"] } },
     { id: "serviceMode", label: "Where will the work happen?", type: "select", options: ["Mobile (we come to you)", "Washbay (drop-off at CDCS)"] },
     { id: "vehicleClass", label: "Vehicle type", type: "select", options: ["Small car / sedan", "SUV", "Pickup", "Large SUV / 7-seater", "Canter / light commercial", "Other"] },
     { id: "washPackage", label: "Wash package", type: "select", options: ["Interior + exterior", "Exterior only"], showWhen: { questionId: "focusService", equalsAny: ["Full wash / detail"] } },
+    { id: "washcareFrequency", label: "Washes per month", type: "select", options: ["2 washes / month", "4 washes / month", "8 washes / month"], showWhen: { questionId: "planType", equalsAny: ["WashCare recurring plan"] } },
+    { id: "washcareVehicles", label: "Vehicles at the same location per visit", type: "number", min: 1, optional: true, showWhen: { questionId: "planType", equalsAny: ["WashCare recurring plan"] } },
     { id: "vehicleCondition", label: "Vehicle condition", type: "select", options: ["Normal", "Moderate", "Heavy", "Severe"] },
-    { id: "subscriptionInterest", label: "Interested in a recurring plan?", type: "select", options: ["One-time only", "2 washes per month", "4 washes per month"], optional: true, showWhen: { questionId: "focusService", equalsAny: ["Full wash / detail"] } },
     { id: "petHair", label: "Pet hair", type: "boolean" },
     { id: "heavyStains", label: "Heavy interior stains", type: "boolean" },
     { id: "odor", label: "Odor to treat", type: "boolean" },
@@ -252,7 +254,8 @@ export const questionSets: Record<EstimatorGroupId, EstimatorQuestion[]> = {
     { id: "washScope", label: "Wash scope", type: "select", options: ["Exterior", "Exterior + Engine", "Exterior + Bottom", "Exterior + Engine + Bottom"] },
     { id: "fleetSize", label: "How many similar units at one location?", type: "number", min: 1 },
     { id: "condition", label: "Condition", type: "select", options: ["Normal operating dirt", "Heavy mud / grease", "Severe buildup", "Exceptional / unknown contamination"] },
-    { id: "frequency", label: "Frequency", type: "select", options: ["One time", "Weekly", "Biweekly", "Monthly"] },
+    { id: "washFrequency", label: "One-time wash or a WashCare Fleet recurring programme?", type: "select", options: ["One-time wash", "2 washes / month", "4 washes / month", "8 washes / month"] },
+    { id: "sameLocation", label: "All units washed at one location per visit", type: "boolean" },
     { id: "depotLocation", label: "Depot / yard location", type: "text", placeholder: "e.g. Ruimveldt, Georgetown", fillsLocation: true },
   ],
 

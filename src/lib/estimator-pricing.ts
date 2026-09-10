@@ -262,11 +262,37 @@ export const pricing = {
     obstructionUplift: 1.1,
   },
 
-  // --- §17 CONSUMER SUBSCRIPTIONS (mobile interior+exterior full wash) ---
-  subscription: {
-    twoPerMonthFactor: 0.92, // of (2 x one-time)
-    fourPerMonthFactor: 0.85, // of (4 x one-time)
-    marginFloorFactor: 0.8, // never below this share of (visits x one-time)
+  // --- CDCS WASHCARE — recurring vehicle-washing subscription system ---
+  washcare: {
+    cap: 0.2, // global combined discount ceiling (== maxTotalDiscount)
+    marginFloorFactor: 0.8, // monthly never below this share of (visits x one-time)
+    // §A WashCare Bay — saving off (one-time washbay price x visits/month)
+    bay: {
+      "2 washes / month": { visits: 2, saving: 0.08 },
+      "4 washes / month": { visits: 4, saving: 0.15 },
+      "8 washes / month": { visits: 8, saving: 0.18 },
+    } as Record<string, { visits: number; saving: number }>,
+    // §B WashCare Mobile — saving off (one-time mobile price x visits/month)
+    mobile: {
+      "2 washes / month": { visits: 2, saving: 0.08 },
+      "4 washes / month": { visits: 4, saving: 0.12 },
+      "8 washes / month": { visits: 8, saving: 0.15 },
+    } as Record<string, { visits: number; saving: number }>,
+    // §B multi-vehicle same-location efficiency (mobile) — added to the plan
+    //     saving, then the combined total is capped at `cap`
+    multiVehicle: [
+      { minVehicles: 2, saving: 0.05 },
+      { minVehicles: 3, saving: 0.08 },
+      { minVehicles: 5, saving: 0.1 },
+    ],
+    // §C WashCare Fleet — recurring-service saving added to the fleet quantity
+    //     band discount, combined total capped at `cap`
+    fleet: {
+      "2 washes / month": { visits: 2, recurringSaving: 0.08 },
+      "4 washes / month": { visits: 4, recurringSaving: 0.12 },
+      "8 washes / month": { visits: 8, recurringSaving: 0.15 },
+    } as Record<string, { visits: number; recurringSaving: number }>,
+    fleetRangeSpread: 0.12, // fleet monthly shown as a range
   },
 
   // ======================================================================
@@ -445,9 +471,13 @@ export interface EstimateLineItem {
   amount: number;
 }
 
-export interface SubscriptionOption {
-  label: string;
-  monthly: number;
+export interface WashCarePlan {
+  channel: "WashCare Bay" | "WashCare Mobile" | "WashCare Fleet";
+  visits: number; // scheduled washes per month
+  vehicles: number;
+  equivalent: number; // undiscounted one-time equivalent per month
+  monthlySaving: number;
+  savingPct: number;
 }
 
 export interface EstimateResult {
@@ -459,8 +489,8 @@ export interface EstimateResult {
   subtotalLabel?: string;
   reason?: string;
   lineItems?: EstimateLineItem[];
-  /** Recurring consumer plan options (mobile vehicle washing). */
-  subscriptions?: SubscriptionOption[];
+  /** Present when the result is a CDCS WashCare recurring plan. */
+  washcare?: WashCarePlan;
   /** e.g. "Recurring Fleet Program Available". */
   recurringNote?: string;
   /** Extra customer-facing caveat (stain disclaimer, add-ons on request…). */
@@ -504,11 +534,11 @@ const siteAssessment = (reason = SITE_REASON, analytics?: EstimateResult["analyt
 interface OutOpts {
   lineItems?: EstimateLineItem[];
   addOnsTotal?: number;
-  subscriptions?: SubscriptionOption[];
   recurringNote?: string;
   noteExtra?: string;
   headline?: string;
   unitSuffix?: string;
+  washcare?: WashCarePlan;
   analytics?: EstimateResult["analytics"];
 }
 
@@ -523,7 +553,7 @@ function priceOut(amount: number, opts: OutOpts = {}): EstimateResult {
     subtotalLabel: formatGYD(rounded),
     lineItems: opts.lineItems,
     addOnsTotal: opts.addOnsTotal || undefined,
-    subscriptions: opts.subscriptions,
+    washcare: opts.washcare,
     recurringNote: opts.recurringNote,
     noteExtra: opts.noteExtra,
     headline: opts.headline,
@@ -549,7 +579,7 @@ function rangeOut(low: number, high: number, opts: OutOpts = {}): EstimateResult
     subtotalLabel: `${formatGYD(lo)} – ${formatGYD(hi)}${opts.unitSuffix ? ` ${opts.unitSuffix}` : ""}`,
     lineItems: opts.lineItems,
     addOnsTotal: opts.addOnsTotal || undefined,
-    subscriptions: opts.subscriptions,
+    washcare: opts.washcare,
     recurringNote: opts.recurringNote,
     noteExtra: opts.noteExtra,
     headline: opts.headline,
@@ -565,7 +595,7 @@ function cappedDiscount(...fractions: number[]): number {
 }
 
 // ---------------------------------------------------------------------------
-// §2 / §3 / §17 — VEHICLE WASHING (mobile_detailing group)
+// §2 / §3 — VEHICLE WASHING + CDCS WASHCARE (mobile_detailing group)
 // ---------------------------------------------------------------------------
 
 function priceVehicleWash(a: AnswerMap, addOns: string[]): EstimateResult {
@@ -576,11 +606,22 @@ function priceVehicleWash(a: AnswerMap, addOns: string[]): EstimateResult {
   const analytics = {
     service_mode: isWashbay ? "washbay" : "mobile",
     vehicle_type: vClass || "unspecified",
-    subscription_interest: s(a.subscriptionInterest) || "none",
+    plan_type: s(a.planType) || "one-time",
   };
 
   if (focus !== "Full wash / detail") {
-    return priceStandaloneDetail(focus, a, { ...analytics, subscription_interest: "none" });
+    return priceStandaloneDetail(focus, a, analytics);
+  }
+
+  if (!vClass || vClass === "Other") {
+    return photoAssessment("Send a photo of the vehicle and CDCS will confirm the right price for it.", analytics);
+  }
+
+  const pkgKey = s(a.washPackage) === "Exterior only" ? "exterior_only" : "interior_exterior";
+
+  // --- CDCS WashCare recurring plan (§A / §B) ---
+  if (s(a.planType) === "WashCare recurring plan") {
+    return priceWashCareVehicle(a, isWashbay, vClass, pkgKey, analytics);
   }
 
   const cond = s(a.vehicleCondition);
@@ -590,11 +631,7 @@ function priceVehicleWash(a: AnswerMap, addOns: string[]): EstimateResult {
       analytics,
     );
   }
-  if (!vClass || vClass === "Other") {
-    return photoAssessment("Send a photo of the vehicle and CDCS will confirm the right price for it.", analytics);
-  }
 
-  const pkgKey = s(a.washPackage) === "Exterior only" ? "exterior_only" : "interior_exterior";
   const table = isWashbay ? pricing.washbay : pricing.mobileWash;
   const base = table[pkgKey]?.[vClass];
   if (base == null) {
@@ -641,18 +678,6 @@ function priceVehicleWash(a: AnswerMap, addOns: string[]): EstimateResult {
   }
   amount = washFigure + addTotal;
 
-  // Subscriptions — mobile interior+exterior full wash only.
-  let subscriptions: SubscriptionOption[] | undefined;
-  if (!isWashbay && pkgKey === "interior_exterior") {
-    const oneTime = Math.max(base, pricing.mobileMinimum);
-    const two = clampSub(oneTime, 2, pricing.subscription.twoPerMonthFactor);
-    const four = clampSub(oneTime, 4, pricing.subscription.fourPerMonthFactor);
-    subscriptions = [
-      { label: "2 washes / month", monthly: two },
-      { label: "4 washes / month", monthly: four },
-    ];
-  }
-
   const noteExtra = onRequest.length
     ? `Also requested (confirmed with your vehicle): ${onRequest.join(", ")}.`
     : undefined;
@@ -660,16 +685,89 @@ function priceVehicleWash(a: AnswerMap, addOns: string[]): EstimateResult {
   return priceOut(amount, {
     lineItems,
     addOnsTotal: addTotal,
-    subscriptions,
     noteExtra,
     analytics,
   });
 }
 
-function clampSub(oneTime: number, visits: number, factor: number): number {
-  const raw = oneTime * visits * factor;
-  const floor = oneTime * visits * pricing.subscription.marginFloorFactor;
-  return roundCommercial(Math.max(raw, floor));
+// ---------------------------------------------------------------------------
+// CDCS WASHCARE BAY / MOBILE — recurring single-vehicle (or same-location
+// multi-vehicle) plans. Base = approved one-time wash price at Normal
+// condition. Discount = plan saving (+ mobile multi-vehicle efficiency),
+// capped at 20%, floored at 0.80 x (visits x one-time).
+// ---------------------------------------------------------------------------
+
+function priceWashCareVehicle(
+  a: AnswerMap,
+  isWashbay: boolean,
+  vClass: string,
+  pkgKey: "interior_exterior" | "exterior_only",
+  baseAnalytics: EstimateResult["analytics"],
+): EstimateResult {
+  const W = pricing.washcare;
+  const freqKey = s(a.washcareFrequency);
+  const planTable = isWashbay ? W.bay : W.mobile;
+  const plan = planTable[freqKey];
+  if (!plan) {
+    return siteAssessment("Choose how many washes per month for a WashCare plan estimate.", baseAnalytics);
+  }
+
+  const rawBase = (isWashbay ? pricing.washbay : pricing.mobileWash)[pkgKey]?.[vClass];
+  if (rawBase == null) {
+    return photoAssessment("Send a photo of the vehicle and CDCS will confirm the right WashCare price.", baseAnalytics);
+  }
+  // one-time equivalent per wash — mobile respects the GYD 6,000 minimum
+  const perWash = isWashbay ? rawBase : Math.max(rawBase, pricing.mobileMinimum);
+  const vehicles = Math.max(1, Math.round(n(a.washcareVehicles) || 1));
+
+  let saving = plan.saving;
+  if (!isWashbay && vehicles > 1) {
+    const mv = [...W.multiVehicle].reverse().find((b) => vehicles >= b.minVehicles);
+    if (mv) saving += mv.saving;
+  }
+  saving = Math.min(saving, W.cap);
+
+  const equivalent = perWash * plan.visits * vehicles;
+  const floor = equivalent * W.marginFloorFactor;
+  const monthly = roundCommercial(Math.max(equivalent * (1 - saving), floor));
+  const equivRounded = roundCommercial(equivalent);
+  const monthlySaving = Math.max(0, roundCommercial(equivRounded - monthly));
+
+  if (!Number.isFinite(monthly) || monthly <= 0 || monthly > equivRounded) {
+    return siteAssessment(SITE_REASON, baseAnalytics);
+  }
+
+  const channel: WashCarePlan["channel"] = isWashbay ? "WashCare Bay" : "WashCare Mobile";
+  return {
+    kind: "estimated_price",
+    amount: monthly,
+    subtotalLabel: `${formatGYD(monthly)} / month`,
+    headline: "Estimated Monthly Plan",
+    unitSuffix: "/ month",
+    lineItems: [
+      {
+        label: `${channel} · ${plan.visits} washes/month${vehicles > 1 ? ` · ${vehicles} vehicles` : ""} · ${vClass}`,
+        amount: monthly,
+      },
+    ],
+    noteExtra:
+      "Preliminary monthly plan, not a binding quotation. Scheduled monthly maintenance — additional detailing or severe-condition cleaning is charged separately.",
+    washcare: {
+      channel,
+      visits: plan.visits,
+      vehicles,
+      equivalent: equivRounded,
+      monthlySaving,
+      savingPct: Math.round(saving * 100),
+    },
+    analytics: {
+      ...baseAnalytics,
+      washcare_channel: isWashbay ? "bay" : "mobile",
+      washcare_visits: plan.visits,
+      washcare_vehicles: vehicles,
+      outcome: "estimated_price",
+    },
+  };
 }
 
 /**
@@ -740,13 +838,23 @@ function priceFleet(a: AnswerMap): EstimateResult {
   const vClass = s(a.vehicleClass);
   const size = Math.max(1, Math.round(n(a.fleetSize) || 1));
   const band = fleetBand(size);
-  const analytics = { vehicle_type: vClass || "unspecified", fleet_quantity_band: band.label };
+  const washFreq = s(a.washFrequency);
+  const isRecurring = washFreq !== "" && washFreq !== "One-time wash";
+  const analytics = { vehicle_type: vClass || "unspecified", fleet_quantity_band: band.label, plan_type: isRecurring ? "washcare_fleet" : "one-time" };
 
-  if (vClass === "Heavy equipment") return priceHeavyEquipment(a, size, band, analytics);
+  if (vClass === "Heavy equipment") {
+    if (isRecurring) {
+      return siteAssessment(
+        "Recurring heavy-equipment washing is set up as a CUSTOM FLEET SERVICE AGREEMENT — contact CDCS to arrange it.",
+        { ...analytics, outcome: "site_assessment" },
+      );
+    }
+    return priceHeavyEquipment(a, size, band, analytics);
+  }
 
   if (band.custom) {
     return siteAssessment(
-      "A fleet of this size is set up as a custom CDCS Fleet Service Agreement with program pricing — contact CDCS to arrange it.",
+      `A fleet of this size is set up as a CUSTOM FLEET SERVICE AGREEMENT with program pricing — contact CDCS to arrange it.`,
       analytics,
     );
   }
@@ -770,13 +878,15 @@ function priceFleet(a: AnswerMap): EstimateResult {
 
   const condUplift = pricing.fleetCondition[cond] ?? 0;
   const perUnit = perUnitBase * (1 + condUplift);
+
+  // --- WashCare Fleet recurring monthly programme (§C) ---
+  if (isRecurring) {
+    return priceWashCareFleet(a, vClass, scope, perUnit, size, band, cond, condUplift, analytics);
+  }
+
   const discount = cappedDiscount(band.discount ?? 0);
   const perUnitAfter = perUnit * (1 - discount);
   const total = perUnitAfter * size;
-
-  const recurring = ["Weekly", "Biweekly", "Monthly"].includes(s(a.frequency))
-    ? "Recurring Fleet Program Available — CDCS can prepare a Fleet Service Agreement with scheduled program pricing."
-    : undefined;
 
   const lineItems: EstimateLineItem[] = [
     {
@@ -791,7 +901,83 @@ function priceFleet(a: AnswerMap): EstimateResult {
     });
   }
 
-  return priceOut(total, { lineItems, recurringNote: recurring, analytics });
+  return priceOut(total, { lineItems, analytics });
+}
+
+// ---------------------------------------------------------------------------
+// CDCS WASHCARE FLEET — recurring commercial fleet programme. Monthly =
+// per-unit one-off (after condition) × units × washes/month × (1 − combined
+// discount), where combined = fleet quantity band + recurring saving, capped
+// at 20%. Shown as a range. 21+ units → custom fleet service agreement.
+// ---------------------------------------------------------------------------
+
+function priceWashCareFleet(
+  a: AnswerMap,
+  vClass: string,
+  scope: string,
+  perUnit: number,
+  size: number,
+  band: ReturnType<typeof fleetBand>,
+  cond: string,
+  condUplift: number,
+  analytics: EstimateResult["analytics"],
+): EstimateResult {
+  const W = pricing.washcare;
+  const plan = W.fleet[s(a.washFrequency)];
+  if (!plan) {
+    return siteAssessment("Choose how many washes per month for a WashCare Fleet estimate.", analytics);
+  }
+  if (band.custom) {
+    return siteAssessment(
+      "A recurring fleet of 21+ vehicles is set up as a CUSTOM FLEET SERVICE AGREEMENT — contact CDCS to arrange it.",
+      { ...analytics, outcome: "site_assessment" },
+    );
+  }
+
+  const combined = Math.min((band.discount ?? 0) + plan.recurringSaving, W.cap);
+  const equivalent = perUnit * size * plan.visits;
+  const mid = equivalent * (1 - combined);
+  const lo = roundCommercial(mid);
+  const hi = roundCommercial(mid * (1 + W.fleetRangeSpread));
+  const equivRounded = roundCommercial(equivalent);
+
+  if (!Number.isFinite(lo) || lo <= 0 || hi < lo || lo > equivRounded) {
+    return siteAssessment(SITE_REASON, analytics);
+  }
+  const monthlySaving = Math.max(0, roundCommercial(equivRounded - lo));
+
+  return {
+    kind: "estimated_range",
+    low: lo,
+    high: hi,
+    subtotalLabel: `${formatGYD(lo)} – ${formatGYD(hi)} / month`,
+    headline: "Estimated Monthly Plan",
+    unitSuffix: "/ month",
+    lineItems: [
+      {
+        label: `WashCare Fleet · ${size} × ${vClass} · ${scope}${condUplift ? ` (+${Math.round(condUplift * 100)}% ${cond})` : ""} · ${plan.visits} washes/month`,
+        amount: lo,
+      },
+    ],
+    recurringNote:
+      "WashCare Fleet — a scheduled monthly washing programme. Final pricing and a fleet service agreement are confirmed with CDCS.",
+    noteExtra: `Preliminary monthly range, not a binding quotation. Combined volume + recurring saving ${Math.round(combined * 100)}% (capped at ${Math.round(W.cap * 100)}%).`,
+    washcare: {
+      channel: "WashCare Fleet",
+      visits: plan.visits,
+      vehicles: size,
+      equivalent: equivRounded,
+      monthlySaving,
+      savingPct: Math.round(combined * 100),
+    },
+    analytics: {
+      ...analytics,
+      washcare_channel: "fleet",
+      washcare_visits: plan.visits,
+      washcare_vehicles: size,
+      outcome: "estimated_range",
+    },
+  };
 }
 
 function priceHeavyEquipment(
