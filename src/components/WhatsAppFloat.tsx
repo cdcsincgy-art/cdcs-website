@@ -6,7 +6,7 @@ import { siteConfig } from "@/lib/site-config";
 
 // Routes with their own prominent WhatsApp controls, where the floating button
 // would only overlap the page's own actions.
-const HIDDEN_ON = ["/estimate"];
+const HIDDEN_ON = ["/estimate", "/washcare"];
 
 export function WhatsAppFloat() {
   const pathname = usePathname();

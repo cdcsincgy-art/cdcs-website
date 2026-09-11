@@ -402,7 +402,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Link href="/services/car-wash-mobile-vehicle-washing/" className="font-semibold text-brand-600 hover:underline">
                         car wash &amp; mobile vehicle washing
                       </Link>{" "}
-                      is the lighter, more frequent option. To book,{" "}
+                      is the lighter, more frequent option. Want it on a set schedule instead of
+                      booking each time? See{" "}
+                      <Link href="/washcare/" className="font-semibold text-brand-600 hover:underline">
+                        WashCare recurring plans
+                      </Link>
+                      . To book,{" "}
                       <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
                         request a mobile detailing quote
                       </Link>{" "}
@@ -543,8 +548,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       wash to cab, wheels, trailer, and an undercarriage rinse. One-time washes are
                       available for a specific job, an audit, or a lease return. For a small number
                       of company or pool vehicles on a set monthly schedule,{" "}
-                      <Link href="/services/car-wash-mobile-vehicle-washing/" className="font-semibold text-brand-600 hover:underline">
-                        WashCare recurring vehicle washing
+                      <Link href="/washcare/#fleet" className="font-semibold text-brand-600 hover:underline">
+                        WashCare Fleet
                       </Link>{" "}
                       may be the simpler arrangement.
                     </p>
@@ -902,11 +907,15 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
                         fleet washing
                       </Link>
-                      .
+                      . See the full{" "}
+                      <Link href="/washcare/" className="font-semibold text-brand-600 hover:underline">
+                        WashCare plans and pricing
+                      </Link>{" "}
+                      for Bay, Mobile, and Fleet.
                     </p>
                     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                       <Button
-                        href="/estimate/"
+                        href="/estimate/?service=mobile-detailing&washcare=1"
                         variant="primary"
                         size="lg"
                         icon={<IconArrowRight className="h-5 w-5" />}

@@ -158,6 +158,16 @@ export default function HomePage() {
               View All Services
             </Button>
           </div>
+
+          <div className="mt-6 flex flex-col items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-slate-600">
+              <span className="font-bold text-navy-900">Prefer a recurring plan?</span>{" "}
+              WashCare keeps a vehicle or fleet clean every month, on a set schedule.
+            </p>
+            <Link href="/washcare/" className="shrink-0 text-sm font-bold text-brand-600 hover:underline">
+              Explore WashCare →
+            </Link>
+          </div>
         </div>
       </section>
 

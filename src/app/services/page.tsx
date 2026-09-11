@@ -64,6 +64,11 @@ const combinations = [
       { label: "Mobile Detailing", href: "/services/mobile-detailing/" },
     ],
   },
+  {
+    title: "WashCare — recurring vehicle care",
+    body: "Skip the rebooking. WashCare keeps a vehicle or fleet on a scheduled monthly wash — Bay, Mobile, or Fleet plans with predictable pricing from the same rates used in the estimator.",
+    links: [{ label: "WashCare Plans & Pricing", href: "/washcare/" }],
+  },
 ];
 
 export default function ServicesPage() {

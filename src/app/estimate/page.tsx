@@ -62,6 +62,13 @@ export default function EstimatePage() {
             Your estimate is preliminary and may change after photos, inspection, measurements, site
             conditions or final scope verification.
           </p>
+          <p className="mt-4 max-w-2xl text-sm text-slate-300">
+            Looking for a recurring vehicle plan instead of a one-time job? See{" "}
+            <Link href="/washcare/" className="font-semibold text-accent-400 hover:underline">
+              WashCare
+            </Link>
+            .
+          </p>
         </div>
       </section>
 

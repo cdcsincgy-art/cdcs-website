@@ -60,6 +60,7 @@ export function Footer() {
             <li><Link href="/industries/" className="text-slate-400 hover:text-accent-400">Industries We Serve</Link></li>
             <li><Link href="/our-work/" className="text-slate-400 hover:text-accent-400">Our Work</Link></li>
             <li><Link href="/insights/" className="text-slate-400 hover:text-accent-400">Cleaning &amp; Facility Insights</Link></li>
+            <li><Link href="/washcare/" className="text-slate-400 hover:text-accent-400">WashCare Plans</Link></li>
             <li><Link href="/estimate/" className="text-slate-400 hover:text-accent-400">Get an Estimate</Link></li>
             <li><Link href="/quote/" className="text-slate-400 hover:text-accent-400">Request a Quote</Link></li>
             <li><Link href="/contact/" className="text-slate-400 hover:text-accent-400">Contact Us</Link></li>

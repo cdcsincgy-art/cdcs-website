@@ -118,6 +118,7 @@ export function Estimator() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState<string>("");
   const startedRef = useRef(false);
+  const urlPrefillRef = useRef(false);
   const topRef = useRef<HTMLDivElement>(null);
   const washcareViewedRef = useRef<string | null>(null);
   const washcareSelectedRef = useRef<string | null>(null);
@@ -166,6 +167,40 @@ export function Estimator() {
     if (startedRef.current || !mounted) return;
     startedRef.current = true;
     trackEvent("estimator_started");
+  }, [mounted]);
+
+  // WashCare deep-link prefill — e.g. /estimate/?service=mobile-detailing&washcare=1&mode=bay
+  // from the /washcare/ page or a service page's "Estimate Your WashCare Plan"
+  // CTA. Only applies to a genuinely fresh session (no service chosen yet) so
+  // it never overwrites an in-progress estimate. `washcare=1` alone (with no
+  // `service`) just records funnel arrival — the customer still picks a
+  // channel themselves in Step 2.
+  useEffect(() => {
+    if (urlPrefillRef.current || !mounted) return;
+    urlPrefillRef.current = true;
+    let params: URLSearchParams;
+    try {
+      params = new URLSearchParams(window.location.search);
+    } catch {
+      return;
+    }
+    const washcareIntent = params.get("washcare") === "1";
+    const svcId = params.get("service");
+    if (washcareIntent) {
+      trackEvent("washcare_estimator_started", { service_id: svcId || "unspecified" });
+    }
+    if (!svcId || state.serviceId) return;
+    const svc = getEstimatorService(svcId);
+    if (!svc) return;
+    const extra: Answers = {};
+    if (washcareIntent && svc.group === "mobile_detailing") {
+      extra.planType = "WashCare recurring plan";
+      const mode = params.get("mode");
+      if (mode === "bay") extra.serviceMode = "Washbay (drop-off at CDCS)";
+      else if (mode === "mobile") extra.serviceMode = "Mobile (we come to you)";
+    }
+    selectService(svc.id, Object.keys(extra).length ? extra : undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- one-shot on mount, reads window.location directly
   }, [mounted]);
 
   const service = useMemo(() => getEstimatorService(state.serviceId), [state.serviceId]);
@@ -366,13 +401,15 @@ export function Estimator() {
     scrollToTop();
   }
 
-  function selectService(id: string) {
+  function selectService(id: string, extraAnswers?: Answers) {
     const svc = getEstimatorService(id);
     // Seed the answers this specific service fixes, and clear everything else
-    // so a value from a previously-chosen service can never carry over.
+    // so a value from a previously-chosen service can never carry over. A
+    // caller (e.g. the WashCare deep-link prefill below) can layer a couple of
+    // additional starting answers — such as a WashCare plan type — on top.
     patch({
       serviceId: id,
-      answers: { ...(svc?.presetAnswers ?? {}) },
+      answers: { ...(svc?.presetAnswers ?? {}), ...extraAnswers },
       addOns: [],
       reference: null,
     });
