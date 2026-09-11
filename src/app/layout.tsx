@@ -50,56 +50,85 @@ export const metadata: Metadata = {
   // file conventions in src/app/ — regenerate with `npm run logo:assets`.
 };
 
+// One connected entity graph for the whole site: the CDCS business
+// (ProfessionalService, @id #business) and the website (@id #website) that
+// publishes it. Service pages, article publishers, and breadcrumbs all point
+// back to #business by @id, so Google resolves them to this single entity.
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  "@id": `${siteConfig.url}/#business`,
-  name: siteConfig.companyName,
-  alternateName: siteConfig.brandName,
-  description: siteConfig.description,
-  slogan: siteConfig.tagline,
-  url: siteConfig.url,
-  logo: `${siteConfig.url}/images/cdcs-logo.png`,
-  image: [
-    `${siteConfig.url}${ogImage.url}`,
-    `${siteConfig.url}/images/projects/commercial-cleaning/commercial-cleaning-facility-interior.jpg`,
-    `${siteConfig.url}/images/projects/fleet-washing/fleet-washing-truck-covered-in-foam.jpg`,
-    `${siteConfig.url}/images/projects/upholstery-extraction/upholstery-extraction-car-seat-before-after.jpg`,
-  ],
-  telephone: siteConfig.contact.phoneDisplay,
-  email: siteConfig.contact.email,
-  knowsLanguage: ["en"],
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: siteConfig.location.city,
-    addressCountry: "GY",
-  },
-  areaServed: [
-    { "@type": "Country", name: "Guyana" },
-    { "@type": "City", name: "Georgetown" },
-  ],
-  contactPoint: {
-    "@type": "ContactPoint",
-    telephone: siteConfig.contact.phoneDisplay,
-    email: siteConfig.contact.email,
-    contactType: "customer service",
-    areaServed: "GY",
-    availableLanguage: "English",
-  },
-  sameAs: [siteConfig.social.instagram, siteConfig.social.facebook],
-  hasOfferCatalog: {
-    "@type": "OfferCatalog",
-    name: "Cleaning & facility services",
-    itemListElement: services.map((s) => ({
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: s.title,
-        description: s.shortDescription,
-        url: `${siteConfig.url}/services/${s.slug}/`,
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": `${siteConfig.url}/#business`,
+      name: siteConfig.companyName,
+      alternateName: siteConfig.brandName,
+      description: siteConfig.description,
+      slogan: siteConfig.tagline,
+      url: siteConfig.url,
+      foundingDate: siteConfig.foundingDate,
+      logo: `${siteConfig.url}/images/cdcs-logo.png`,
+      image: [
+        `${siteConfig.url}${ogImage.url}`,
+        `${siteConfig.url}/images/projects/commercial-cleaning/commercial-cleaning-facility-interior.jpg`,
+        `${siteConfig.url}/images/projects/fleet-washing/fleet-washing-truck-covered-in-foam.jpg`,
+        `${siteConfig.url}/images/projects/upholstery-extraction/upholstery-extraction-car-seat-before-after.jpg`,
+      ],
+      telephone: siteConfig.contact.phoneE164,
+      email: siteConfig.contact.email,
+      knowsLanguage: ["en"],
+      knowsAbout: [
+        "Janitorial services",
+        "Commercial and office cleaning",
+        "Deep cleaning",
+        "Post-construction cleaning",
+        "Pressure washing",
+        "Carpet and upholstery cleaning",
+        "Car wash and mobile vehicle washing",
+        "Mobile vehicle detailing",
+        "Fleet washing",
+      ],
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: siteConfig.location.city,
+        addressCountry: "GY",
       },
-    })),
-  },
+      areaServed: [
+        { "@type": "Country", name: "Guyana" },
+        { "@type": "City", name: "Georgetown" },
+      ],
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: siteConfig.contact.phoneE164,
+        email: siteConfig.contact.email,
+        contactType: "customer service",
+        areaServed: "GY",
+        availableLanguage: "English",
+      },
+      sameAs: [siteConfig.social.instagram, siteConfig.social.facebook],
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Cleaning & facility services",
+        itemListElement: services.map((s) => ({
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: s.title,
+            description: s.shortDescription,
+            url: `${siteConfig.url}/services/${s.slug}/`,
+          },
+        })),
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteConfig.url}/#website`,
+      url: siteConfig.url,
+      name: siteConfig.brandName,
+      alternateName: siteConfig.companyName,
+      inLanguage: "en",
+      publisher: { "@id": `${siteConfig.url}/#business` },
+    },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

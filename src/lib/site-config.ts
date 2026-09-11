@@ -2,10 +2,13 @@
 // copy toggles here and they propagate across the entire site.
 
 export const siteConfig = {
-  companyName: "Capital Detailing & Cleaning Services Inc.",
+  // Registered legal name — must match the Google Business Profile name exactly.
+  companyName: "Capital Detailing and Cleaning Services Inc.",
   brandName: "CDCS Inc.",
   brandShort: "CDCS",
   tagline: "Professional Cleaning. Powerful Results.",
+  // Business open date, confirmed by management (GBP "opening date").
+  foundingDate: "2022-09-01",
   description:
     "CDCS Inc. provides commercial and janitorial cleaning, pressure washing, fleet washing, mobile detailing, and facility cleaning in Georgetown and across Guyana.",
   // Canonical origin for the site. Must exactly match the primary domain
@@ -20,7 +23,9 @@ export const siteConfig = {
     display: "Georgetown, Guyana",
   },
   contact: {
-    phoneDisplay: "+592 625-2141",
+    phoneDisplay: "+592 625 2141",
+    // E.164 form for tel: links and structured data (schema.org telephone).
+    phoneE164: "+5926252141",
     phoneHref: "tel:+5926252141",
     whatsappNumber: "5926252141",
     get whatsappHref() {

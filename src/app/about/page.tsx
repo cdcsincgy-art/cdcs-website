@@ -12,7 +12,7 @@ import { siteConfig } from "@/lib/site-config";
 export const metadata: Metadata = {
   title: { absolute: "About CDCS Inc. — Cleaning Company in Guyana" },
   description:
-    "Capital Detailing & Cleaning Services Inc. (CDCS Inc.) — a Guyana-based commercial cleaning, pressure washing, and facility-support company for businesses.",
+    "Capital Detailing and Cleaning Services Inc. (CDCS Inc.) — a Georgetown-based commercial cleaning, pressure washing, and facility-support company serving businesses across Guyana since 2022.",
   alternates: { canonical: "/about/" },
 };
 
@@ -55,13 +55,14 @@ export default function AboutPage() {
       <section className="bg-white py-16 sm:py-24">
         <div className="container-page grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div>
-            <SectionHeading eyebrow="Who We Are" title="Capital Detailing & Cleaning Services Inc." />
+            <SectionHeading eyebrow="Who We Are" title={siteConfig.companyName} />
             <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
               <p>
                 {siteConfig.companyName}, operating as {siteConfig.brandName}, is a
-                Georgetown-based company providing professional cleaning, detailing, pressure
-                washing, and facility-support services to businesses, organizations, government
-                agencies, commercial properties, fleets, and individual clients throughout Guyana.
+                Georgetown-based company that has provided professional cleaning, detailing,
+                pressure washing, and facility-support services since 2022 — to businesses,
+                organizations, government agencies, commercial properties, fleets, and individual
+                clients throughout Guyana.
               </p>
               <p>
                 We work with corporate offices, property managers, restaurants, retail
