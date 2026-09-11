@@ -106,6 +106,11 @@ function loadInitialState(): WizardState {
 export function Estimator() {
   const [state, setState] = useState<WizardState>(loadInitialState);
   const [mounted, setMounted] = useState(false);
+  // "active" while the customer is working through / reviewing an estimate;
+  // "submitted" once an official quotation request has been accepted. A
+  // submitted session is shown as a confirmation and is NOT persisted, so a
+  // refresh lands on a fresh estimate rather than a stale form.
+  const [phase, setPhase] = useState<"active" | "submitted">("active");
   const [stepError, setStepError] = useState<string>("");
   const [openCategory, setOpenCategory] = useState<string | null>(
     () => getEstimatorService(state.serviceId)?.category ?? null,
@@ -145,15 +150,16 @@ export function Estimator() {
     setMounted(true);
   }, []);
 
-  // Persist progress (photos are never serialized).
+  // Persist progress (photos are never serialized). A submitted session is not
+  // persisted — see `phase`.
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || phase === "submitted") return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
       /* storage full or blocked — non-fatal */
     }
-  }, [state, mounted]);
+  }, [state, mounted, phase]);
 
   // Fire estimator_started once, after mount.
   useEffect(() => {
@@ -302,17 +308,61 @@ export function Estimator() {
     scrollToTop();
   }
 
-  function resetAll() {
+  /**
+   * The single source of truth for clearing an estimator session. Every
+   * "Reset estimate" / "Start New Estimate" / "Start Another Estimate" control
+   * calls this — nothing else clears estimator state. Clears the wizard state
+   * (customer type, service, job details, add-ons, condition, location input,
+   * WashCare plan / frequency / vehicle count, calculated result, assessment
+   * outcome, estimate reference, quote-prefill), the persisted copy, uploaded
+   * photos, the WashCare analytics de-dupe refs, and the submitted phase. It
+   * does not touch unrelated storage, analytics, or other page features.
+   */
+  function resetEstimatorSession() {
     try {
       window.localStorage.removeItem(STORAGE_KEY);
     } catch {
       /* ignore */
     }
+    washcareViewedRef.current = null;
+    washcareSelectedRef.current = null;
+    washcareCompletedRef.current = false;
+    setPhase("active");
     setState(INITIAL_STATE);
     setStepError("");
     setOpenCategory(null);
     setPhotos([]);
     setPhotoError("");
+    scrollToTop();
+  }
+
+  function handleReset() {
+    resetEstimatorSession();
+    trackEvent("estimator_reset");
+  }
+
+  function handleStartNewEstimate() {
+    resetEstimatorSession();
+    trackEvent("estimator_new_started");
+  }
+
+  // Step 6 (quote form) -> back to the step 5 result, preserving everything.
+  function handleBackToEstimate() {
+    setPhase("active");
+    patch({ step: 5 });
+    scrollToTop();
+  }
+
+  // Called once an official quotation request is confirmed accepted. Drops the
+  // persisted session so a refresh does not repopulate a completed estimate,
+  // but keeps the in-memory state so the confirmation can show its reference.
+  function handleQuoteSubmitted() {
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    setPhase("submitted");
     scrollToTop();
   }
 
@@ -360,6 +410,23 @@ export function Estimator() {
     return (
       <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500 shadow-sm">
         Loading the estimator…
+      </div>
+    );
+  }
+
+  if (phase === "submitted") {
+    return (
+      <div ref={topRef} className="scroll-mt-24">
+        <ConfirmationPanel
+          heading="Quote Request Received"
+          reference={state.reference}
+          whatsappHref={whatsappHref}
+          onStartNew={handleStartNewEstimate}
+          showHomeLink
+        >
+          Thank you — your official quotation request is in. A CDCS estimator will follow up by
+          phone, email, or WhatsApp, usually within one business day.
+        </ConfirmationPanel>
       </div>
     );
   }
@@ -536,6 +603,7 @@ export function Estimator() {
               patch({ step: 6 });
               scrollToTop();
             }}
+            onStartNew={handleStartNewEstimate}
           />
         )}
 
@@ -555,6 +623,9 @@ export function Estimator() {
             onAddPhotos={addPhotos}
             onRemovePhoto={removePhoto}
             photoError={photoError}
+            onSubmitted={handleQuoteSubmitted}
+            onBackToEstimate={handleBackToEstimate}
+            onStartNew={handleStartNewEstimate}
           />
         )}
 
@@ -579,7 +650,7 @@ export function Estimator() {
               )}
               <button
                 type="button"
-                onClick={resetAll}
+                onClick={handleReset}
                 className="rounded-md px-3 py-2.5 text-sm font-semibold text-slate-500 hover:text-red-600 hover:underline"
               >
                 Reset estimate
@@ -997,7 +1068,8 @@ function OutcomeBlock({ result }: { result: EstimateResult }) {
 }
 
 function ResultScreen(
-  props: SummaryProps & PhotoProps & { whatsappHref: string; onRequestQuote: () => void },
+  props: SummaryProps &
+    PhotoProps & { whatsappHref: string; onRequestQuote: () => void; onStartNew: () => void },
 ) {
   const {
     service,
@@ -1010,6 +1082,7 @@ function ResultScreen(
     estimatorNotes,
     whatsappHref,
     onRequestQuote,
+    onStartNew,
     photos,
     onAddPhotos,
     onRemovePhoto,
@@ -1079,6 +1152,13 @@ function ResultScreen(
             Call CDCS
           </a>
         </div>
+        <button
+          type="button"
+          onClick={onStartNew}
+          className="mt-1 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:border-slate-400 hover:text-navy-900"
+        >
+          Start New Estimate
+        </button>
       </div>
 
       {servicePage && (
@@ -1233,7 +1313,14 @@ function InfoCard({ label, children }: { label: string; children: ReactNode }) {
 // ---------------------------------------------------------------------------
 
 function LeadForm(
-  props: SummaryProps & PhotoProps & { defaultLocation: string; whatsappHref: string },
+  props: SummaryProps &
+    PhotoProps & {
+      defaultLocation: string;
+      whatsappHref: string;
+      onSubmitted: () => void;
+      onBackToEstimate: () => void;
+      onStartNew: () => void;
+    },
 ) {
   const {
     reference,
@@ -1246,6 +1333,9 @@ function LeadForm(
     result,
     defaultLocation,
     whatsappHref,
+    onSubmitted,
+    onBackToEstimate,
+    onStartNew,
     photos,
     onAddPhotos,
     onRemovePhoto,
@@ -1354,7 +1444,9 @@ function LeadForm(
               washcare_vehicles: result.washcare.vehicles,
             });
           }
-          setStatus("success");
+          // The estimator owns the post-submission confirmation (and drops the
+          // persisted session) so a refresh can't trap the customer here.
+          onSubmitted();
           return;
         }
         const detail = payload?.errors?.map((x) => x.message).filter(Boolean).join(" ") || payload?.error;
@@ -1399,17 +1491,15 @@ function LeadForm(
     setStatus("email_opened");
   }
 
-  if (status === "success") {
-    return (
-      <ConfirmationPanel heading="Quote Request Received" reference={reference} whatsappHref={whatsappHref}>
-        Thank you — your official quotation request is in. A CDCS estimator will follow up by phone,
-        email, or WhatsApp, usually within one business day.
-      </ConfirmationPanel>
-    );
-  }
   if (status === "email_opened") {
     return (
-      <ConfirmationPanel heading="Finish in Your Email App" reference={reference} whatsappHref={whatsappHref}>
+      <ConfirmationPanel
+        heading="Finish in Your Email App"
+        reference={reference}
+        whatsappHref={whatsappHref}
+        onBackToEstimate={onBackToEstimate}
+        onStartNew={onStartNew}
+      >
         We&apos;ve opened a pre-filled email in your mail app — review it and press send to complete
         your request. If nothing opened, use WhatsApp or call us.
       </ConfirmationPanel>
@@ -1428,7 +1518,24 @@ function LeadForm(
         Your estimator answers are attached automatically — you only need your contact details.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-5 space-y-5" noValidate>
+      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+        <button
+          type="button"
+          onClick={onBackToEstimate}
+          className="inline-flex min-h-[44px] items-center gap-1.5 font-semibold text-brand-600 hover:underline"
+        >
+          <span aria-hidden>&larr;</span> Back to estimate
+        </button>
+        <button
+          type="button"
+          onClick={onStartNew}
+          className="inline-flex min-h-[44px] items-center font-semibold text-slate-500 hover:text-navy-900 hover:underline"
+        >
+          Start new estimate
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-3 space-y-5" noValidate>
         {status === "error" && error && (
           <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
             {error}
@@ -1514,11 +1621,20 @@ function ConfirmationPanel({
   reference,
   whatsappHref,
   children,
+  onStartNew,
+  onBackToEstimate,
+  showHomeLink,
 }: {
   heading: string;
   reference: string | null;
   whatsappHref: string;
   children: ReactNode;
+  /** Primary "Start Another Estimate" action — clears the session, back to Step 1. */
+  onStartNew?: () => void;
+  /** "Back to Estimate" — only where returning to the result makes sense. */
+  onBackToEstimate?: () => void;
+  /** Show a "Return to Home" link alongside the contact actions. */
+  showHomeLink?: boolean;
 }) {
   return (
     <div role="status" className="rounded-xl border border-brand-200 bg-brand-50 p-8 text-center sm:p-10">
@@ -1530,22 +1646,51 @@ function ConfirmationPanel({
         <p className="mt-2 text-sm font-bold text-slate-600">Reference: {reference}</p>
       )}
       <p className="mt-3 text-sm leading-relaxed text-slate-600">{children}</p>
-      <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+
+      {onStartNew && (
+        <button
+          type="button"
+          onClick={onStartNew}
+          className="mx-auto mt-6 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-3.5 text-sm font-bold text-navy-950 transition-colors hover:bg-accent-600"
+        >
+          Start Another Estimate
+          <IconArrowRight className="h-5 w-5" />
+        </button>
+      )}
+
+      <div className="mt-5 flex flex-col flex-wrap items-center justify-center gap-3 sm:flex-row">
+        {onBackToEstimate && (
+          <button
+            type="button"
+            onClick={onBackToEstimate}
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+          >
+            Back to Estimate
+          </button>
+        )}
+        {showHomeLink && (
+          <Link
+            href="/"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+          >
+            Return to Home
+          </Link>
+        )}
         <a
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-md bg-[#25D366] px-5 py-3 text-sm font-bold text-white"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-[#25D366] px-5 py-3 text-sm font-bold text-white"
         >
           <IconWhatsapp className="h-5 w-5" />
-          Send on WhatsApp
+          WhatsApp CDCS
         </a>
         <a
           href={siteConfig.contact.phoneHref}
-          className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
         >
           <IconPhone className="h-4 w-4" />
-          Call {siteConfig.contact.phoneDisplay}
+          Call CDCS
         </a>
       </div>
     </div>
