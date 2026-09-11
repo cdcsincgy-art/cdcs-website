@@ -332,6 +332,41 @@ export const insightArticles: InsightArticle[] = [
         "Tell us your fleet size, vehicle types, depot location, and dispatch pattern, and CDCS Inc. will propose an on-site washing schedule and a clear quote.",
     },
   },
+  {
+    slug: "mobile-car-wash-vs-detailing-guyana",
+    title: "Mobile Car Wash vs Mobile Detailing in Guyana: What's the Difference?",
+    metaTitle: "Mobile Car Wash vs Mobile Detailing in Guyana",
+    metaDescription:
+      "The difference between a routine car wash, mobile washing, interior and exterior washing, mobile detailing, fabric extraction, and fleet washing in Guyana — and how to pick the right one for your vehicle.",
+    excerpt:
+      "“Car wash” and “detailing” get used interchangeably, but they are different services at different price points. This guide explains routine washing, mobile washing, interior and exterior washing, full detailing, fabric extraction, and fleet washing — and how to tell which one your vehicle actually needs.",
+    datePublished: "2026-09-10",
+    dateModified: "2026-09-10",
+    readingTimeMinutes: 8,
+    topic: "Vehicle Care",
+    primaryKeyword: "mobile car wash Guyana",
+    heroImageFile: "mobile-detailing-vehicle-interior-seats-out",
+    relatedServiceSlugs: [
+      "car-wash-mobile-vehicle-washing",
+      "mobile-detailing",
+      "fleet-washing",
+    ],
+    keywords: [
+      "mobile car wash Guyana",
+      "car wash Guyana",
+      "car wash vs detailing",
+      "mobile vehicle washing Guyana",
+      "car detailing Guyana",
+      "vehicle washing Guyana",
+    ],
+    relatedServicesIntro:
+      "Once you know which level of service you need, these are the CDCS Inc. services that cover it.",
+    cta: {
+      title: "Not Sure Which Your Vehicle Needs?",
+      description:
+        "Tell CDCS Inc. the vehicle, its condition, and what you want done — a wash, a WashCare plan, or a full detail — and we'll confirm the right service and a clear figure.",
+    },
+  },
 ];
 
 export function getArticleBySlug(slug: string): InsightArticle | undefined {

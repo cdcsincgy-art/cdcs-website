@@ -56,9 +56,10 @@ const combinations = [
     ],
   },
   {
-    title: "Fleet washing + vehicle detailing",
-    body: "Scheduled fleet washing to keep vehicles presentable, with full mobile detailing for management or pool vehicles.",
+    title: "Vehicle washing + detailing",
+    body: "Routine car wash or WashCare washing to keep vehicles presentable day to day, scheduled fleet washing for company vehicles, and full mobile detailing when a vehicle needs more than a wash.",
     links: [
+      { label: "Car Wash & Mobile Vehicle Washing", href: "/services/car-wash-mobile-vehicle-washing/" },
       { label: "Fleet Washing", href: "/services/fleet-washing/" },
       { label: "Mobile Detailing", href: "/services/mobile-detailing/" },
     ],

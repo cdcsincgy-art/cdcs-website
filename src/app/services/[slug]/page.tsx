@@ -15,6 +15,7 @@ import {
   serviceGalleryImages,
   categoryForService,
   categoryLabel,
+  projectImageByFile,
 } from "@/lib/project-images";
 import { serviceIconMap, IconCheck, IconArrowRight } from "@/components/icons";
 import { siteConfig, ogImage } from "@/lib/site-config";
@@ -56,13 +57,30 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   const Icon = serviceIconMap[service.icon];
   const heroImage = serviceHeroImage(service.slug);
   const gallery = serviceGalleryImages(service.slug);
-  // For services without their own photo set yet, show related commercial
-  // cleaning work rather than a bare card.
+  // For services without their own photo set yet, show related CDCS work rather
+  // than a bare card. The vehicle-washing page draws on real detailing and
+  // fleet-wash photos; everything else falls back to commercial cleaning work.
+  const galleryFallback =
+    service.slug === "car-wash-mobile-vehicle-washing"
+      ? {
+          images: [
+            "mobile-detailing-vehicle-interior-seats-out",
+            "fleet-washing-truck-covered-in-foam",
+            "fleet-washing-truck-front-wash",
+          ].map(projectImageByFile),
+          title: "Related CDCS Vehicle Work",
+          description:
+            "Authentic CDCS Inc. vehicle work from jobs across Guyana — the interior and exterior cleaning a wash and a full detail both draw on.",
+        }
+      : {
+          images: categoryForService("commercial-janitorial-cleaning")?.images ?? [],
+          title: "Related CDCS Commercial Cleaning Work",
+          description:
+            "Authentic CDCS Inc. commercial cleaning work from projects across Guyana — floor, glass, and detailed surface cleaning of the kind involved in bringing a space to a presentation-ready standard.",
+        };
   const relatedWork =
     gallery.length === 0
-      ? (categoryForService("commercial-janitorial-cleaning")?.images ?? [])
-          .filter((img) => img.file !== heroImage?.file)
-          .slice(0, 3)
+      ? galleryFallback.images.filter((img) => img.file !== heroImage?.file).slice(0, 3)
       : [];
   const related = (
     service.relatedSlugs
@@ -380,7 +398,11 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
                         fleet washing
                       </Link>{" "}
-                      is usually the better fit. To book,{" "}
+                      is usually the better fit. For routine upkeep rather than a full detail,{" "}
+                      <Link href="/services/car-wash-mobile-vehicle-washing/" className="font-semibold text-brand-600 hover:underline">
+                        car wash &amp; mobile vehicle washing
+                      </Link>{" "}
+                      is the lighter, more frequent option. To book,{" "}
                       <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
                         request a mobile detailing quote
                       </Link>{" "}
@@ -519,7 +541,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       bi-weekly, monthly, or a custom schedule), your operational schedule, the
                       depot or yard location, and the wash scope required — from a straight exterior
                       wash to cab, wheels, trailer, and an undercarriage rinse. One-time washes are
-                      available for a specific job, an audit, or a lease return.
+                      available for a specific job, an audit, or a lease return. For a small number
+                      of company or pool vehicles on a set monthly schedule,{" "}
+                      <Link href="/services/car-wash-mobile-vehicle-washing/" className="font-semibold text-brand-600 hover:underline">
+                        WashCare recurring vehicle washing
+                      </Link>{" "}
+                      may be the simpler arrangement.
                     </p>
                     <p>
                       Fleet washing pairs with{" "}
@@ -751,6 +778,168 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </div>
                 </div>
               )}
+
+              {/* Page-specific: vehicle-service distinctions, wash options, and
+                  the WashCare recurring programme for the car-wash page. Kept
+                  in-flow within the overview section. */}
+              {service.slug === "car-wash-mobile-vehicle-washing" && (
+                <div className="mt-12 border-t border-slate-200 pt-10">
+                  <SectionHeading
+                    eyebrow="Which Service"
+                    title="Car Wash, Detailing or Fleet Washing — Which Do You Need?"
+                  />
+                  <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                    <p>
+                      CDCS Inc. runs four related vehicle services. This page covers routine
+                      washing; the others handle heavier or higher-volume work.
+                    </p>
+                    <dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                      <div>
+                        <dt className="font-bold text-navy-900">Car / vehicle washing</dt>
+                        <dd className="mt-1 text-sm leading-relaxed text-slate-700">
+                          Routine exterior, or interior and exterior, washing to keep a vehicle
+                          presentable — the regular service on this page.
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="font-bold text-navy-900">Mobile vehicle washing</dt>
+                        <dd className="mt-1 text-sm leading-relaxed text-slate-700">
+                          The same wash, brought to your home or workplace in Georgetown where
+                          scheduling and logistics permit, instead of a drop-off.
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="font-bold text-navy-900">
+                          <Link
+                            href="/services/mobile-detailing/"
+                            className="text-brand-600 hover:underline"
+                          >
+                            Mobile detailing
+                          </Link>
+                        </dt>
+                        <dd className="mt-1 text-sm leading-relaxed text-slate-700">
+                          More intensive vehicle care — machine polishing, paint correction,
+                          headlight restoration, engine-bay cleaning, and deep interior fabric
+                          extraction.
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="font-bold text-navy-900">
+                          <Link
+                            href="/services/fleet-washing/"
+                            className="text-brand-600 hover:underline"
+                          >
+                            Fleet washing
+                          </Link>
+                        </dt>
+                        <dd className="mt-1 text-sm leading-relaxed text-slate-700">
+                          Recurring, on-site washing for several company vehicles, trucks, or a
+                          whole fleet at your depot or yard.
+                        </dd>
+                      </div>
+                    </dl>
+                    <p className="text-sm text-slate-600">
+                      Not sure which fits? Get a{" "}
+                      <Link href="/estimate/" className="font-semibold text-brand-600 hover:underline">
+                        preliminary estimate
+                      </Link>{" "}
+                      or{" "}
+                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
+                        request a quote
+                      </Link>{" "}
+                      with the vehicle details and we&apos;ll confirm the right service.
+                    </p>
+
+                    <h3 className="pt-2 font-bold text-navy-900">Ways CDCS washes vehicles</h3>
+                    <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
+                      {[
+                        "Exterior vehicle washing — body, glass, wheels, tyres, and trim",
+                        "Interior & exterior washing — adds vacuuming, seats, mats, and surfaces",
+                        "Mobile vehicle washing — we come to your home or workplace",
+                        "Washbay vehicle washing — drop the vehicle at CDCS",
+                        "SUV & pickup washing — priced to the larger body and ride height",
+                        "Truck & commercial-vehicle washing — single vehicles here, fleets via fleet washing",
+                        "WashCare recurring washing — the same wash on a set monthly schedule",
+                      ].map((item) => (
+                        <li key={item} className="flex items-start gap-2.5 text-sm">
+                          <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="text-sm text-slate-600">
+                      Each option is part of this one service — there is no separate booking path
+                      for each. Tell us the vehicle and the wash you want and CDCS Inc. matches the
+                      package to it.
+                    </p>
+
+                    <h3 className="pt-4 font-bold text-navy-900">WashCare Recurring Vehicle Washing</h3>
+                    <p>
+                      WashCare is CDCS Inc.&apos;s recurring vehicle-washing programme. Instead of
+                      booking each wash, an eligible vehicle is washed on a set monthly schedule —
+                      at the CDCS washbay or by mobile service where available — so it stays
+                      consistently clean and recurring vehicle care is easier to plan.
+                    </p>
+                    <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
+                      {[
+                        "Scheduled recurring service — a fixed number of washes each month",
+                        "A consistent vehicle appearance week to week",
+                        "Washbay or mobile options where applicable",
+                        "Suitable for eligible private vehicles",
+                        "Commercial and fleet arrangements handled separately",
+                        "Simpler recurring vehicle-care planning and one monthly figure",
+                      ].map((item) => (
+                        <li key={item} className="flex items-start gap-2.5 text-sm">
+                          <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <p>
+                      The CDCS estimator carries the approved WashCare plans and returns a
+                      preliminary monthly figure for your vehicle and wash frequency. Fleet and
+                      large-volume WashCare programmes are scoped separately with{" "}
+                      <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
+                        fleet washing
+                      </Link>
+                      .
+                    </p>
+                    <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                      <Button
+                        href="/estimate/"
+                        variant="primary"
+                        size="lg"
+                        icon={<IconArrowRight className="h-5 w-5" />}
+                      >
+                        Estimate Your WashCare Plan
+                      </Button>
+                      <Button href="/quote/" variant="ghost" size="lg">
+                        Request a Custom WashCare Plan
+                      </Button>
+                    </div>
+
+                    <p className="pt-2 text-sm text-slate-600">
+                      Based in Georgetown and serving customers across Guyana where scheduling and
+                      logistics permit. See recent vehicle work on{" "}
+                      <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
+                        Our Work
+                      </Link>
+                      , read{" "}
+                      <Link
+                        href="/insights/mobile-car-wash-vs-detailing-guyana/"
+                        className="font-semibold text-brand-600 hover:underline"
+                      >
+                        mobile car wash vs mobile detailing
+                      </Link>
+                      , or{" "}
+                      <Link href="/estimate/" className="font-semibold text-brand-600 hover:underline">
+                        estimate a vehicle wash
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -855,8 +1044,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
           <div className="container-page relative">
             <SectionHeading
               eyebrow="Our Work"
-              title="Related CDCS Commercial Cleaning Work"
-              description="Authentic CDCS Inc. commercial cleaning work from projects across Guyana — floor, glass, and detailed surface cleaning of the kind involved in bringing a space to a presentation-ready standard."
+              title={galleryFallback.title}
+              description={galleryFallback.description}
               light
             />
             <div className="mt-10 grid gap-4 sm:grid-cols-3">

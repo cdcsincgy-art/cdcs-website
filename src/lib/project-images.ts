@@ -211,6 +211,7 @@ export const projectCategories: ProjectCategory[] = [
         alt: "The cleaned interior of a sedan with the seats refitted after a CDCS detailing service",
         caption: "The same interior, cleaned and refitted.",
         service: "mobile-detailing",
+        heroForService: "car-wash-mobile-vehicle-washing",
       },
       {
         file: `${P}/mobile-detailing/mobile-detailing-exterior-paint-before-after`,

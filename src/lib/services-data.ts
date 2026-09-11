@@ -7,6 +7,7 @@ export type ServiceCategory =
   | "Commercial Cleaning"
   | "Fleet Washing"
   | "Mobile Detailing"
+  | "Vehicle Washing"
   | "Deep Cleaning"
   | "Extraction Cleaning";
 
@@ -334,6 +335,89 @@ export const services: ServiceDefinition[] = [
       "on-site fleet washing Guyana",
       "commercial truck washing",
       "heavy equipment washing Guyana",
+    ],
+  },
+  {
+    slug: "car-wash-mobile-vehicle-washing",
+    title: "Car Wash & Mobile Vehicle Washing",
+    shortDescription:
+      "Routine exterior and interior vehicle washing — mobile at your home or workplace, or drop-off at the CDCS washbay, one-time or on a recurring WashCare plan.",
+    category: "Vehicle Washing",
+    icon: "car",
+    heroPlaceholderLabel: "Photo placeholder — a vehicle being washed on-site by CDCS",
+    metaTitle: "Car Wash Guyana | Mobile Vehicle Washing | CDCS",
+    seoTitleAbsolute: true,
+    metaDescription:
+      "Professional car wash and mobile vehicle washing in Guyana. CDCS Inc. washes cars, SUVs, pickups and company vehicles at your home or workplace in Georgetown, or by washbay drop-off — one-time or on a recurring WashCare plan.",
+    ctaTitle: "Request a Vehicle Washing Quote",
+    h1: "Car Wash & Mobile Vehicle Washing in Guyana",
+    intro:
+      "CDCS Inc. provides professional car wash and mobile vehicle washing in Guyana — routine exterior and interior cleaning for cars, SUVs, pickups, and company vehicles. Based in Georgetown, we bring the wash to your home or workplace where scheduling and logistics permit, or you can drop the vehicle at the CDCS washbay. Book a single wash or set up a recurring WashCare plan that keeps the vehicle consistently clean.",
+    overview: [
+      "A vehicle wash is routine upkeep: a thorough exterior wash — body, glass, wheels, tyres, and trim — with an interior clean of seats, mats, carpets, and surfaces where an interior-and-exterior wash is booked. It keeps a car, SUV, pickup, or work vehicle presentable week to week, and it is the regular service most drivers need between the occasional full detail.",
+      "CDCS Inc. washes vehicles two ways. Mobile vehicle washing brings the team, water, and equipment to your driveway or office parking area in Georgetown, so you do not lose time to a queue. Washbay washing is a drop-off at CDCS. Either way, the wash is matched to the vehicle type and its condition, and a heavily soiled or stained interior can be referred to a fuller service.",
+      "For anything beyond routine washing — machine polishing, paint correction, headlight restoration, engine-bay cleaning, or deep interior fabric extraction — mobile detailing is the right service. For washing several company vehicles or trucks on a schedule, fleet washing is the better fit. This page covers the regular wash; those services cover the heavier work.",
+    ],
+    idealFor: [
+      "Private car, SUV, and pickup owners",
+      "Executives and professionals short on time",
+      "Households keeping more than one vehicle clean",
+      "Company pool, management, and sales vehicles",
+      "Drivers who want a vehicle kept clean on a set schedule",
+    ],
+    whatsIncluded: [
+      "Exterior wash — body, glass, wheels, tyres, and exterior trim",
+      "Interior clean — vacuuming, seats, mats, carpets, dashboard, console, and door panels (interior & exterior wash)",
+      "Wash matched to the vehicle type, size, and condition",
+      "Mobile washing at your home or workplace, or drop-off at the CDCS washbay",
+      "Cars, SUVs, pickups, 7-seaters, and light commercial vehicles",
+      "One-time washes or a recurring WashCare plan",
+      "Heavily soiled or stained interiors referred to mobile detailing or fabric extraction",
+    ],
+    process: [
+      "Tell us the vehicle, its condition, and whether you want mobile service or washbay drop-off",
+      "We confirm the wash package — exterior only, or interior and exterior — and a time",
+      "The vehicle is washed inside and/or out, matched to its size and condition",
+      "A quick walk-around checks glass, panels, and the interior before hand-back",
+    ],
+    relatedSlugs: ["mobile-detailing", "fleet-washing", "upholstery-fabric-extraction"],
+    faq: [
+      {
+        q: "Do you offer mobile car washing in Guyana?",
+        a: "Yes. CDCS Inc. brings mobile vehicle washing to your home or workplace in Georgetown, with service in other areas of Guyana arranged where scheduling and logistics permit. You can also drop the vehicle at the CDCS washbay.",
+      },
+      {
+        q: "Can CDCS come to my home or workplace?",
+        a: "Yes, within the mobile service area. The team arrives with water, power, and equipment and washes the vehicle where it is parked — a driveway or an office parking area. Tell us the location when you request an estimate and we will confirm.",
+      },
+      {
+        q: "What is the difference between a car wash and mobile detailing?",
+        a: "A car wash is routine exterior and interior cleaning to keep a vehicle presentable. Mobile detailing is more intensive — machine polishing, paint correction, headlight restoration, engine-bay cleaning, and deep interior fabric extraction. Most drivers need a regular wash and an occasional detail.",
+      },
+      {
+        q: "Do you wash SUVs and pickups?",
+        a: "Yes. Cars, SUVs, pickups, 7-seaters, and light commercial vehicles are all washed, with the package and price matched to the vehicle size and condition.",
+      },
+      {
+        q: "Do you wash trucks and company vehicles?",
+        a: "A single company vehicle can be washed as a normal booking. For several vehicles or trucks washed on a regular schedule, fleet washing is the right service — CDCS Inc. washes fleets on-site at your depot or yard.",
+      },
+      {
+        q: "What is WashCare?",
+        a: "WashCare is CDCS Inc.'s recurring vehicle-washing programme. Instead of booking each wash, eligible vehicles are washed on a set monthly schedule — washbay or mobile where available — for a consistent appearance and simpler planning. Commercial and fleet arrangements are handled separately.",
+      },
+      {
+        q: "How do I get a vehicle-washing estimate?",
+        a: "Use the CDCS estimator — answer a few questions about the vehicle and the wash you want and it returns a preliminary figure, including WashCare monthly plans. You can then send it through as an official quotation request.",
+      },
+    ],
+    keywords: [
+      "car wash Guyana",
+      "mobile car wash Guyana",
+      "car wash Georgetown",
+      "vehicle washing Guyana",
+      "mobile vehicle washing Guyana",
+      "on-site vehicle washing Guyana",
     ],
   },
   {
