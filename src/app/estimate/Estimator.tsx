@@ -1091,7 +1091,7 @@ function OutcomeBlock({ result }: { result: EstimateResult }) {
       <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand-700">
         {result.headline ?? (isRange ? "Estimated Range" : "Preliminary Estimate")}
       </p>
-      <p className="mt-2 text-3xl font-black leading-tight text-navy-900 sm:text-[2.6rem]">
+      <p className="font-heading mt-2 text-3xl font-extrabold leading-tight text-navy-900 sm:text-[2.6rem]">
         {figure}
         {result.unitSuffix && (
           <span className="ml-1.5 text-lg font-bold text-slate-400 sm:text-xl">{result.unitSuffix}</span>

@@ -301,7 +301,7 @@ export default function WashCarePage() {
             ].map(({ label, d }) => (
               <div key={label} className="rounded-xl border-2 border-slate-200 bg-white p-5 shadow-sm">
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{label}</p>
-                <p className="mt-2 text-2xl font-black leading-tight text-navy-900">{d.p4.formatted}</p>
+                <p className="font-heading mt-2 text-2xl font-extrabold leading-tight text-navy-900">{d.p4.formatted}</p>
                 <p className="mt-1 text-xs text-slate-500">
                   4 scheduled washbay washes / month
                   {d.p4.savingPct ? ` · saves ${d.p4.savingPct}% vs one-time` : ""}
@@ -404,7 +404,7 @@ export default function WashCarePage() {
             ].map(({ label, d }) => (
               <div key={label} className="rounded-xl border border-white/15 bg-white/5 p-5 text-center">
                 <p className="text-xs font-bold uppercase tracking-wider text-accent-400">{label}</p>
-                <p className="mt-2 text-xl font-black leading-tight text-white sm:text-2xl">{d.formatted}</p>
+                <p className="font-heading mt-2 text-xl font-extrabold leading-tight text-white sm:text-2xl">{d.formatted}</p>
                 <p className="mt-1 text-xs text-slate-400">
                   Example — mid-size trucks, exterior wash, 4×/month
                 </p>

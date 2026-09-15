@@ -24,7 +24,7 @@ export function Logo({ variant = "dark" }: { variant?: "dark" | "light" }) {
         </picture>
       </span>
       <span className="flex min-w-0 flex-col leading-none">
-        <span className={`text-lg font-extrabold tracking-tight ${isLight ? "text-white" : "text-navy-900"}`}>
+        <span className={`font-heading text-lg font-extrabold tracking-tight ${isLight ? "text-white" : "text-navy-900"}`}>
           CDCS <span className="text-accent-500">Inc.</span>
         </span>
         {/* Tagline is hidden on the smallest screens so the header logo never
