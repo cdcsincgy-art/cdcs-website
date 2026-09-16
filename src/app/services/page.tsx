@@ -8,22 +8,26 @@ import { services, getServiceBySlug } from "@/lib/services-data";
 import { serviceHeroImage } from "@/lib/project-images";
 import { serviceIconMap, IconCheck, IconArrowRight } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
+import { pageLd } from "@/lib/seo";
+
+const SERVICES_DESCRIPTION =
+  "Browse every CDCS Inc. service and the areas we cover across Georgetown and Guyana — commercial cleaning, pressure washing, fleet washing, deep cleaning, detailing, and more.";
 
 export const metadata: Metadata = {
   title: "CDCS Services & Coverage in Guyana",
-  description:
-    "Browse every CDCS Inc. service and the areas we cover across Georgetown and Guyana — commercial cleaning, pressure washing, fleet washing, deep cleaning, detailing, and more.",
+  description: SERVICES_DESCRIPTION,
   alternates: { canonical: "/services/" },
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
-    { "@type": "ListItem", position: 2, name: "Services", item: `${siteConfig.url}/services/` },
+const pageJsonLd = pageLd({
+  path: "/services/",
+  name: `CDCS Services & Coverage in Guyana | ${siteConfig.brandName}`,
+  description: SERVICES_DESCRIPTION,
+  trail: [
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services/" },
   ],
-};
+});
 
 // Commercial & Janitorial Cleaning is the core commercial offering — given a
 // spotlight panel above the full grid.
@@ -78,7 +82,7 @@ export default function ServicesPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
 
       {/* ================= HERO ================= */}

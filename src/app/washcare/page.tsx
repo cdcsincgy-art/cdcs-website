@@ -16,6 +16,7 @@ import {
   IconWhatsapp,
 } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
+import { pageLd } from "@/lib/seo";
 import {
   bayExample,
   mobileExample,
@@ -24,21 +25,25 @@ import {
   fleetCustomAgreementThreshold,
 } from "@/lib/washcare-showcase";
 
+const WASHCARE_TITLE = "WashCare — Recurring Vehicle Care Plans | CDCS Inc.";
+const WASHCARE_DESCRIPTION =
+  "WashCare is CDCS Inc.'s scheduled vehicle-care programme in Guyana — Washbay, Mobile, and Fleet plans with predictable monthly pricing. Keep a vehicle or fleet clean every month, without rebooking.";
+
 export const metadata: Metadata = {
-  title: { absolute: "WashCare — Recurring Vehicle Care Plans | CDCS Inc." },
-  description:
-    "WashCare is CDCS Inc.'s scheduled vehicle-care programme in Guyana — Washbay, Mobile, and Fleet plans with predictable monthly pricing. Keep a vehicle or fleet clean every month, without rebooking.",
+  title: { absolute: WASHCARE_TITLE },
+  description: WASHCARE_DESCRIPTION,
   alternates: { canonical: "/washcare/" },
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
-    { "@type": "ListItem", position: 2, name: "WashCare", item: `${siteConfig.url}/washcare/` },
+const pageJsonLd = pageLd({
+  path: "/washcare/",
+  name: WASHCARE_TITLE,
+  description: WASHCARE_DESCRIPTION,
+  trail: [
+    { name: "Home", path: "/" },
+    { name: "WashCare", path: "/washcare/" },
   ],
-};
+});
 
 // ---------------------------------------------------------------------------
 // Live example pricing — every figure below comes from the approved WashCare
@@ -180,7 +185,7 @@ export default function WashCarePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
 
       {/* ================= HERO ================= */}

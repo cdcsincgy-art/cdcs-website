@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     absolute: "Commercial Cleaning Company in Guyana | CDCS Inc.",
   },
   description:
-    "CDCS Inc. is a professional cleaning company in Georgetown, Guyana — commercial and janitorial cleaning, pressure washing, fleet washing, deep cleaning, and more.",
+    "CDCS Inc. provides professional cleaning services in Guyana, including commercial and janitorial cleaning, deep cleaning, pressure washing, fleet washing, upholstery cleaning and mobile detailing. Serving Georgetown and clients across Guyana.",
   alternates: { canonical: "/" },
 };
 
@@ -45,9 +45,10 @@ export default function HomePage() {
               Professional Cleaning. Powerful Results.
             </p>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
-              CDCS Inc. is a Georgetown-based cleaning company providing commercial and janitorial
-              cleaning, deep cleaning, pressure washing, fleet washing, and mobile detailing for
-              businesses, government agencies, and organizations across Guyana.
+              CDCS Inc. is a Georgetown-based company providing professional cleaning services in
+              Guyana — commercial and janitorial cleaning, deep cleaning, pressure washing, fleet
+              washing, and mobile detailing for businesses, government agencies, and organizations
+              across Guyana.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button href="/quote/" variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>

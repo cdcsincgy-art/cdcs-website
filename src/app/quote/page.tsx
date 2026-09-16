@@ -2,13 +2,26 @@ import type { Metadata } from "next";
 import { QuoteForm } from "./QuoteForm";
 import { IconPhone, IconWhatsapp, IconMail, IconClock, IconCheck } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
+import { pageLd } from "@/lib/seo";
+
+const QUOTE_DESCRIPTION =
+  "Request a free quote from CDCS Inc. for commercial cleaning, janitorial, pressure washing, fleet washing, or mobile detailing in Georgetown and across Guyana.";
 
 export const metadata: Metadata = {
   title: "Request a Cleaning Quote in Guyana",
-  description:
-    "Request a free quote from CDCS Inc. for commercial cleaning, janitorial, pressure washing, fleet washing, or mobile detailing in Georgetown and across Guyana.",
+  description: QUOTE_DESCRIPTION,
   alternates: { canonical: "/quote/" },
 };
+
+const pageJsonLd = pageLd({
+  path: "/quote/",
+  name: `Request a Cleaning Quote in Guyana | ${siteConfig.brandName}`,
+  description: QUOTE_DESCRIPTION,
+  trail: [
+    { name: "Home", path: "/" },
+    { name: "Request a Quote", path: "/quote/" },
+  ],
+});
 
 const reassurances = [
   "No obligation — quotes are free",
@@ -19,7 +32,12 @@ const reassurances = [
 
 export default function QuotePage() {
   return (
-    <section className="bg-slate-50 py-14 sm:py-20">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
+      />
+      <section className="bg-slate-50 py-14 sm:py-20">
       <div className="container-page grid gap-10 lg:grid-cols-3 lg:gap-12">
         <div className="lg:col-span-2">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-brand-600">Request a Quote</p>
@@ -87,5 +105,6 @@ export default function QuotePage() {
         </aside>
       </div>
     </section>
+    </>
   );
 }

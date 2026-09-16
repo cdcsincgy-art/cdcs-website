@@ -254,7 +254,7 @@ export const services: ServiceDefinition[] = [
         a: "Yes. Where interior fabric is heavily soiled, the detail can include hot-water extraction of seats, carpets, and mats — the same method used in our upholstery and fabric cleaning service.",
       },
     ],
-    relatedSlugs: ["upholstery-fabric-extraction", "fleet-washing", "deep-cleaning"],
+    relatedSlugs: ["upholstery-fabric-extraction", "car-wash-mobile-vehicle-washing", "fleet-washing"],
     keywords: [
       "mobile detailing Guyana",
       "mobile car detailing Guyana",
@@ -302,7 +302,7 @@ export const services: ServiceDefinition[] = [
       "Scheduled recurring programs (weekly, bi-weekly, monthly, or custom) and one-time washes",
       "Flexible scheduling around dispatch and delivery times, scaled to fleet size",
     ],
-    relatedSlugs: ["mobile-detailing", "pressure-washing", "commercial-facility-cleaning"],
+    relatedSlugs: ["mobile-detailing", "car-wash-mobile-vehicle-washing", "pressure-washing"],
     process: [
       "We review the fleet — vehicle types and numbers, wash location, water and drainage, and dispatch times",
       "A schedule and scope are agreed, from a weekly run to a one-time wash",

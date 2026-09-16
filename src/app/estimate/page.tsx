@@ -4,22 +4,26 @@ import { Estimator } from "./Estimator";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { IconCheck, IconShield, IconTools, IconMapPin, IconClipboard } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
+import { pageLd } from "@/lib/seo";
+
+const ESTIMATE_DESCRIPTION =
+  "Get a preliminary estimate for commercial, residential, or vehicle cleaning and detailing in Guyana, then request an official quotation from CDCS Inc.";
 
 export const metadata: Metadata = {
   title: "Service Cost Estimator Guyana",
-  description:
-    "Get a preliminary estimate for commercial, residential, or vehicle cleaning and detailing in Guyana, then request an official quotation from CDCS Inc.",
+  description: ESTIMATE_DESCRIPTION,
   alternates: { canonical: "/estimate/" },
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
-    { "@type": "ListItem", position: 2, name: "Get an Estimate", item: `${siteConfig.url}/estimate/` },
+const pageJsonLd = pageLd({
+  path: "/estimate/",
+  name: `Service Cost Estimator Guyana | ${siteConfig.brandName}`,
+  description: ESTIMATE_DESCRIPTION,
+  trail: [
+    { name: "Home", path: "/" },
+    { name: "Get an Estimate", path: "/estimate/" },
   ],
-};
+});
 
 const whyCdcs = [
   { icon: IconShield, text: "Professional cleaning and detailing company serving Guyana" },
@@ -33,7 +37,7 @@ export default function EstimatePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
 
       {/* ===== Hero ===== */}

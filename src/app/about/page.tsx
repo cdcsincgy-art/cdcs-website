@@ -8,29 +8,34 @@ import { whyChooseUs } from "@/lib/content-data";
 import { aboutImage } from "@/lib/project-images";
 import { iconMap } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
+import { pageLd } from "@/lib/seo";
+
+const ABOUT_TITLE = "About CDCS Inc. — Cleaning Company in Guyana";
+const ABOUT_DESCRIPTION =
+  "Capital Detailing and Cleaning Services Inc. (CDCS Inc.) — a Georgetown-based commercial cleaning, pressure washing, and facility-support company serving businesses across Guyana since 2022.";
 
 export const metadata: Metadata = {
-  title: { absolute: "About CDCS Inc. — Cleaning Company in Guyana" },
-  description:
-    "Capital Detailing and Cleaning Services Inc. (CDCS Inc.) — a Georgetown-based commercial cleaning, pressure washing, and facility-support company serving businesses across Guyana since 2022.",
+  title: { absolute: ABOUT_TITLE },
+  description: ABOUT_DESCRIPTION,
   alternates: { canonical: "/about/" },
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
-    { "@type": "ListItem", position: 2, name: "About", item: `${siteConfig.url}/about/` },
+const pageJsonLd = pageLd({
+  path: "/about/",
+  name: ABOUT_TITLE,
+  description: ABOUT_DESCRIPTION,
+  trail: [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about/" },
   ],
-};
+});
 
 export default function AboutPage() {
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
 
       <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-20">

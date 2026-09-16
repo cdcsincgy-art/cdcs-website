@@ -6,22 +6,26 @@ import { ProjectImage } from "@/components/ProjectImage";
 import { iconMap, IconArrowRight, IconCheck } from "@/components/icons";
 import { serviceHeroImage, projectImagesForService } from "@/lib/project-images";
 import { siteConfig } from "@/lib/site-config";
+import { pageLd } from "@/lib/seo";
+
+const INDUSTRIES_DESCRIPTION =
+  "CDCS Inc. serves corporate offices, government agencies, logistics companies, construction firms, retail, hospitality, and industrial facilities across Guyana.";
 
 export const metadata: Metadata = {
   title: "Industries We Serve in Guyana",
-  description:
-    "CDCS Inc. serves corporate offices, government agencies, logistics companies, construction firms, retail, hospitality, and industrial facilities across Guyana.",
+  description: INDUSTRIES_DESCRIPTION,
   alternates: { canonical: "/industries/" },
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
-    { "@type": "ListItem", position: 2, name: "Industries We Serve", item: `${siteConfig.url}/industries/` },
+const pageJsonLd = pageLd({
+  path: "/industries/",
+  name: `Industries We Serve in Guyana | ${siteConfig.brandName}`,
+  description: INDUSTRIES_DESCRIPTION,
+  trail: [
+    { name: "Home", path: "/" },
+    { name: "Industries We Serve", path: "/industries/" },
   ],
-};
+});
 
 type Industry = {
   icon: string;
@@ -149,7 +153,7 @@ export default function IndustriesPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
 
       {/* ================= HERO ================= */}

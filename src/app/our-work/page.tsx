@@ -5,30 +5,34 @@ import { Button } from "@/components/ui/Button";
 import { ProjectImage } from "@/components/ProjectImage";
 import { IconArrowRight, IconCheck } from "@/components/icons";
 import { projectCategories } from "@/lib/project-images";
-import { siteConfig } from "@/lib/site-config";
+import { pageLd } from "@/lib/seo";
+
+const OUR_WORK_TITLE = "Our Work — CDCS Cleaning Projects in Guyana";
+const OUR_WORK_DESCRIPTION =
+  "Photos from real CDCS Inc. projects across Guyana — commercial and janitorial cleaning, pressure washing, fleet washing, mobile detailing, and upholstery extraction.";
 
 export const metadata: Metadata = {
-  title: { absolute: "Our Work — CDCS Cleaning Projects in Guyana" },
-  description:
-    "Photos from real CDCS Inc. projects across Guyana — commercial and janitorial cleaning, pressure washing, fleet washing, mobile detailing, and upholstery extraction.",
+  title: { absolute: OUR_WORK_TITLE },
+  description: OUR_WORK_DESCRIPTION,
   alternates: { canonical: "/our-work/" },
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
-    { "@type": "ListItem", position: 2, name: "Our Work", item: `${siteConfig.url}/our-work/` },
+const pageJsonLd = pageLd({
+  path: "/our-work/",
+  name: OUR_WORK_TITLE,
+  description: OUR_WORK_DESCRIPTION,
+  trail: [
+    { name: "Home", path: "/" },
+    { name: "Our Work", path: "/our-work/" },
   ],
-};
+});
 
 export default function OurWorkPage() {
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
 
       <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-20">

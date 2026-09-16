@@ -15,22 +15,27 @@ import {
 } from "@/components/icons";
 import { projectImagesForService } from "@/lib/project-images";
 import { siteConfig } from "@/lib/site-config";
+import { pageLd } from "@/lib/seo";
+
+const CONTACT_TITLE = "Contact CDCS Inc. — Cleaning Services in Guyana";
+const CONTACT_DESCRIPTION =
+  "Contact CDCS Inc. in Georgetown, Guyana by phone, WhatsApp, or email for commercial cleaning, janitorial, pressure washing, fleet washing, or mobile detailing.";
 
 export const metadata: Metadata = {
-  title: { absolute: "Contact CDCS Inc. — Cleaning Services in Guyana" },
-  description:
-    "Contact CDCS Inc. in Georgetown, Guyana by phone, WhatsApp, or email for commercial cleaning, janitorial, pressure washing, fleet washing, or mobile detailing.",
+  title: { absolute: CONTACT_TITLE },
+  description: CONTACT_DESCRIPTION,
   alternates: { canonical: "/contact/" },
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
-    { "@type": "ListItem", position: 2, name: "Contact", item: `${siteConfig.url}/contact/` },
+const pageJsonLd = pageLd({
+  path: "/contact/",
+  name: CONTACT_TITLE,
+  description: CONTACT_DESCRIPTION,
+  trail: [
+    { name: "Home", path: "/" },
+    { name: "Contact", path: "/contact/" },
   ],
-};
+});
 
 const contactMethods = [
   {
@@ -79,7 +84,7 @@ export default function ContactPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
 
       {/* ================= HERO ================= */}
