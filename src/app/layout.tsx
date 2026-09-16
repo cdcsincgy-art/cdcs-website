@@ -3,14 +3,16 @@ import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
-// Syne — premium/display typeface for headings, brand wordmark, and the
-// estimator's/WashCare's headline figures. Body copy, forms, the estimator's
-// questions/tables, and all small/legal text stay on Inter (see
-// --font-sans / --font-heading in globals.css) — Syne is a display face and
-// is not used for extended reading text.
-import "@fontsource/syne/600.css";
-import "@fontsource/syne/700.css";
-import "@fontsource/syne/800.css";
+// Manrope — premium/brand typeface for headings, navigation, buttons, the
+// brand wordmark, and the estimator's/WashCare's headline figures and plan
+// names. Body copy, forms, the estimator's questions/tables, and all
+// small/legal text stay on Inter (see --font-sans / --font-heading in
+// globals.css) — Manrope is used for short, prominent text, not extended
+// reading copy.
+import "@fontsource/manrope/500.css";
+import "@fontsource/manrope/600.css";
+import "@fontsource/manrope/700.css";
+import "@fontsource/manrope/800.css";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";

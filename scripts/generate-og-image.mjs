@@ -37,8 +37,8 @@ const DOMAIN = "www.cdcsincgy.com";
 const h = (type, style, ...children) => ({ type, props: { style, children } });
 
 const fontsDir = join(root, "node_modules/@fontsource");
-const [soraExtraBold, interRegular, interSemiBold] = await Promise.all([
-  readFile(join(fontsDir, "sora/files/sora-latin-800-normal.woff")),
+const [manropeExtraBold, interRegular, interSemiBold] = await Promise.all([
+  readFile(join(fontsDir, "manrope/files/manrope-latin-800-normal.woff")),
   readFile(join(fontsDir, "inter/files/inter-latin-400-normal.woff")),
   readFile(join(fontsDir, "inter/files/inter-latin-600-normal.woff")),
 ]);
@@ -94,7 +94,7 @@ const tree = h(
       { display: "flex", flexDirection: "column", marginLeft: 22 },
       h(
         "div",
-        { display: "flex", fontFamily: "Sora", fontSize: 34, fontWeight: 800 },
+        { display: "flex", fontFamily: "Manrope", fontSize: 34, fontWeight: 800 },
         h("span", {}, "CDCS "),
         h("span", { color: ACCENT_400 }, "Inc.")
       ),
@@ -118,14 +118,14 @@ const tree = h(
     { display: "flex", flexDirection: "column" },
     h(
       "div",
-      { display: "flex", fontFamily: "Sora", fontSize: 78, fontWeight: 800, lineHeight: 1.05 },
+      { display: "flex", fontFamily: "Manrope", fontSize: 78, fontWeight: 800, lineHeight: 1.05 },
       "Professional Cleaning."
     ),
     h(
       "div",
       {
         display: "flex",
-        fontFamily: "Sora",
+        fontFamily: "Manrope",
         fontSize: 78,
         fontWeight: 800,
         lineHeight: 1.05,
@@ -160,7 +160,7 @@ const response = new ImageResponse(tree, {
   width: 1200,
   height: 630,
   fonts: [
-    { name: "Sora", data: soraExtraBold, style: "normal", weight: 800 },
+    { name: "Manrope", data: manropeExtraBold, style: "normal", weight: 800 },
     { name: "Inter", data: interRegular, style: "normal", weight: 400 },
     { name: "Inter", data: interSemiBold, style: "normal", weight: 600 },
   ],

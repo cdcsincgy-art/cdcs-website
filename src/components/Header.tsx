@@ -84,7 +84,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-semibold text-slate-700 transition-colors hover:text-brand-600"
+                className="font-heading text-sm font-semibold text-slate-700 transition-colors hover:text-brand-600"
               >
                 {link.label}
               </Link>
@@ -94,7 +94,7 @@ export function Header() {
           <div className="hidden items-center gap-3 lg:flex">
             <a
               href={siteConfig.contact.phoneHref}
-              className="flex items-center gap-2 text-sm font-bold text-navy-900 hover:text-brand-600"
+              className="font-heading flex items-center gap-2 text-sm font-bold text-navy-900 hover:text-brand-600"
             >
               <IconPhone className="h-4 w-4" />
               {siteConfig.contact.phoneDisplay}
@@ -156,7 +156,7 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-3.5 text-base font-semibold text-navy-900 hover:bg-slate-50"
+                className="font-heading rounded-md px-3 py-3.5 text-base font-semibold text-navy-900 hover:bg-slate-50"
               >
                 {link.label}
               </Link>
@@ -169,7 +169,7 @@ export function Header() {
             <a
               href={siteConfig.contact.phoneHref}
               onClick={() => setOpen(false)}
-              className="mt-3 flex items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3.5 text-sm font-bold text-navy-900"
+              className="font-heading mt-3 flex items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3.5 text-sm font-bold text-navy-900"
             >
               <IconPhone className="h-4 w-4" />
               Call {siteConfig.contact.phoneDisplay}

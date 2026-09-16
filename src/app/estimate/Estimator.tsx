@@ -680,7 +680,7 @@ export function Estimator() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="rounded-md border-2 border-navy-800 px-5 py-2.5 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+                  className="font-heading rounded-md border-2 border-navy-800 px-5 py-2.5 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
                 >
                   Back
                 </button>
@@ -688,7 +688,7 @@ export function Estimator() {
               <button
                 type="button"
                 onClick={handleReset}
-                className="rounded-md px-3 py-2.5 text-sm font-semibold text-slate-500 hover:text-red-600 hover:underline"
+                className="font-heading rounded-md px-3 py-2.5 text-sm font-semibold text-slate-500 hover:text-red-600 hover:underline"
               >
                 Reset estimate
               </button>
@@ -698,7 +698,7 @@ export function Estimator() {
               <button
                 type="button"
                 onClick={goNext}
-                className="inline-flex items-center gap-2 rounded-md bg-accent-500 px-6 py-3 text-sm font-bold text-navy-950 transition-colors hover:bg-accent-600"
+                className="font-heading inline-flex items-center gap-2 rounded-md bg-accent-500 px-6 py-3 text-sm font-bold text-navy-950 transition-colors hover:bg-accent-600"
               >
                 Continue
                 <IconArrowRight className="h-4 w-4" />
@@ -1160,7 +1160,7 @@ function ResultScreen(
         <button
           type="button"
           onClick={onRequestQuote}
-          className="inline-flex items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-bold text-navy-950 transition-colors hover:bg-accent-600"
+          className="font-heading inline-flex items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-bold text-navy-950 transition-colors hover:bg-accent-600"
         >
           {result.washcare ? "Request WashCare Enrollment" : "Request Official Quotation"}
           <IconArrowRight className="h-5 w-5" />
@@ -1173,7 +1173,7 @@ function ResultScreen(
             onClick={() =>
               trackEvent("estimator_whatsapp_clicked", { service_category: service.category, transport_type: "beacon" })
             }
-            className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-[#25D366] px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-[#25D366] hover:text-white"
+            className="font-heading inline-flex items-center justify-center gap-2 rounded-md border-2 border-[#25D366] px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-[#25D366] hover:text-white"
           >
             <IconWhatsapp className="h-5 w-5" />
             Send Details on WhatsApp
@@ -1183,7 +1183,7 @@ function ResultScreen(
             onClick={() =>
               trackEvent("estimator_call_clicked", { service_category: service.category, transport_type: "beacon" })
             }
-            className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-navy-800 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+            className="font-heading inline-flex items-center justify-center gap-2 rounded-md border-2 border-navy-800 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
           >
             <IconPhone className="h-5 w-5" />
             Call CDCS
@@ -1192,7 +1192,7 @@ function ResultScreen(
         <button
           type="button"
           onClick={onStartNew}
-          className="mt-1 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:border-slate-400 hover:text-navy-900"
+          className="font-heading mt-1 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:border-slate-400 hover:text-navy-900"
         >
           Start New Estimate
         </button>
@@ -1210,7 +1210,7 @@ function ResultScreen(
       {/* ===== 4. WashCare recurring plan (when calculated) ===== */}
       {result.washcare && (
         <div className="mt-6 rounded-lg border-2 border-brand-300 bg-brand-50 p-5">
-          <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-brand-700">
+          <p className="font-heading text-xs font-extrabold uppercase tracking-[0.16em] text-brand-700">
             {result.washcare.channel} — recurring plan
           </p>
           <dl className="mt-3 space-y-1.5 text-sm">
@@ -1559,14 +1559,14 @@ function LeadForm(
         <button
           type="button"
           onClick={onBackToEstimate}
-          className="inline-flex min-h-[44px] items-center gap-1.5 font-semibold text-brand-600 hover:underline"
+          className="font-heading inline-flex min-h-[44px] items-center gap-1.5 font-semibold text-brand-600 hover:underline"
         >
           <span aria-hidden>&larr;</span> Back to estimate
         </button>
         <button
           type="button"
           onClick={onStartNew}
-          className="inline-flex min-h-[44px] items-center font-semibold text-slate-500 hover:text-navy-900 hover:underline"
+          className="font-heading inline-flex min-h-[44px] items-center font-semibold text-slate-500 hover:text-navy-900 hover:underline"
         >
           Start new estimate
         </button>
@@ -1619,7 +1619,7 @@ function LeadForm(
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-bold text-navy-950 transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-60"
+          className="font-heading flex w-full items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-bold text-navy-950 transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {status === "submitting" ? "Sending…" : "Submit Quote Request"}
           {status !== "submitting" && <IconArrowRight className="h-5 w-5" />}
@@ -1688,7 +1688,7 @@ function ConfirmationPanel({
         <button
           type="button"
           onClick={onStartNew}
-          className="mx-auto mt-6 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-3.5 text-sm font-bold text-navy-950 transition-colors hover:bg-accent-600"
+          className="font-heading mx-auto mt-6 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-3.5 text-sm font-bold text-navy-950 transition-colors hover:bg-accent-600"
         >
           Start Another Estimate
           <IconArrowRight className="h-5 w-5" />
@@ -1700,7 +1700,7 @@ function ConfirmationPanel({
           <button
             type="button"
             onClick={onBackToEstimate}
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+            className="font-heading inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
           >
             Back to Estimate
           </button>
@@ -1708,7 +1708,7 @@ function ConfirmationPanel({
         {showHomeLink && (
           <Link
             href="/"
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+            className="font-heading inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
           >
             Return to Home
           </Link>
@@ -1717,14 +1717,14 @@ function ConfirmationPanel({
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-[#25D366] px-5 py-3 text-sm font-bold text-white"
+          className="font-heading inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-[#25D366] px-5 py-3 text-sm font-bold text-white"
         >
           <IconWhatsapp className="h-5 w-5" />
           WhatsApp CDCS
         </a>
         <a
           href={siteConfig.contact.phoneHref}
-          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+          className="font-heading inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
         >
           <IconPhone className="h-4 w-4" />
           Call CDCS
