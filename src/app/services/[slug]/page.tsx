@@ -274,8 +274,13 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Link href="/services/post-construction-cleaning/" className="font-semibold text-brand-600 hover:underline">
                         post-construction cleaning
                       </Link>
-                      , and then kept there on a recurring janitorial schedule. Larger and
-                      multi-site organizations are served through a{" "}
+                      , and then kept there on a recurring janitorial schedule. Carpeted offices
+                      and fabric seating are cleaned separately as part of{" "}
+                      <Link href="/services/upholstery-fabric-extraction/" className="font-semibold text-brand-600 hover:underline">
+                        carpet and upholstery extraction
+                      </Link>
+                      , usually scheduled alongside the janitorial programme rather than as part of
+                      the routine visit. Larger and multi-site organizations are served through a{" "}
                       <Link href="/services/commercial-facility-cleaning/" className="font-semibold text-brand-600 hover:underline">
                         structured facility cleaning programme
                       </Link>
@@ -291,6 +296,35 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                         what a commercial janitorial service agreement should include
                       </Link>{" "}
                       covers what to expect.
+                    </p>
+
+                    <h3 className="pt-2 font-bold text-navy-900">How CDCS Runs a Janitorial Programme</h3>
+                    <p>
+                      Beyond the cleaning itself, a recurring contract is only as reliable as how
+                      it&apos;s managed day to day. Every CDCS Inc. programme runs on the same
+                      operating principles, scaled to the site:
+                    </p>
+                    <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
+                      {[
+                        "A written, site-specific scope of work agreed before work begins",
+                        "Teams briefed on each site's layout, access, and requirements",
+                        "Appropriate PPE and cleaning products for the environment",
+                        "Attendance tracked, with relief staff arranged to cover absences",
+                        "Regular supervisor inspections against the agreed scope",
+                        "A single point of contact for schedule changes and feedback",
+                        "Service records kept for each site",
+                        "Safety-conscious working practices around staff, visitors, and the public",
+                      ].map((item) => (
+                        <li key={item} className="flex items-start gap-2.5 text-sm">
+                          <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <p>
+                      Team size and equipment are scaled to the site — from a single office to a
+                      large multi-floor or multi-site facility — and mobilized according to what
+                      the project requires.
                     </p>
                   </div>
                 </div>

@@ -17,6 +17,9 @@ export const siteConfig = {
   url: "https://www.cdcsincgy.com",
   location: {
     city: "Georgetown",
+    // Administrative region containing Georgetown — used as schema.org
+    // addressRegion (a real, verifiable region, not an invented location).
+    region: "Demerara-Mahaica",
     country: "Guyana",
     // TODO: add a specific street address here once you have a public office
     // address to display. Left intentionally general per company instructions.

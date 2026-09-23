@@ -224,9 +224,9 @@ export default function ContactPage() {
           <div>
             <SectionHeading eyebrow="Service Area" title="Georgetown & Across Guyana" />
             <p className="mt-4 text-base leading-relaxed text-slate-700">
-              CDCS Inc. is based in Georgetown, Guyana and provides on-site cleaning, pressure
-              washing, fleet washing, and mobile detailing for clients throughout the country.
-              Tell us where you&apos;re located when you{" "}
+              CDCS Inc. is based in Georgetown, in the Demerara-Mahaica region, and provides
+              on-site cleaning, pressure washing, fleet washing, and mobile detailing for clients
+              throughout the country. Tell us where you&apos;re located when you{" "}
               <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">request a quote</Link>{" "}
               and we&apos;ll confirm scheduling.
             </p>
