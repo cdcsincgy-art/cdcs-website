@@ -431,7 +431,7 @@ export function Estimator() {
       : result?.kind === "estimated_range"
         ? `Estimated Range: ${outcome}`
         : result?.kind === "estimated_price"
-          ? `Preliminary Estimate: ${outcome}`
+          ? `Estimated Price: ${outcome}`
           : `Estimate: ${outcome}`;
     const msg =
       `Hello CDCS Inc. I completed the website estimator and would like an official quotation.\n\n` +
@@ -1089,7 +1089,7 @@ function OutcomeBlock({ result }: { result: EstimateResult }) {
   return (
     <div className="rounded-xl border-2 border-brand-600 bg-white p-6 text-center shadow-sm sm:p-8">
       <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand-700">
-        {result.headline ?? (isRange ? "Estimated Range" : "Preliminary Estimate")}
+        {result.headline ?? (isRange ? "Estimated Range" : "Estimated Price")}
       </p>
       <p className="font-heading mt-2 text-3xl font-extrabold leading-tight text-navy-900 sm:text-[2.6rem]">
         {figure}

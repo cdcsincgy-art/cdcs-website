@@ -1054,6 +1054,7 @@ function priceExtraction(a: AnswerMap, addOns: string[]): EstimateResult {
   let label = itemType;
   let isFrom = false;
   let forceRange = false;
+  let floor: number | null = null; // service-specific minimum charge, if any
 
   if (itemType === "Sofa") {
     const cfg = s(a.sofaConfig);
@@ -1122,6 +1123,7 @@ function priceExtraction(a: AnswerMap, addOns: string[]): EstimateResult {
     }`;
     // carpet always carries condition + spread uncertainty -> range
     forceRange = true;
+    floor = pricing.carpet.minimum; // service-call minimum — was configured but never applied
   } else if (itemType === "Vehicle seats / interior") {
     const pkg = s(a.extractionPackage);
     base = pricing.vehicleExtraction[pkg] ?? null;
@@ -1135,6 +1137,7 @@ function priceExtraction(a: AnswerMap, addOns: string[]): EstimateResult {
 
   let amount = base * condMult;
   if (isMobile) amount = Math.max(amount, pricing.mobileMinimum);
+  if (floor != null) amount = Math.max(amount, floor);
   const coreFigure = roundCommercial(amount);
 
   const lineItems: EstimateLineItem[] = [
@@ -1245,7 +1248,7 @@ function pricePressure(a: AnswerMap): EstimateResult {
   }
 
   return rangeOut(lo, hi, {
-    headline: "Preliminary Estimate",
+    headline: "Estimated Range",
     lineItems: [
       {
         label: `${surface || "Exterior surface"} · ~${area.toLocaleString("en-US")} sq ft @ ${formatGYD(tier.rate)}/sq ft${
@@ -1294,7 +1297,7 @@ function priceDeep(serviceId: string, a: AnswerMap): EstimateResult {
   const room = D.singleRoom[serviceId];
   if (room && !isCommercial) {
     return rangeOut(room.low, room.high, {
-      headline: "Preliminary Estimate",
+      headline: "Estimated Range",
       lineItems: [{ label: serviceId === "kitchen-deep" ? "Kitchen deep clean" : "Washroom / bathroom deep clean", amount: roundCommercial((room.low + room.high) / 2) }],
       noteExtra:
         "Based on a single-room deep clean. Final pricing is subject to confirmation of the room, its condition and access.",
@@ -1314,7 +1317,7 @@ function priceDeep(serviceId: string, a: AnswerMap): EstimateResult {
     if (!cb) return siteAssessment(SITE_REASON, analytics);
     const condMult = D.conditionMult[cond] ?? 1;
     return rangeOut(cb.low * condMult, cb.high * condMult, {
-      headline: "Preliminary Estimate",
+      headline: "Estimated Range",
       lineItems: [{ label: `Commercial deep clean · ~${sqft.toLocaleString("en-US")} sq ft${condMult !== 1 ? ` · ${cond}` : ""}`, amount: roundCommercial(((cb.low + cb.high) / 2) * condMult) }],
       noteExtra:
         "Based on the floor area and condition provided. Final pricing is subject to confirmation of scope, condition and access on a walkthrough.",
@@ -1354,7 +1357,7 @@ function priceDeep(serviceId: string, a: AnswerMap): EstimateResult {
   }
 
   return rangeOut(lo, hi, {
-    headline: "Preliminary Estimate",
+    headline: "Estimated Range",
     lineItems: [{ label: `${propertyType || "Home"} deep clean · ${beds} bedroom${beds > 1 ? "s" : ""}`, amount: roundCommercial(((band.low + band.high) / 2) * factor) }],
     noteExtra: [
       "Based on the property size and condition information provided.",
@@ -1493,7 +1496,7 @@ function pricePostConstruction(a: AnswerMap): EstimateResult {
   if (residues.length > 0) extraNotes.push("Permanent surface damage and set stains are not guaranteed removable.");
 
   return rangeOut(loR, hiR, {
-    headline: "Preliminary Estimate",
+    headline: "Estimated Range",
     lineItems: [
       {
         label: `${stage} · ~${sqft.toLocaleString("en-US")} sq ft @ ${formatGYD(rate.low)}–${formatGYD(rate.high)}/sq ft`,
@@ -1585,7 +1588,7 @@ function priceJanitorial(a: AnswerMap): EstimateResult {
     const otBand = J.oneTimeBands.find((b) => sqft <= b.maxSqFt);
     if (!otBand) return siteAssessment(SITE_REASON, analytics);
     return rangeOut(round5k(otBand.low), round5k(otBand.high), {
-      headline: "Preliminary Estimate",
+      headline: "Estimated Range",
       lineItems: [
         {
           label: `One-time commercial clean · ~${sqft.toLocaleString("en-US")} sq ft`,
