@@ -36,8 +36,8 @@ export const siteConfig = {
     },
     whatsappHrefWithMessage: (message: string) =>
       `https://wa.me/5926252141?text=${encodeURIComponent(message)}`,
-    email: "cdcsincgy@gmail.com",
-    emailHref: "mailto:cdcsincgy@gmail.com",
+    email: "admin@cdcsincgy.com",
+    emailHref: "mailto:admin@cdcsincgy.com",
   },
   social: {
     handle: "@cdcsinc",

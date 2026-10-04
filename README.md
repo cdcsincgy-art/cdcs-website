@@ -104,11 +104,11 @@ original:
 
 The quote form (`/quote/`) works out of the box with **no setup**: if no backend is configured,
 submitting it opens the visitor's email app with a pre-filled message addressed to
-`cdcsincgy@gmail.com`, so no lead is lost. This is a reasonable fallback, but two better options:
+`admin@cdcsincgy.com`, so no lead is lost. This is a reasonable fallback, but two better options:
 
 **Option A — Formspree (free tier available, supports file uploads, ~5 minutes):**
 1. Create a free account at [formspree.io](https://formspree.io) and create a new form pointed at
-   `cdcsincgy@gmail.com`.
+   `admin@cdcsincgy.com`.
 2. Copy the form's endpoint URL (looks like `https://formspree.io/f/xxxxxxx`).
 3. Add it as an environment variable when you deploy: `NEXT_PUBLIC_QUOTE_FORM_ENDPOINT=https://formspree.io/f/xxxxxxx`
 4. Rebuild/redeploy. The form will now POST directly (including any uploaded photo) instead of
