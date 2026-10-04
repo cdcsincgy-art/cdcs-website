@@ -16,7 +16,7 @@ import {
   IconWhatsapp,
 } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
-import { pageLd } from "@/lib/seo";
+import { pageLd, socialMetadata } from "@/lib/seo";
 import {
   bayExample,
   mobileExample,
@@ -33,6 +33,7 @@ export const metadata: Metadata = {
   title: { absolute: WASHCARE_TITLE },
   description: WASHCARE_DESCRIPTION,
   alternates: { canonical: "/washcare/" },
+  ...socialMetadata({ title: WASHCARE_TITLE, description: WASHCARE_DESCRIPTION, path: "/washcare/" }),
 };
 
 const pageJsonLd = pageLd({

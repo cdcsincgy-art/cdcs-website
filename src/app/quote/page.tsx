@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { QuoteForm } from "./QuoteForm";
 import { IconPhone, IconWhatsapp, IconMail, IconClock, IconCheck } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
-import { pageLd } from "@/lib/seo";
+import { pageLd, socialMetadata } from "@/lib/seo";
 
 const QUOTE_DESCRIPTION =
   "Request a free quote from CDCS Inc. for commercial cleaning, janitorial, pressure washing, fleet washing, or mobile detailing in Georgetown and across Guyana.";
@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   title: "Request a Cleaning Quote in Guyana",
   description: QUOTE_DESCRIPTION,
   alternates: { canonical: "/quote/" },
+  ...socialMetadata({
+    title: `Request a Cleaning Quote in Guyana | ${siteConfig.brandName}`,
+    description: QUOTE_DESCRIPTION,
+    path: "/quote/",
+  }),
 };
 
 const pageJsonLd = pageLd({

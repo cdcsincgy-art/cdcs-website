@@ -203,7 +203,7 @@ export default function MobileCarWashVsDetailingArticle() {
         immediately draws it back out with the loosened soil. CDCS Inc. offers this for vehicle
         interiors as part of{" "}
         <Link href="/services/upholstery-fabric-extraction/">
-          carpet, upholstery and fabric cleaning
+          upholstery and fabric cleaning
         </Link>
         , and it can be added to a mobile detail. How much lifts depends on the fabric, the
         type and age of the staining, and any previous treatment &mdash; we give an honest read

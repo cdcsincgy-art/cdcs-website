@@ -4,7 +4,7 @@ import { Estimator } from "./Estimator";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { IconCheck, IconShield, IconTools, IconMapPin, IconClipboard } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
-import { pageLd } from "@/lib/seo";
+import { pageLd, socialMetadata } from "@/lib/seo";
 
 const ESTIMATE_DESCRIPTION =
   "Get a preliminary estimate for commercial, residential, or vehicle cleaning and detailing in Guyana, then request an official quotation from CDCS Inc.";
@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   title: "Service Cost Estimator Guyana",
   description: ESTIMATE_DESCRIPTION,
   alternates: { canonical: "/estimate/" },
+  ...socialMetadata({
+    title: `Service Cost Estimator Guyana | ${siteConfig.brandName}`,
+    description: ESTIMATE_DESCRIPTION,
+    path: "/estimate/",
+  }),
 };
 
 const pageJsonLd = pageLd({

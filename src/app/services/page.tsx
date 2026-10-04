@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/Button";
 import { CTABanner } from "@/components/CTABanner";
 import { ProjectImage } from "@/components/ProjectImage";
 import { services, getServiceBySlug } from "@/lib/services-data";
-import { serviceHeroImage } from "@/lib/project-images";
+import { serviceHeroImage, projectImageByFile } from "@/lib/project-images";
 import { serviceIconMap, IconCheck, IconArrowRight } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
-import { pageLd } from "@/lib/seo";
+import { pageLd, socialMetadata } from "@/lib/seo";
 
 const SERVICES_DESCRIPTION =
   "Browse every CDCS Inc. service and the areas we cover across Georgetown and Guyana — commercial cleaning, pressure washing, fleet washing, deep cleaning, detailing, and more.";
@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "CDCS Services & Coverage in Guyana",
   description: SERVICES_DESCRIPTION,
   alternates: { canonical: "/services/" },
+  ...socialMetadata({
+    title: `CDCS Services & Coverage in Guyana | ${siteConfig.brandName}`,
+    description: SERVICES_DESCRIPTION,
+    path: "/services/",
+  }),
 };
 
 const pageJsonLd = pageLd({
@@ -52,6 +57,14 @@ const combinations = [
     ],
   },
   {
+    title: "Carpet + office chair care",
+    body: "Commercial carpet extraction and office-chair cleaning booked for the same evening or weekend, on a maintenance schedule alongside the janitorial programme.",
+    links: [
+      { label: "Commercial Carpet Cleaning", href: "/services/carpet-cleaning/" },
+      { label: "Upholstery & Office Chair Cleaning", href: "/services/upholstery-fabric-extraction/" },
+    ],
+  },
+  {
     title: "Building exterior + facility program",
     body: "Pressure washing for entrances, walkways, and facades alongside a structured interior cleaning program for the whole site.",
     links: [
@@ -64,8 +77,8 @@ const combinations = [
     body: "Routine car wash or WashCare washing to keep vehicles presentable day to day, scheduled fleet washing for company vehicles, and full mobile detailing when a vehicle needs more than a wash.",
     links: [
       { label: "Car Wash & Mobile Vehicle Washing", href: "/services/car-wash-mobile-vehicle-washing/" },
-      { label: "Fleet Washing", href: "/services/fleet-washing/" },
-      { label: "Mobile Detailing", href: "/services/mobile-detailing/" },
+      { label: "Fleet & Heavy Equipment Washing", href: "/services/fleet-washing/" },
+      { label: "Mobile Vehicle Detailing", href: "/services/mobile-detailing/" },
     ],
   },
   {
@@ -178,7 +191,9 @@ export default function ServicesPage() {
           />
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {gridServices.map((service) => {
-              const img = serviceHeroImage(service.slug);
+              const img =
+                serviceHeroImage(service.slug) ??
+                (service.heroImage ? projectImageByFile(service.heroImage) : null);
               return (
                 <Link
                   key={service.slug}

@@ -3,18 +3,36 @@ import Link from "next/link";
 import { CTABanner } from "@/components/CTABanner";
 import { Button } from "@/components/ui/Button";
 import { ProjectImage } from "@/components/ProjectImage";
+import { ProjectCard } from "@/components/ProjectCard";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { IconArrowRight, IconCheck } from "@/components/icons";
 import { projectCategories } from "@/lib/project-images";
+import { publishedProjects } from "@/lib/projects-data";
+import { siteConfig, ogImage } from "@/lib/site-config";
 import { pageLd } from "@/lib/seo";
 
 const OUR_WORK_TITLE = "Our Work — CDCS Cleaning Projects in Guyana";
 const OUR_WORK_DESCRIPTION =
-  "Photos from real CDCS Inc. projects across Guyana — commercial and janitorial cleaning, pressure washing, fleet washing, mobile detailing, and upholstery extraction.";
+  "Photos and case studies from real CDCS Inc. projects across Guyana — commercial and janitorial cleaning, pressure washing, fleet and heavy equipment washing, mobile detailing, and upholstery extraction.";
 
 export const metadata: Metadata = {
   title: { absolute: OUR_WORK_TITLE },
   description: OUR_WORK_DESCRIPTION,
   alternates: { canonical: "/our-work/" },
+  openGraph: {
+    type: "website",
+    url: `${siteConfig.url}/our-work/`,
+    siteName: siteConfig.brandName,
+    title: OUR_WORK_TITLE,
+    description: OUR_WORK_DESCRIPTION,
+    images: [ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: OUR_WORK_TITLE,
+    description: OUR_WORK_DESCRIPTION,
+    images: [ogImage],
+  },
 };
 
 const pageJsonLd = pageLd({
@@ -61,6 +79,12 @@ export default function OurWorkPage() {
             aria-label="Project categories"
             className="mt-8 flex flex-wrap gap-2.5 text-sm font-semibold"
           >
+            <a
+              href="#case-studies"
+              className="rounded-full border border-accent-500/60 px-4 py-2 text-accent-400 transition-colors hover:border-accent-500 hover:text-accent-300"
+            >
+              Case Studies
+            </a>
             {projectCategories.map((c) => (
               <a
                 key={c.slug}
@@ -73,6 +97,32 @@ export default function OurWorkPage() {
           </nav>
         </div>
       </section>
+
+      {publishedProjects.length > 0 && (
+        <section id="case-studies" className="scroll-mt-24 bg-slate-50 py-16 sm:py-20">
+          <div className="container-page">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <SectionHeading
+                eyebrow="Case Studies"
+                title="Project Case Studies"
+                description="A closer look at selected work — the scope, the conditions on site, and the method and equipment CDCS used."
+              />
+              <Link
+                href="/projects/"
+                className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
+              >
+                All projects
+                <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              {publishedProjects.map((p) => (
+                <ProjectCard key={p.slug} project={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {projectCategories.map((category, i) => (
         <section

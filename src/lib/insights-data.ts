@@ -61,6 +61,7 @@ export const insightArticles: InsightArticle[] = [
     relatedServiceSlugs: [
       "commercial-janitorial-cleaning",
       "deep-cleaning",
+      "carpet-cleaning",
       "upholstery-fabric-extraction",
       "commercial-facility-cleaning",
     ],
@@ -132,9 +133,10 @@ export const insightArticles: InsightArticle[] = [
     primaryKeyword: "commercial carpet and upholstery cleaning frequency in Guyana",
     heroImageFile: "upholstery-extraction-cleaning-wand",
     relatedServiceSlugs: [
+      "carpet-cleaning",
       "upholstery-fabric-extraction",
-      "deep-cleaning",
       "commercial-janitorial-cleaning",
+      "deep-cleaning",
     ],
     keywords: [
       "carpet cleaning Guyana",

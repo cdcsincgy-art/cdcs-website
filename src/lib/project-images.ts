@@ -142,10 +142,10 @@ export const projectCategories: ProjectCategory[] = [
   },
   {
     slug: "fleet-washing",
-    title: "Fleet Washing",
+    title: "Fleet & Heavy Equipment Washing",
     service: "fleet-washing",
     blurb:
-      "On-site washing for trucks, trailers, and commercial vehicles at depots and yards in Guyana.",
+      "On-site washing for trucks, prime movers, trailers, and heavy equipment at depots, yards, and work sites in Guyana.",
     images: [
       {
         file: `${P}/fleet-washing/fleet-washing-truck-covered-in-foam`,
@@ -182,6 +182,24 @@ export const projectCategories: ProjectCategory[] = [
         height: 960,
         alt: "Cleaning foam on the wheels and deck of a flatbed trailer during a CDCS fleet wash in Guyana",
         caption: "Foam on the wheels of a flatbed trailer mid-wash.",
+        service: "fleet-washing",
+      },
+      {
+        file: `${P}/fleet-washing/fleet-washing-prime-movers-yard`,
+        fallback: false,
+        width: 707,
+        height: 707,
+        alt: "Red prime movers parked on a gravel fleet yard in Guyana during a CDCS on-site wash, with hoses and cleaning supplies on the ground",
+        caption: "Prime movers lined up for an on-site wash at a fleet yard.",
+        service: "fleet-washing",
+      },
+      {
+        file: `${P}/fleet-washing/heavy-equipment-excavator-cab-cleaning`,
+        fallback: false,
+        width: 707,
+        height: 756,
+        alt: "The dusty operator cab of an excavator on a work site in Guyana, ahead of interior cleaning by CDCS",
+        caption: "An excavator operator cab ahead of interior cleaning.",
         service: "fleet-washing",
       },
     ],
@@ -247,7 +265,7 @@ export const projectCategories: ProjectCategory[] = [
   },
   {
     slug: "upholstery-fabric-extraction",
-    title: "Carpet, Upholstery & Fabric Cleaning",
+    title: "Upholstery & Fabric Extraction",
     service: "upholstery-fabric-extraction",
     blurb:
       "Hot-water extraction, often called steam cleaning, for carpets, office chairs, car seats, and fabric surfaces.",
@@ -316,6 +334,11 @@ function pick(endsWith: string): ProjectImage {
  */
 export function projectImageByFile(endsWith: string): ProjectImage {
   return pick(endsWith);
+}
+
+/** Public path of an image's best single file (.jpg where one exists, else .webp). */
+export function projectImagePath(image: ProjectImage): string {
+  return `${image.file}${image.fallback ? ".jpg" : ".webp"}`;
 }
 
 /** The wide commercial-cleaning shot used as the homepage hero and About photo. */

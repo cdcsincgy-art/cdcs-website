@@ -15,7 +15,7 @@ import {
 } from "@/components/icons";
 import { projectImagesForService } from "@/lib/project-images";
 import { siteConfig } from "@/lib/site-config";
-import { pageLd } from "@/lib/seo";
+import { pageLd, socialMetadata } from "@/lib/seo";
 
 const CONTACT_TITLE = "Contact CDCS Inc. — Cleaning Services in Guyana";
 const CONTACT_DESCRIPTION =
@@ -25,6 +25,7 @@ export const metadata: Metadata = {
   title: { absolute: CONTACT_TITLE },
   description: CONTACT_DESCRIPTION,
   alternates: { canonical: "/contact/" },
+  ...socialMetadata({ title: CONTACT_TITLE, description: CONTACT_DESCRIPTION, path: "/contact/" }),
 };
 
 const pageJsonLd = pageLd({

@@ -43,16 +43,116 @@ export const whyChooseUs = [
   },
 ];
 
-export const industries = [
-  { icon: "building", name: "Corporate Offices" },
-  { icon: "shield", name: "Government & Public Sector" },
-  { icon: "truck", name: "Transportation & Logistics" },
-  { icon: "hardhat", name: "Construction" },
-  { icon: "clipboard", name: "Retail" },
-  { icon: "sparkle", name: "Hospitality" },
-  { icon: "building", name: "Commercial Properties" },
-  { icon: "factory", name: "Industrial Facilities" },
+export interface Industry {
+  /** Anchor on /industries/ (e.g. /industries/#hotels-hospitality). */
+  id: string;
+  icon: string;
+  name: string;
+  group: "institutions" | "operations";
+  description: string;
+  /** Service slugs most relevant to this sector, most important first. */
+  services: string[];
+}
+
+// One sector list shared by the homepage, the Industries page, and the
+// "Industries served" strip on service pages. Descriptions describe the work,
+// not credentials — no sector certifications or approvals are claimed.
+export const industries: Industry[] = [
+  {
+    id: "corporate-offices",
+    icon: "building",
+    name: "Corporate Offices",
+    group: "institutions",
+    description:
+      "Recurring janitorial programmes for professional offices, with carpet, office-chair, and deep cleaning scheduled around working hours.",
+    services: ["commercial-janitorial-cleaning", "carpet-cleaning", "upholstery-fabric-extraction", "deep-cleaning"],
+  },
+  {
+    id: "government-public-sector",
+    icon: "shield",
+    name: "Government & Public Sector",
+    group: "institutions",
+    description:
+      "Structured, documented cleaning for ministries, agencies, and public buildings — defined scopes, supervised teams, and service records suited to public procurement.",
+    services: ["commercial-janitorial-cleaning", "commercial-facility-cleaning", "upholstery-fabric-extraction", "carpet-cleaning"],
+  },
+  {
+    id: "hotels-hospitality",
+    icon: "sparkle",
+    name: "Hotels & Hospitality",
+    group: "institutions",
+    description:
+      "Carpet extraction for corridors, rooms, and function spaces, upholstery cleaning for lobby and banquet seating, and exterior washing for entrances and pool decks.",
+    services: ["carpet-cleaning", "upholstery-fabric-extraction", "deep-cleaning", "pressure-washing"],
+  },
+  {
+    id: "retail",
+    icon: "clipboard",
+    name: "Retail",
+    group: "institutions",
+    description:
+      "Storefront, floor, and common-area cleaning that keeps retail spaces presentable, with frontage pressure washing on a set schedule.",
+    services: ["commercial-janitorial-cleaning", "pressure-washing", "deep-cleaning"],
+  },
+  {
+    id: "commercial-properties",
+    icon: "building",
+    name: "Commercial Properties",
+    group: "operations",
+    description:
+      "Cleaning, carpet care, and exterior washing programmes for property managers overseeing multi-tenant buildings and shared areas.",
+    services: ["commercial-facility-cleaning", "pressure-washing", "carpet-cleaning", "commercial-janitorial-cleaning"],
+  },
+  {
+    id: "logistics-transport",
+    icon: "truck",
+    name: "Logistics & Transport",
+    group: "operations",
+    description:
+      "On-site fleet washing for trucks, prime movers, and trailers, plus yard, apron, and depot pressure washing for haulage, courier, and distribution operators.",
+    services: ["fleet-washing", "pressure-washing", "commercial-facility-cleaning"],
+  },
+  {
+    id: "oil-gas-support",
+    icon: "flame",
+    name: "Oil & Gas Support Companies",
+    group: "operations",
+    description:
+      "Fleet and heavy-equipment washing, yard pressure washing, and office and facility cleaning for contractors and service companies supporting the sector. Site inductions, permits, and access rules are confirmed during scoping.",
+    services: ["fleet-washing", "commercial-facility-cleaning", "pressure-washing", "commercial-janitorial-cleaning"],
+  },
+  {
+    id: "construction",
+    icon: "hardhat",
+    name: "Construction",
+    group: "operations",
+    description:
+      "Post-construction cleaning for handover, exterior washing of new frontages, and washing of site vehicles and equipment.",
+    services: ["post-construction-cleaning", "pressure-washing", "fleet-washing"],
+  },
+  {
+    id: "industrial-facilities",
+    icon: "factory",
+    name: "Industrial Facilities",
+    group: "operations",
+    description:
+      "Structured facility cleaning programmes with recurring teams and supervision, alongside yard pressure washing and equipment washing.",
+    services: ["commercial-facility-cleaning", "pressure-washing", "fleet-washing"],
+  },
+  {
+    id: "residential",
+    icon: "home",
+    name: "Residential Clients",
+    group: "operations",
+    description:
+      "Deep cleaning for homes, apartments, and rentals, sofa and upholstery cleaning, exterior washing, and vehicle detailing at your home.",
+    services: ["deep-cleaning", "upholstery-fabric-extraction", "pressure-washing", "mobile-detailing"],
+  },
 ];
+
+export function getIndustry(id: string) {
+  return industries.find((i) => i.id === id);
+}
 
 export const processSteps = [
   {

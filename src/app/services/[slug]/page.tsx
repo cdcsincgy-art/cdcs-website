@@ -8,16 +8,20 @@ import { CTABanner } from "@/components/CTABanner";
 import { ServiceCard } from "@/components/ServiceCard";
 import { Faq } from "@/components/Faq";
 import { ProjectImage } from "@/components/ProjectImage";
+import { ProjectCard } from "@/components/ProjectCard";
 import { services, getServiceBySlug } from "@/lib/services-data";
 import { insightsForService } from "@/lib/insights-data";
+import { projectsForService } from "@/lib/projects-data";
+import { getIndustry } from "@/lib/content-data";
 import {
   serviceHeroImage,
   serviceGalleryImages,
   categoryForService,
   categoryLabel,
   projectImageByFile,
+  projectImagePath,
 } from "@/lib/project-images";
-import { serviceIconMap, IconCheck, IconArrowRight } from "@/components/icons";
+import { serviceIconMap, IconCheck, IconArrowRight, IconWhatsapp } from "@/components/icons";
 import { siteConfig, ogImage } from "@/lib/site-config";
 
 export function generateStaticParams() {
@@ -55,13 +59,17 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   if (!service) notFound();
 
   const Icon = serviceIconMap[service.icon];
-  const heroImage = serviceHeroImage(service.slug);
+  const heroImage =
+    serviceHeroImage(service.slug) ??
+    (service.heroImage ? projectImageByFile(service.heroImage) : null);
   const gallery = serviceGalleryImages(service.slug);
   // For services without their own photo set yet, show related CDCS work rather
-  // than a bare card. The vehicle-washing page draws on real detailing and
-  // fleet-wash photos; everything else falls back to commercial cleaning work.
-  const galleryFallback =
-    service.slug === "car-wash-mobile-vehicle-washing"
+  // than a bare card. A service can name its own related photos; the
+  // vehicle-washing page draws on real detailing and fleet-wash photos;
+  // everything else falls back to commercial cleaning work.
+  const galleryFallback = service.relatedWork
+    ? { ...service.relatedWork, images: service.relatedWork.images.map(projectImageByFile) }
+    : service.slug === "car-wash-mobile-vehicle-washing"
       ? {
           images: [
             "mobile-detailing-vehicle-interior-seats-out",
@@ -96,16 +104,32 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
 
   const relatedInsights = insightsForService(service.slug);
+  const relatedProjects = projectsForService(service.slug).slice(0, 2);
+  const industriesServed = (service.industryIds ?? [])
+    .map((id) => getIndustry(id))
+    .filter((i): i is NonNullable<typeof i> => Boolean(i));
+
+  // Conversion paths: commercial pages lead with a site assessment (quote form
+  // pre-selected to this service); consumer pages lead with the estimator and
+  // WhatsApp. Both keep the existing quote, call, and WhatsApp channels.
+  const isConsumer = service.audience === "consumer";
+  const quoteHref = `/quote/?service=${service.slug}`;
+  const estimateHref = service.estimateServiceId
+    ? `/estimate/?service=${service.estimateServiceId}`
+    : "/estimate/";
+  const primaryCta = isConsumer
+    ? { label: "Get an Estimate", href: estimateHref }
+    : { label: "Request a Site Assessment", href: quoteHref };
+  const whatsappMessage = `Hello CDCS, I'd like to ask about ${service.title.toLowerCase()}.`;
 
   const serviceUrl = `${siteConfig.url}/services/${service.slug}/`;
-  const heroImageUrl = heroImage
-    ? `${siteConfig.url}${heroImage.file}${heroImage.fallback ? ".jpg" : ".webp"}`
-    : undefined;
+  const heroImageUrl = heroImage ? `${siteConfig.url}${projectImagePath(heroImage)}` : undefined;
 
   const jsonLd = [
     {
       "@context": "https://schema.org",
       "@type": "Service",
+      "@id": `${serviceUrl}#service`,
       serviceType: service.title,
       name: service.title,
       description: service.metaDescription,
@@ -118,9 +142,18 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         url: siteConfig.url,
       },
       areaServed: [
-        { "@type": "Country", name: "Guyana" },
         { "@type": "City", name: "Georgetown" },
+        { "@type": "AdministrativeArea", name: siteConfig.location.region },
+        { "@type": "Country", name: "Guyana" },
       ],
+      ...(industriesServed.length > 0
+        ? {
+            audience: industriesServed.map((i) => ({
+              "@type": "Audience",
+              audienceType: i.name,
+            })),
+          }
+        : {}),
     },
     {
       "@context": "https://schema.org",
@@ -182,13 +215,34 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               </span>
             </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button href="/quote/" variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>
-                Request a Quote
+              <Button href={primaryCta.href} variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>
+                {primaryCta.label}
               </Button>
-              <Button href={siteConfig.contact.phoneHref} variant="outline" size="lg">
-                Call {siteConfig.contact.phoneDisplay}
-              </Button>
+              {isConsumer ? (
+                <Button
+                  href={siteConfig.contact.whatsappHrefWithMessage(whatsappMessage)}
+                  variant="outline"
+                  size="lg"
+                  icon={<IconWhatsapp className="h-5 w-5" />}
+                  external
+                >
+                  WhatsApp CDCS
+                </Button>
+              ) : (
+                <Button href={siteConfig.contact.phoneHref} variant="outline" size="lg">
+                  Call {siteConfig.contact.phoneDisplay}
+                </Button>
+              )}
             </div>
+            {!isConsumer && service.estimateServiceId && (
+              <p className="mt-4 text-sm text-slate-400">
+                Want a ballpark first?{" "}
+                <Link href={estimateHref} className="font-semibold text-accent-400 hover:underline">
+                  Get a preliminary estimate
+                </Link>
+                .
+              </p>
+            )}
           </div>
           {heroImage ? (
             <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-2 shadow-2xl shadow-black/40">
@@ -238,8 +292,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                           : ", "}
                     </span>
                   ))}
-                  <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
-                    Request a quote
+                  <Link href={primaryCta.href} className="font-semibold text-brand-600 hover:underline">
+                    {isConsumer ? "Get an estimate" : "Request a site assessment"}
                   </Link>{" "}
                   to get started.
                 </p>
@@ -274,19 +328,31 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Link href="/services/post-construction-cleaning/" className="font-semibold text-brand-600 hover:underline">
                         post-construction cleaning
                       </Link>
-                      , and then kept there on a recurring janitorial schedule. Carpeted offices
-                      and fabric seating are cleaned separately as part of{" "}
+                      , and then kept there on a recurring janitorial schedule. Carpeted floors
+                      are maintained through{" "}
+                      <Link href="/services/carpet-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        commercial carpet cleaning
+                      </Link>{" "}
+                      and fabric seating through{" "}
                       <Link href="/services/upholstery-fabric-extraction/" className="font-semibold text-brand-600 hover:underline">
-                        carpet and upholstery extraction
+                        office chair and upholstery cleaning
                       </Link>
                       , usually scheduled alongside the janitorial programme rather than as part of
-                      the routine visit. Larger and multi-site organizations are served through a{" "}
+                      the routine visit; building exteriors and entrances are handled by{" "}
+                      <Link href="/services/pressure-washing/" className="font-semibold text-brand-600 hover:underline">
+                        commercial pressure washing
+                      </Link>
+                      . See examples on our{" "}
+                      <Link href="/projects/" className="font-semibold text-brand-600 hover:underline">
+                        projects page
+                      </Link>
+                      . Larger and multi-site organizations are served through a{" "}
                       <Link href="/services/commercial-facility-cleaning/" className="font-semibold text-brand-600 hover:underline">
                         structured facility cleaning programme
                       </Link>
                       . To get started,{" "}
-                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
-                        request a quote
+                      <Link href={quoteHref} className="font-semibold text-brand-600 hover:underline">
+                        request a site assessment
                       </Link>{" "}
                       with your facility size, operating hours, and priorities — our guide to{" "}
                       <Link
@@ -376,9 +442,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
                         fleet washing
                       </Link>{" "}
-                      for depots and yards. See recent jobs on{" "}
-                      <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
-                        Our Work
+                      for depots and yards. See the{" "}
+                      <Link
+                        href="/projects/commercial-pressure-washing-guyana/"
+                        className="font-semibold text-brand-600 hover:underline"
+                      >
+                        commercial pressure washing project
                       </Link>
                       , read our guide to{" "}
                       <Link href="/insights/commercial-pressure-washing-guyana/" className="font-semibold text-brand-600 hover:underline">
@@ -609,9 +678,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Link href="/insights/commercial-fleet-washing-guyana/" className="font-semibold text-brand-600 hover:underline">
                         how often a commercial vehicle fleet should be washed
                       </Link>{" "}
-                      covers frequency by vehicle type. See real fleet work on{" "}
-                      <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
-                        Our Work
+                      covers frequency by vehicle type. See the{" "}
+                      <Link
+                        href="/projects/fleet-heavy-equipment-washing-guyana/"
+                        className="font-semibold text-brand-600 hover:underline"
+                      >
+                        fleet and heavy equipment washing project
                       </Link>
                       ,{" "}
                       <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
@@ -704,8 +776,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                     <p>
                       Some specialist work is quoted separately or combined with a deep clean where
                       it is needed:{" "}
+                      <Link href="/services/carpet-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        carpet cleaning
+                      </Link>{" "}
+                      and{" "}
                       <Link href="/services/upholstery-fabric-extraction/" className="font-semibold text-brand-600 hover:underline">
-                        carpet and upholstery extraction
+                        upholstery extraction
                       </Link>{" "}
                       for soiled fabric, and{" "}
                       <Link href="/services/pressure-washing/" className="font-semibold text-brand-600 hover:underline">
@@ -729,42 +805,26 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 </div>
               )}
 
-              {/* Page-specific: surface types + commercial/residential/vehicle
-                  positioning for the carpet & upholstery page. Kept in-flow
-                  within the overview section. */}
+              {/* Page-specific: commercial/residential/vehicle positioning for
+                  the upholstery & office chair page. Kept in-flow within the
+                  overview section. Carpet has its own page. */}
               {service.slug === "upholstery-fabric-extraction" && (
                 <div className="mt-12 border-t border-slate-200 pt-10">
                   <SectionHeading
-                    eyebrow="What We Clean"
-                    title="Professional Carpet & Upholstery Cleaning in Guyana"
+                    eyebrow="Who We Clean For"
+                    title="Professional Upholstery Cleaning in Guyana"
                   />
                   <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+                    <h3 className="font-bold text-navy-900">Commercial upholstery cleaning</h3>
                     <p>
-                      CDCS Inc. provides hot-water extraction cleaning — the process most people
-                      call steam cleaning — for fabric surfaces in offices, homes, and vehicles:
-                    </p>
-                    <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
-                      {[
-                        "Office and commercial carpets",
-                        "Task, executive, and reception chairs",
-                        "Sofas and lounge furniture",
-                        "Waiting-area and event seating",
-                        "Fabric seats and upholstered furniture",
-                        "Vehicle seats and interior carpet",
-                      ].map((item) => (
-                        <li key={item} className="flex items-start gap-2.5 text-sm">
-                          <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <h3 className="pt-2 font-bold text-navy-900">Commercial carpet &amp; upholstery cleaning</h3>
-                    <p>
-                      For offices, corporate facilities, conference and reception areas, hospitality
-                      venues, and institutions, multiple chairs, carpeted areas, and upholstered
-                      furniture can be quoted together as a single commercial cleaning project,
-                      scheduled around your operating hours. It fits alongside a{" "}
+                      For offices, government buildings, conference and reception areas, hotels, and
+                      institutions, a whole set of chairs and upholstered furniture can be quoted as
+                      one project and scheduled around your operating hours. Carpeted floors are
+                      covered by our dedicated{" "}
+                      <Link href="/services/carpet-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                        commercial carpet cleaning
+                      </Link>{" "}
+                      service, and the two are often booked for the same visit. Both fit alongside a{" "}
                       <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
                         recurring janitorial programme
                       </Link>{" "}
@@ -775,20 +835,27 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       .
                     </p>
 
-                    <h3 className="pt-2 font-bold text-navy-900">Residential carpet &amp; upholstery cleaning</h3>
+                    <h3 className="pt-2 font-bold text-navy-900">Residential upholstery cleaning</h3>
                     <p>
-                      For homes, CDCS Inc. cleans sofas, upholstered chairs, carpets, and fabric
-                      furniture. Fabric is inspected first, high-traffic lanes and visible marks are
-                      pre-treated, and how much lifts depends on the fabric type, the type and age
-                      of the staining, any previous treatments, and the condition of the fibre — we
-                      give an honest read before starting and do not guarantee full stain removal.
+                      For homes, CDCS Inc. cleans sofas, upholstered chairs, and fabric furniture.
+                      Fabric is inspected first, visible marks are pre-treated, and how much lifts
+                      depends on the fabric type, the type and age of the staining, any previous
+                      treatments, and the condition of the fibre — we give an honest read before
+                      starting and do not guarantee full stain removal.
                     </p>
 
                     <h3 className="pt-2 font-bold text-navy-900">Vehicle seats and interior carpet</h3>
                     <p>
                       Extraction cleaning of car and vehicle seats and interior carpet is part of
-                      this service. If you want a full interior and exterior vehicle service rather
-                      than fabric cleaning alone,{" "}
+                      this service — see the{" "}
+                      <Link
+                        href="/projects/vehicle-interior-extraction-detailing-guyana/"
+                        className="font-semibold text-brand-600 hover:underline"
+                      >
+                        vehicle interior extraction project
+                      </Link>{" "}
+                      for before-and-after results. If you want a full interior and exterior vehicle
+                      service rather than fabric cleaning alone,{" "}
                       <Link href="/services/mobile-detailing/" className="font-semibold text-brand-600 hover:underline">
                         mobile detailing
                       </Link>{" "}
@@ -800,13 +867,13 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Link href="/insights/carpet-upholstery-cleaning-guyana/" className="font-semibold text-brand-600 hover:underline">
                         how often commercial carpets and upholstery should be cleaned
                       </Link>{" "}
-                      covers frequency by area and furniture type. See before-and-after work on{" "}
+                      covers frequency by area and furniture type. See more work on{" "}
                       <Link href="/our-work/" className="font-semibold text-brand-600 hover:underline">
                         Our Work
                       </Link>
                       ,{" "}
-                      <Link href="/quote/" className="font-semibold text-brand-600 hover:underline">
-                        request a carpet &amp; upholstery cleaning quote
+                      <Link href={quoteHref} className="font-semibold text-brand-600 hover:underline">
+                        request an upholstery cleaning quote
                       </Link>
                       , or{" "}
                       <Link href="/contact/" className="font-semibold text-brand-600 hover:underline">
@@ -988,6 +1055,66 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         </section>
       )}
 
+      {/* ================= BENEFITS (optional per-service) ================= */}
+      {service.benefits && service.benefits.length > 0 && (
+        <section className="bg-white pt-16 sm:pt-20">
+          <div className="container-page">
+            <SectionHeading eyebrow="Why It Matters" title={`Benefits of ${service.title}`} />
+            <dl className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {service.benefits.map((b) => (
+                <div key={b.title} className="rounded-xl border border-slate-200 bg-slate-50 p-5">
+                  <dt className="font-bold text-navy-900">{b.title}</dt>
+                  <dd className="mt-2 text-sm leading-relaxed text-slate-600">{b.text}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )}
+
+      {/* ================= ADDITIONAL BODY SECTIONS (optional per-service) ================= */}
+      {service.sections?.map((section) => (
+        <section key={section.title} id={section.id} className="scroll-mt-24 bg-white pt-16 sm:pt-20">
+          <div className="container-page">
+            <div className="max-w-4xl border-t border-slate-200 pt-10">
+              <SectionHeading eyebrow={section.eyebrow} title={section.title} />
+              {section.paragraphs && (
+                <div className="mt-6 max-w-3xl space-y-4 text-base leading-relaxed text-slate-700">
+                  {section.paragraphs.map((para) => (
+                    <p key={para.slice(0, 40)}>{para}</p>
+                  ))}
+                </div>
+              )}
+              {section.items && (
+                <div className="mt-8 grid gap-x-10 gap-y-6 sm:grid-cols-2">
+                  {section.items.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="font-bold text-navy-900">{item.title}</h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-slate-700">{item.text}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {section.bullets && (
+                <ul className="mt-6 grid max-w-3xl gap-x-8 gap-y-2 sm:grid-cols-2">
+                  {section.bullets.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5 text-sm leading-relaxed text-slate-700">
+                      <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {section.note && (
+                <p className="mt-6 max-w-3xl rounded-lg border border-accent-500/40 bg-accent-500/5 px-4 py-3 text-sm leading-relaxed text-slate-700">
+                  {section.note}
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+      ))}
+
       {/* ================= IDEAL FOR / WHAT'S INCLUDED ================= */}
       <section className="bg-white py-16 sm:py-24">
         <div className="container-page grid gap-8 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-12">
@@ -1036,6 +1163,68 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 </li>
               ))}
             </ol>
+          </div>
+        </section>
+      )}
+
+      {/* ================= EQUIPMENT / WHY CDCS / INDUSTRIES (optional) ================= */}
+      {(service.equipment || service.whyChoose || industriesServed.length > 0) && (
+        <section className="bg-white py-16 sm:py-24">
+          <div className="container-page">
+            <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+              {service.equipment && (
+                <div className="rounded-2xl border border-slate-200 p-6 sm:p-8">
+                  <SectionHeading eyebrow="Capability" title="Equipment & Capability" />
+                  <ul className="mt-6 space-y-3">
+                    {service.equipment.map((item) => (
+                      <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-slate-700">
+                        <IconCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {service.whyChoose && (
+                <div className="relative overflow-hidden rounded-2xl bg-navy-950 p-6 sm:p-8">
+                  <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" aria-hidden />
+                  <div className="relative">
+                    <SectionHeading
+                      eyebrow="Why CDCS"
+                      title={isConsumer ? "Why Clients Choose CDCS" : "Why Businesses Choose CDCS"}
+                      light
+                    />
+                    <ul className="mt-6 space-y-3">
+                      {service.whyChoose.map((item) => (
+                        <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-slate-200">
+                          <IconCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent-400" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {industriesServed.length > 0 && (
+              <div className="mt-12">
+                <SectionHeading eyebrow="Industries Served" title="Industries We Serve" />
+                <ul className="mt-6 flex flex-wrap gap-2.5">
+                  {industriesServed.map((industry) => (
+                    <li key={industry.id}>
+                      <Link
+                        href={`/industries/#${industry.id}`}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-navy-800 transition-colors hover:border-brand-400 hover:text-brand-700"
+                      >
+                        {industry.name}
+                        <IconArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -1118,6 +1307,33 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         </section>
       )}
 
+      {/* Related case studies from /projects/ */}
+      {relatedProjects.length > 0 && (
+        <section className="bg-white pt-16 sm:pt-24">
+          <div className="container-page">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <SectionHeading
+                eyebrow="Case Studies"
+                title="Related Project Case Studies"
+                description="How CDCS Inc. approached comparable work — scope, method, and photos from the job."
+              />
+              <Link
+                href="/projects/"
+                className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
+              >
+                All projects
+                <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              {relatedProjects.map((p) => (
+                <ProjectCard key={p.slug} project={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* FAQ (optional per-service) */}
       {service.faq && <Faq items={service.faq} />}
 
@@ -1172,7 +1388,14 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
       <CTABanner
         title={service.ctaTitle ?? `Ready to Schedule ${service.title}?`}
-        description="Request a quote and our team will confirm the details and provide a clear service proposal."
+        description={
+          isConsumer
+            ? "Get a preliminary figure online in a few minutes, or message CDCS Inc. on WhatsApp to book."
+            : "Tell us about your site and requirements. CDCS Inc. will confirm the details, assess the site where needed, and provide a clear written proposal."
+        }
+        primaryLabel={primaryCta.label}
+        primaryHref={primaryCta.href}
+        whatsappMessage={whatsappMessage}
       />
     </>
   );

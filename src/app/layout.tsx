@@ -36,6 +36,7 @@ export const metadata: Metadata = {
     "pressure washing Guyana",
     "mobile detailing Guyana",
     "fleet washing Guyana",
+    "commercial carpet cleaning Guyana",
     "office cleaning Georgetown Guyana",
     "commercial cleaning Georgetown",
     "post construction cleaning Guyana",
@@ -89,10 +90,12 @@ const jsonLd = {
         "Deep cleaning",
         "Post-construction cleaning",
         "Pressure washing",
-        "Carpet and upholstery cleaning",
+        "Commercial carpet cleaning",
+        "Upholstery and office chair cleaning",
         "Car wash and mobile vehicle washing",
         "Mobile vehicle detailing",
         "Fleet washing",
+        "Heavy equipment washing",
       ],
       address: {
         "@type": "PostalAddress",
@@ -101,8 +104,9 @@ const jsonLd = {
         addressCountry: "GY",
       },
       areaServed: [
-        { "@type": "Country", name: "Guyana" },
         { "@type": "City", name: "Georgetown" },
+        { "@type": "AdministrativeArea", name: siteConfig.location.region },
+        { "@type": "Country", name: "Guyana" },
       ],
       contactPoint: {
         "@type": "ContactPoint",

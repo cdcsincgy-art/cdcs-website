@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { services } from "@/lib/services-data";
 import { insightArticles } from "@/lib/insights-data";
+import { publishedProjects } from "@/lib/projects-data";
 import { siteConfig } from "@/lib/site-config";
 
 export const dynamic = "force-static";
@@ -12,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/washcare/",
     "/industries/",
     "/our-work/",
+    "/projects/",
     "/about/",
     "/insights/",
     "/estimate/",
@@ -21,8 +23,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const serviceRoutes = services.map((s) => `/services/${s.slug}/`);
   const insightRoutes = insightArticles.map((a) => `/insights/${a.slug}/`);
+  // Drafts have no page, so only published projects are listed.
+  const projectRoutes = publishedProjects.map((p) => `/projects/${p.slug}/`);
 
-  const routes = [...staticRoutes, ...serviceRoutes, ...insightRoutes];
+  const routes = [...staticRoutes, ...serviceRoutes, ...insightRoutes, ...projectRoutes];
 
   return routes.map((route) => ({
     url: `${siteConfig.url}${route}`,
@@ -33,7 +37,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
         ? 1
         : route === "/quote/" || route === "/estimate/"
           ? 0.9
-          : route.startsWith("/insights/") && route !== "/insights/"
+          : (route.startsWith("/insights/") && route !== "/insights/") ||
+              (route.startsWith("/projects/") && route !== "/projects/")
             ? 0.6
             : 0.8,
   }));

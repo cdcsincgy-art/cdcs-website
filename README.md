@@ -17,7 +17,8 @@ src/
     services/page.tsx      Services index
     services/[slug]/       Individual service pages (auto-generated from services-data.ts)
     industries/page.tsx    Industries We Serve
-    our-work/               Portfolio / project gallery
+    our-work/               Portfolio / project gallery (+ case-study cards)
+    projects/              Case studies: /projects/ index + /projects/[slug]/ (from projects-data.ts)
     about/page.tsx         About CDCS
     quote/                 Request-a-Quote form
     contact/page.tsx       Contact page
@@ -28,8 +29,9 @@ src/
   components/              Reusable UI: Header, Footer, ServiceCard, buttons, icons, etc.
   lib/
     site-config.ts         Company name, phone, email, socials — edit this file first
-    services-data.ts       The 8 services — add/edit a service here and its page is generated automatically
-    content-data.ts        Homepage content blocks (trust points, industries, process steps, portfolio items)
+    services-data.ts       The services — add/edit a service here and its page is generated automatically
+    projects-data.ts       Case studies — published entries get a page; drafts list what's missing
+    content-data.ts        Shared content (trust points, industry catalogue, process steps)
 ```
 
 **To add a 9th service later:** add one object to the `services` array in
@@ -69,6 +71,16 @@ power the homepage hero and "Our Work" preview, the About photo, every service-p
 The three service pages without their own photos yet (deep cleaning, post-construction, and
 commercial facility cleaning) reuse a related commercial-cleaning shot and show a "View Our Work"
 card instead of a gallery until dedicated photos exist.
+
+### Project case studies
+
+Case studies live in **`src/lib/projects-data.ts`**. Add one object per project; set
+`status: "published"` only once the photos are in `project-images.ts` and every detail on the page
+is confirmed. Published projects automatically get a page at `/projects/<slug>/`, a card on
+`/projects/`, `/our-work/`, and related service pages, and a sitemap entry. `status: "draft"`
+entries are never rendered — their `missing` list records what CDCS still needs to supply (the
+hotel carpet and government upholstery case studies are drafts for this reason). Never add client
+names, contract values, dates, or measured results without client approval and evidence.
 
 ### Logo
 

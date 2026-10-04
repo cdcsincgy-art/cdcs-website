@@ -3,18 +3,31 @@ import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTABanner } from "@/components/CTABanner";
 import { ProjectImage } from "@/components/ProjectImage";
+import { ProjectCard } from "@/components/ProjectCard";
 import { iconMap, IconArrowRight, IconCheck } from "@/components/icons";
 import { serviceHeroImage, projectImagesForService } from "@/lib/project-images";
-import { siteConfig } from "@/lib/site-config";
+import { industries, type Industry } from "@/lib/content-data";
+import { getServiceBySlug } from "@/lib/services-data";
+import { publishedProjects } from "@/lib/projects-data";
+import { siteConfig, ogImage } from "@/lib/site-config";
 import { pageLd } from "@/lib/seo";
 
+const INDUSTRIES_TITLE = "Industries We Serve in Guyana";
 const INDUSTRIES_DESCRIPTION =
-  "CDCS Inc. serves corporate offices, government agencies, logistics companies, construction firms, retail, hospitality, and industrial facilities across Guyana.";
+  "CDCS Inc. serves corporate offices, government agencies, hotels, logistics and oil and gas support companies, construction firms, commercial properties, and industrial facilities across Guyana.";
 
 export const metadata: Metadata = {
-  title: "Industries We Serve in Guyana",
+  title: INDUSTRIES_TITLE,
   description: INDUSTRIES_DESCRIPTION,
   alternates: { canonical: "/industries/" },
+  openGraph: {
+    type: "website",
+    url: `${siteConfig.url}/industries/`,
+    siteName: siteConfig.brandName,
+    title: `${INDUSTRIES_TITLE} | ${siteConfig.brandName}`,
+    description: INDUSTRIES_DESCRIPTION,
+    images: [ogImage],
+  },
 };
 
 const pageJsonLd = pageLd({
@@ -27,78 +40,8 @@ const pageJsonLd = pageLd({
   ],
 });
 
-type Industry = {
-  icon: string;
-  name: string;
-  description: string;
-  href: string;
-  linkLabel: string;
-};
-
-const officeSectors: Industry[] = [
-  {
-    icon: "building",
-    name: "Corporate Offices",
-    description: "Recurring janitorial programs and deep cleaning for professional office environments.",
-    href: "/services/commercial-janitorial-cleaning/",
-    linkLabel: "Commercial & janitorial cleaning",
-  },
-  {
-    icon: "shield",
-    name: "Government & Public Sector",
-    description:
-      "Structured, accountable cleaning services suited to public-sector facilities and procurement standards.",
-    href: "/services/commercial-facility-cleaning/",
-    linkLabel: "Commercial facility cleaning",
-  },
-  {
-    icon: "clipboard",
-    name: "Retail",
-    description:
-      "Storefront, floor, and common-area cleaning that keeps retail spaces presentable for customers.",
-    href: "/services/commercial-janitorial-cleaning/",
-    linkLabel: "Commercial & janitorial cleaning",
-  },
-  {
-    icon: "sparkle",
-    name: "Hospitality",
-    description: "Deep cleaning and extraction services for hotels, restaurants, and hospitality venues.",
-    href: "/services/deep-cleaning/",
-    linkLabel: "Deep cleaning",
-  },
-];
-
-const operationalSectors: Industry[] = [
-  {
-    icon: "building",
-    name: "Commercial Properties",
-    description:
-      "Cleaning and pressure washing programs for property managers overseeing multi-tenant buildings.",
-    href: "/services/pressure-washing/",
-    linkLabel: "Pressure washing",
-  },
-  {
-    icon: "truck",
-    name: "Transportation & Logistics",
-    description: "Fleet washing and yard/depot cleaning for trucking, courier, and logistics operators.",
-    href: "/services/fleet-washing/",
-    linkLabel: "Fleet washing",
-  },
-  {
-    icon: "hardhat",
-    name: "Construction",
-    description: "Post-construction cleaning that prepares newly built or renovated spaces for occupancy.",
-    href: "/services/post-construction-cleaning/",
-    linkLabel: "Post-construction cleaning",
-  },
-  {
-    icon: "factory",
-    name: "Industrial Facilities",
-    description: "Large-scale facility cleaning programs with recurring teams, equipment, and supervision.",
-    href: "/services/commercial-facility-cleaning/",
-    linkLabel: "Commercial facility cleaning",
-  },
-];
+const officeSectors = industries.filter((i) => i.group === "institutions");
+const operationalSectors = industries.filter((i) => i.group === "operations");
 
 const operatingPoints = [
   "A defined scope of work agreed before the first visit",
@@ -128,23 +71,35 @@ const environments = [
 
 function IndustryPanel({ industry }: { industry: Industry }) {
   const Icon = iconMap[industry.icon];
+  const services = industry.services
+    .map((slug) => getServiceBySlug(slug))
+    .filter((s): s is NonNullable<typeof s> => Boolean(s));
   return (
-    <Link
-      href={industry.href}
-      className="group flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-navy-900/20 hover:shadow-lg hover:shadow-navy-900/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:p-6"
+    <div
+      id={industry.id}
+      className="flex scroll-mt-28 gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
     >
-      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-navy-800 ring-1 ring-inset ring-navy-900/12 transition-colors duration-300 group-hover:bg-navy-900 group-hover:text-white group-hover:ring-navy-900">
+      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-navy-800 ring-1 ring-inset ring-navy-900/12">
         {Icon && <Icon className="h-6 w-6" />}
       </span>
       <div>
         <h3 className="font-bold text-navy-900">{industry.name}</h3>
         <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{industry.description}</p>
-        <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 transition-colors group-hover:text-brand-700">
-          {industry.linkLabel}
-          <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </span>
+        <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
+          {services.map((s) => (
+            <li key={s.slug}>
+              <Link
+                href={`/services/${s.slug}/`}
+                className="group inline-flex items-center gap-1 text-sm font-bold text-brand-600 hover:text-brand-700"
+              >
+                {s.title}
+                <IconArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -226,7 +181,7 @@ export default function IndustriesPage() {
           <div className="mt-14">
             <p className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">
               <span className="h-px w-6 bg-brand-600/50" aria-hidden />
-              Property, Logistics &amp; Industry
+              Property, Logistics, Industry &amp; Residential
             </p>
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
               {operationalSectors.map((industry) => (
@@ -268,7 +223,35 @@ export default function IndustriesPage() {
         </section>
       )}
 
+      {/* ================= CASE STUDIES ================= */}
+      {publishedProjects.length > 0 && (
+        <section className="bg-slate-50 py-16 sm:py-24">
+          <div className="container-page">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <SectionHeading
+                eyebrow="Case Studies"
+                title="Recent Projects Across Sectors"
+                description="Selected CDCS Inc. work for commercial, logistics, and industrial clients."
+              />
+              <Link
+                href="/projects/"
+                className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
+              >
+                All projects
+                <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              {publishedProjects.slice(0, 2).map((p) => (
+                <ProjectCard key={p.slug} project={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <CTABanner
+        primaryLabel="Discuss Your Facility Requirements"
         title="Don't See Your Industry Listed?"
         description="CDCS Inc. works with a wide range of organizations. Reach out and tell us about your facility or fleet — we'll help determine the right service."
       />

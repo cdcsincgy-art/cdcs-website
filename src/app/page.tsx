@@ -6,7 +6,9 @@ import { ServiceCard } from "@/components/ServiceCard";
 import { CTABanner } from "@/components/CTABanner";
 import { DeliveryModel } from "@/components/DeliveryModel";
 import { ProjectImage } from "@/components/ProjectImage";
+import { ProjectCard } from "@/components/ProjectCard";
 import { services } from "@/lib/services-data";
+import { publishedProjects } from "@/lib/projects-data";
 import { trustPoints, whyChooseUs, industries, processSteps } from "@/lib/content-data";
 import {
   homepageHeroImage,
@@ -16,15 +18,23 @@ import {
 } from "@/lib/project-images";
 import { iconMap, IconArrowRight, IconWhatsapp, IconCheck } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
+import { socialMetadata } from "@/lib/seo";
+
+const HOME_TITLE = "Commercial Cleaning Company in Guyana | CDCS Inc.";
+const HOME_DESCRIPTION =
+  "CDCS Inc. provides professional cleaning services in Guyana, including commercial and janitorial cleaning, carpet and upholstery cleaning, pressure washing, fleet washing, deep cleaning and mobile detailing. Serving Georgetown and clients across Guyana.";
 
 export const metadata: Metadata = {
-  title: {
-    absolute: "Commercial Cleaning Company in Guyana | CDCS Inc.",
-  },
-  description:
-    "CDCS Inc. provides professional cleaning services in Guyana, including commercial and janitorial cleaning, deep cleaning, pressure washing, fleet washing, upholstery cleaning and mobile detailing. Serving Georgetown and clients across Guyana.",
+  title: { absolute: HOME_TITLE },
+  description: HOME_DESCRIPTION,
   alternates: { canonical: "/" },
+  ...socialMetadata({ title: HOME_TITLE, description: HOME_DESCRIPTION, path: "/" }),
 };
+
+// The two commercial case studies lead on the homepage.
+const homepageProjects = publishedProjects
+  .filter((p) => p.slug === "fleet-heavy-equipment-washing-guyana" || p.slug === "commercial-pressure-washing-guyana")
+  .slice(0, 2);
 
 export default function HomePage() {
   return (
@@ -131,11 +141,15 @@ export default function HomePage() {
               </Link>
               ,{" "}
               <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
-                fleet washing
+                fleet and heavy equipment washing
+              </Link>
+              ,{" "}
+              <Link href="/services/carpet-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                commercial carpet cleaning
               </Link>
               ,{" "}
               <Link href="/services/upholstery-fabric-extraction/" className="font-semibold text-brand-600 hover:underline">
-                carpet and upholstery cleaning
+                upholstery and office chair cleaning
               </Link>
               ,{" "}
               <Link href="/services/post-construction-cleaning/" className="font-semibold text-brand-600 hover:underline">
@@ -256,13 +270,14 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 lg:grid-cols-5">
             {industries.map((industry) => {
               const Icon = iconMap[industry.icon];
               return (
-                <div
-                  key={industry.name}
-                  className="group flex flex-col gap-4 bg-navy-950 p-6 transition-colors duration-300 hover:bg-navy-900"
+                <Link
+                  key={industry.id}
+                  href={`/industries/#${industry.id}`}
+                  className="group flex flex-col gap-4 bg-navy-950 p-6 transition-colors duration-300 hover:bg-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-500"
                 >
                   <span className="text-accent-400">{Icon && <Icon className="h-6 w-6" />}</span>
                   <p className="text-sm font-bold leading-snug text-white">{industry.name}</p>
@@ -270,7 +285,7 @@ export default function HomePage() {
                     aria-hidden
                     className="mt-auto h-0.5 w-6 bg-accent-500/40 transition-all duration-300 group-hover:w-10 group-hover:bg-accent-500"
                   />
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -316,6 +331,27 @@ export default function HomePage() {
                   <p className="mt-2 text-sm font-medium leading-snug text-white">{image.caption}</p>
                 </figcaption>
               </figure>
+            ))}
+          </div>
+
+          <div className="mt-16 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="max-w-2xl">
+              <h3 className="text-xl font-bold tracking-tight text-navy-900 sm:text-2xl">Project Case Studies</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                Scope, method, and equipment from selected commercial jobs.
+              </p>
+            </div>
+            <Link
+              href="/projects/"
+              className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
+            >
+              All projects
+              <IconArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2">
+            {homepageProjects.map((p) => (
+              <ProjectCard key={p.slug} project={p} />
             ))}
           </div>
         </div>

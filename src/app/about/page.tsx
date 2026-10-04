@@ -8,7 +8,7 @@ import { whyChooseUs } from "@/lib/content-data";
 import { aboutImage } from "@/lib/project-images";
 import { iconMap } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
-import { pageLd } from "@/lib/seo";
+import { pageLd, socialMetadata } from "@/lib/seo";
 
 const ABOUT_TITLE = "About CDCS Inc. — Cleaning Company in Guyana";
 const ABOUT_DESCRIPTION =
@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   title: { absolute: ABOUT_TITLE },
   description: ABOUT_DESCRIPTION,
   alternates: { canonical: "/about/" },
+  ...socialMetadata({ title: ABOUT_TITLE, description: ABOUT_DESCRIPTION, path: "/about/" }),
 };
 
 const pageJsonLd = pageLd({
@@ -84,6 +85,37 @@ export default function AboutPage() {
                 around your operation rather than disrupting it. Whether you need a single
                 project completed or an ongoing service contract managed, CDCS is structured to
                 support it.
+              </p>
+              <p>
+                For commercial and public-sector clients, that covers{" "}
+                <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                  commercial cleaning and janitorial programmes
+                </Link>
+                ,{" "}
+                <Link href="/services/carpet-cleaning/" className="font-semibold text-brand-600 hover:underline">
+                  commercial carpet cleaning
+                </Link>
+                ,{" "}
+                <Link href="/services/upholstery-fabric-extraction/" className="font-semibold text-brand-600 hover:underline">
+                  office chair and upholstery cleaning
+                </Link>
+                ,{" "}
+                <Link href="/services/pressure-washing/" className="font-semibold text-brand-600 hover:underline">
+                  pressure washing
+                </Link>
+                , and{" "}
+                <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
+                  fleet and heavy equipment washing
+                </Link>
+                . See the{" "}
+                <Link href="/industries/" className="font-semibold text-brand-600 hover:underline">
+                  sectors we serve
+                </Link>{" "}
+                and{" "}
+                <Link href="/projects/" className="font-semibold text-brand-600 hover:underline">
+                  recent project case studies
+                </Link>
+                .
               </p>
             </div>
           </div>

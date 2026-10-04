@@ -72,9 +72,9 @@ export default function CarpetUpholsteryCleaningArticle() {
         arms on show to staff and visitors. The second is getting the full life
         out of the textile: grit left in a carpet acts like sandpaper on the
         fibre every time someone walks across it, so periodic{" "}
-        <Link href="/services/upholstery-fabric-extraction/">
-          professional carpet and upholstery cleaning
-        </Link>{" "}
+        professional{" "}
+        <Link href="/services/carpet-cleaning/">carpet cleaning</Link> and{" "}
+        <Link href="/services/upholstery-fabric-extraction/">upholstery cleaning</Link>{" "}
         is part of protecting the investment, not just tidying it.
       </p>
 
@@ -263,11 +263,10 @@ export default function CarpetUpholsteryCleaningArticle() {
         </li>
       </ul>
       <p>
-        This is exactly why the CDCS Inc.{" "}
-        <Link href="/services/upholstery-fabric-extraction/">
-          carpet, upholstery, and fabric cleaning service
-        </Link>{" "}
-        begins with an inspection of fibre, construction, colourfastness, and
+        This is exactly why every CDCS Inc.{" "}
+        <Link href="/services/carpet-cleaning/">commercial carpet cleaning</Link> and{" "}
+        <Link href="/services/upholstery-fabric-extraction/">upholstery cleaning</Link>{" "}
+        job begins with an inspection of fibre, construction, colourfastness, and
         condition, and a test area, before any method is chosen.
       </p>
 
@@ -385,7 +384,7 @@ export default function CarpetUpholsteryCleaningArticle() {
       <h2>Scheduling to minimise disruption</h2>
       <p>
         The CDCS Inc.{" "}
-        <Link href="/services/upholstery-fabric-extraction/">
+        <Link href="/services/carpet-cleaning/">
           extraction cleaning service
         </Link>{" "}
         works around your hours: most offices have carpet and upholstery cleaning
@@ -419,8 +418,9 @@ export default function CarpetUpholsteryCleaningArticle() {
       <h2>Getting carpet and upholstery care into your maintenance plan</h2>
       <p>
         CDCS Inc. provides{" "}
+        <Link href="/services/carpet-cleaning/">commercial carpet cleaning</Link> and{" "}
         <Link href="/services/upholstery-fabric-extraction/">
-          commercial carpet, upholstery, and fabric cleaning
+          upholstery and office chair cleaning
         </Link>{" "}
         — hot-water extraction, the method commonly called steam cleaning — for
         offices, hospitality operators, and organizations in Georgetown and

@@ -5,9 +5,15 @@ import { siteConfig } from "@/lib/site-config";
 export function CTABanner({
   title = "Need a Professional Cleaning Solution?",
   description = "Tell us what needs to be cleaned and our team will help determine the right service for your property, fleet, or facility.",
+  primaryLabel = "Request a Quote",
+  primaryHref = "/quote/",
+  whatsappMessage = "Hello CDCS, I'd like to request a quote.",
 }: {
   title?: string;
   description?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  whatsappMessage?: string;
 }) {
   return (
     <section className="relative overflow-hidden bg-navy-900">
@@ -18,11 +24,11 @@ export function CTABanner({
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{title}</h2>
           <p className="mt-4 text-base leading-relaxed text-slate-200 sm:text-lg">{description}</p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button href="/quote/" variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>
-              Request a Quote
+            <Button href={primaryHref} variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>
+              {primaryLabel}
             </Button>
             <Button
-              href={siteConfig.contact.whatsappHrefWithMessage("Hello CDCS, I'd like to request a quote.")}
+              href={siteConfig.contact.whatsappHrefWithMessage(whatsappMessage)}
               variant="outline"
               size="lg"
               icon={<IconWhatsapp className="h-5 w-5" />}

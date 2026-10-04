@@ -242,6 +242,34 @@ export function IconUpload(props: IconProps) {
   );
 }
 
+export function IconCarpet(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="5" y="4" width="14" height="16" rx="1" />
+      <path d="M8 8h8M8 12h8M8 16h8" />
+      <path d="M3 6h2M3 10h2M3 14h2M3 18h2M19 6h2M19 10h2M19 14h2M19 18h2" />
+    </svg>
+  );
+}
+
+export function IconHome(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3 11l9-7 9 7" />
+      <path d="M5 10v10h14V10" />
+      <path d="M10 20v-5h4v5" />
+    </svg>
+  );
+}
+
+export function IconFlame(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.2 1-3.6 2-4.6.3 1.6 1 2.6 2 2.6 0-3 0-5.5 1-8z" />
+    </svg>
+  );
+}
+
 export const serviceIconMap: Record<string, (props: IconProps) => ReactElement> = {
   building: IconBuilding,
   spray: IconSpray,
@@ -251,6 +279,7 @@ export const serviceIconMap: Record<string, (props: IconProps) => ReactElement> 
   chair: IconChair,
   hardhat: IconHardhat,
   factory: IconFactory,
+  carpet: IconCarpet,
 };
 
 // Superset used by content sections (trust points, why-choose-us, industries,
@@ -267,4 +296,6 @@ export const iconMap: Record<string, (props: IconProps) => ReactElement> = {
   phone: IconPhone,
   mail: IconMail,
   check: IconCheck,
+  home: IconHome,
+  flame: IconFlame,
 };

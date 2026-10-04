@@ -186,7 +186,7 @@ export default function OfficeCleaningFrequencyArticle() {
         Vacuuming keeps carpet looking acceptable, but it does not remove the
         oils, fine soil, and spills that build up in the pile over months.
         Carpeted commercial areas generally need{" "}
-        <Link href="/services/upholstery-fabric-extraction/">
+        <Link href="/services/carpet-cleaning/">
           hot-water extraction cleaning
         </Link>{" "}
         every three to six months, sooner for entrance runners and busy walkways.
@@ -430,9 +430,8 @@ export default function OfficeCleaningFrequencyArticle() {
         with a frequency set per area, and keep it consistent with supervised
         teams and regular quality checks — with{" "}
         <Link href="/services/deep-cleaning/">periodic deep cleaning</Link> and{" "}
-        <Link href="/services/upholstery-fabric-extraction/">
-          carpet and upholstery care
-        </Link>{" "}
+        <Link href="/services/carpet-cleaning/">carpet</Link> and{" "}
+        <Link href="/services/upholstery-fabric-extraction/">upholstery care</Link>{" "}
         built into the same plan.
       </p>
       <p>

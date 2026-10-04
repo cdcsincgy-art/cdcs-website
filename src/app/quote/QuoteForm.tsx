@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { services } from "@/lib/services-data";
 import { siteConfig } from "@/lib/site-config";
 import { trackEvent } from "@/lib/analytics";
@@ -76,6 +76,21 @@ export function QuoteForm() {
   const [fileName, setFileName] = useState<string>("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const serviceSelectRef = useRef<HTMLSelectElement>(null);
+
+  // Service-page CTAs link here as /quote/?service=<slug>; preselect that
+  // service (uncontrolled select, so the visitor can still change it).
+  useEffect(() => {
+    let slug: string | null = null;
+    try {
+      slug = new URLSearchParams(window.location.search).get("service");
+    } catch {
+      return;
+    }
+    const match = slug ? services.find((s) => s.slug === slug) : undefined;
+    const select = serviceSelectRef.current;
+    if (match && select && !select.value) select.value = match.title;
+  }, []);
 
   function clearFieldError(name?: string | null) {
     if (!name) return;
@@ -296,7 +311,14 @@ export function QuoteForm() {
         </Field>
 
         <Field label="Service Required" name="service" required error={fieldErrors.service}>
-          <select {...inputA11y("service", fieldErrors)} name="service" required defaultValue="" className={inputClass}>
+          <select
+            {...inputA11y("service", fieldErrors)}
+            ref={serviceSelectRef}
+            name="service"
+            required
+            defaultValue=""
+            className={inputClass}
+          >
             <option value="" disabled>
               Select a service
             </option>

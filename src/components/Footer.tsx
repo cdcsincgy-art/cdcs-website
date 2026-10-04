@@ -59,6 +59,7 @@ export function Footer() {
             <li><Link href="/about/" className="text-slate-400 hover:text-accent-400">About CDCS</Link></li>
             <li><Link href="/industries/" className="text-slate-400 hover:text-accent-400">Industries We Serve</Link></li>
             <li><Link href="/our-work/" className="text-slate-400 hover:text-accent-400">Our Work</Link></li>
+            <li><Link href="/projects/" className="text-slate-400 hover:text-accent-400">Projects &amp; Case Studies</Link></li>
             <li><Link href="/insights/" className="text-slate-400 hover:text-accent-400">Cleaning &amp; Facility Insights</Link></li>
             <li><Link href="/washcare/" className="text-slate-400 hover:text-accent-400">WashCare Plans</Link></li>
             <li><Link href="/estimate/" className="text-slate-400 hover:text-accent-400">Get an Estimate</Link></li>
@@ -99,7 +100,7 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-500 sm:flex-row">
           <p>© {year} {siteConfig.companyName}. All rights reserved.</p>
-          <p>Georgetown, Guyana</p>
+          <p>Based in Georgetown · Serving Demerara-Mahaica and across Guyana</p>
         </div>
       </div>
     </footer>

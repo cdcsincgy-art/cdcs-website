@@ -82,7 +82,7 @@ export const estimatorServices: EstimatorService[] = [
   { id: "kitchen-deep", label: "Kitchen Deep Cleaning", category: "Residential & Deep Cleaning", group: "deep_residential", servicePageSlug: "deep-cleaning" },
 
   // --- Carpet, Upholstery & Extraction ---
-  { id: "carpet-cleaning", label: "Carpet Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: "Carpet" } },
+  { id: "carpet-cleaning", label: "Carpet Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "carpet-cleaning", presetAnswers: { itemType: "Carpet" } },
   { id: "upholstery-extraction", label: "Upholstery & Fabric Extraction", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction" },
   { id: "office-chair-cleaning", label: "Office Chair Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: "Office chair", chairType: "Office chair" } },
   { id: "sofa-cleaning", label: "Sofa Cleaning", category: "Carpet, Upholstery & Extraction", group: "carpet_upholstery", servicePageSlug: "upholstery-fabric-extraction", presetAnswers: { itemType: "Sofa" } },

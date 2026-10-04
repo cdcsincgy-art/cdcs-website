@@ -46,6 +46,10 @@ const jobs = [
     trim: { top: 0.33, bottom: 0.38 } },
   { in: "IMG_0425.jpeg", out: "fleet-washing/fleet-washing-flatbed-trailer", maxW: 820,
     trim: { top: 0.135, bottom: 0.24, left: 0.02, right: 0.14 } },
+  { in: "IMG_0400.jpeg", out: "fleet-washing/fleet-washing-prime-movers-yard", maxW: 820,
+    trim: { top: 0.2, bottom: 0.34 } },
+  { in: "IMG_0422.jpeg", out: "fleet-washing/heavy-equipment-excavator-cab-cleaning", maxW: 820,
+    trim: { top: 0.118, bottom: 0.39 } },
 
   // ---- Mobile Detailing ----
   { in: "IMG_2873.jpeg", out: "mobile-detailing/mobile-detailing-vehicle-interior-seats-out", maxW: 1200, jpg: true },
@@ -62,8 +66,13 @@ const jobs = [
     trim: { top: 0.075 } },
 ];
 
+// Optional: pass source filenames to process only those, e.g.
+//   node scripts/process-project-images.mjs IMG_0400.jpeg IMG_0422.jpeg
+const only = process.argv.slice(2);
+const selected = only.length ? jobs.filter((j) => only.includes(j.in)) : jobs;
+
 let totalBytes = 0;
-for (const job of jobs) {
+for (const job of selected) {
   const srcPath = join(SRC, job.in);
   const meta = await sharp(srcPath).rotate().metadata();
   const t = job.trim || {};
@@ -95,4 +104,4 @@ for (const job of jobs) {
   }
   console.log(line);
 }
-console.log(`\n${jobs.length} images -> ${(totalBytes / 1024 / 1024).toFixed(2)}MB total`);
+console.log(`\n${selected.length} images -> ${(totalBytes / 1024 / 1024).toFixed(2)}MB total`);
