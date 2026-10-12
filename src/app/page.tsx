@@ -8,6 +8,7 @@ import { DeliveryModel } from "@/components/DeliveryModel";
 import { ProjectImage } from "@/components/ProjectImage";
 import { ProjectCard } from "@/components/ProjectCard";
 import { LocalContentCredential } from "@/components/LocalContentCredential";
+import { GcciMembership } from "@/components/GcciMembership";
 import { Faq } from "@/components/Faq";
 import { services } from "@/lib/services-data";
 import { publishedProjects, pendingHomepageProjectSlugs } from "@/lib/projects-data";
@@ -18,7 +19,7 @@ import {
   operatingStandardsImage,
   categoryLabel,
 } from "@/lib/project-images";
-import { localContentCertificate as cert, formatCredentialDate } from "@/lib/credentials";
+import { localContentCertificate as cert, formatCredentialDate, gcciMembership } from "@/lib/credentials";
 import {
   iconMap,
   IconArrowRight,
@@ -96,7 +97,7 @@ const credibility = [
   {
     icon: "building",
     title: "Registered Guyanese company",
-    text: `${siteConfig.companyName}, based in Georgetown and operating since 2022.`,
+    text: `${siteConfig.companyName}, based in Georgetown, operating since 2022, and a ${gcciMembership.shortName} member since ${gcciMembership.memberSince}.`,
     href: "/about/",
     linkLabel: "About CDCS",
   },
@@ -135,7 +136,7 @@ const credibility = [
 const homeFaqs = [
   {
     q: "What is CDCS Inc.?",
-    a: `CDCS Inc. is the trading name of ${siteConfig.companyName}, a Guyanese cleaning company based in Georgetown and operating since 2022. It provides commercial and janitorial cleaning, carpet and upholstery cleaning, pressure washing, fleet washing, and vehicle detailing for businesses, organizations, and individuals.`,
+    a: `CDCS Inc. is the trading name of ${siteConfig.companyName}, a Guyanese cleaning company based in Georgetown and operating since 2022. It provides commercial and janitorial cleaning, carpet and upholstery cleaning, pressure washing, fleet washing, and vehicle detailing for businesses, organizations, and individuals, and is a member of the ${gcciMembership.organization} (${gcciMembership.shortName}).`,
   },
   {
     q: "Where does CDCS operate?",
@@ -289,6 +290,7 @@ export default function HomePage() {
 
       {/* ================= LOCAL CONTENT REGISTRATION ================= */}
       <LocalContentCredential variant="strip" />
+      <GcciMembership variant="strip" />
 
       {/* ================= WHAT WE DO / SERVICES ================= */}
       <section className="bg-white py-20 sm:py-28">

@@ -5,6 +5,7 @@ import { CTABanner } from "@/components/CTABanner";
 import { DeliveryModel } from "@/components/DeliveryModel";
 import { ProjectImage } from "@/components/ProjectImage";
 import { LocalContentCredential } from "@/components/LocalContentCredential";
+import { GcciMembership } from "@/components/GcciMembership";
 import { whyChooseUs } from "@/lib/content-data";
 import { aboutImage } from "@/lib/project-images";
 import { iconMap } from "@/components/icons";
@@ -147,6 +148,10 @@ export default function AboutPage() {
                 Content Register administered by the Local Content Secretariat.
               </p>
               <p>
+                CDCS is also a member of the Georgetown Chamber of Commerce &amp; Industry (GCCI)
+                since March 2025, and is listed in the Chamber&apos;s official member directory.
+              </p>
+              <p>
                 Procurement teams can check the certificate directly on the official register
                 using the certificate number.{" "}
                 <Link href="/credentials/" className="font-semibold text-brand-600 hover:underline">
@@ -156,7 +161,10 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-          <LocalContentCredential headingLevel="h3" linkToCredentials={false} />
+          <div className="space-y-6">
+            <LocalContentCredential headingLevel="h3" linkToCredentials={false} />
+            <GcciMembership headingLevel="h3" />
+          </div>
         </div>
       </section>
 

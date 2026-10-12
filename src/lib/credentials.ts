@@ -80,6 +80,30 @@ export const localContentCertificate = {
   } as CredentialDocument | undefined,
 };
 
+/**
+ * Georgetown Chamber of Commerce & Industry membership.
+ *
+ * Content rules: describe CDCS as a GCCI *member* — never "GCCI certified",
+ * accredited, or endorsed. Membership is not a certification and is not an
+ * endorsement or guarantee of CDCS services by the Chamber. Supporting
+ * reference: the official GCCI member directory listing (no certificate on
+ * file). Member since March 2025; CDCS management confirmed on 2026-10-12 that
+ * the membership is active with dues up to date. Re-confirm it is current
+ * before future publications. Do not use the GCCI logo unless GCCI's usage
+ * permission is confirmed.
+ */
+export const gcciMembership = {
+  label: "Georgetown Chamber of Commerce & Industry (GCCI) Member",
+  organization: "Georgetown Chamber of Commerce & Industry",
+  shortName: "GCCI",
+  organizationUrl: "https://gcci.gy/",
+  memberSince: "March 2025",
+  listingUrl: "https://gcci.gy/capital-detailing-cleaning-services-inc/",
+};
+
+export const gcciDisclaimer =
+  "GCCI membership means CDCS is a member of the Georgetown Chamber of Commerce & Industry business association. It is not a certification, and it is not an endorsement or guarantee of CDCS services by the Chamber.";
+
 /** Descriptive alt text for any rendering of the certificate. */
 export function certificateAlt(): string {
   const c = localContentCertificate;

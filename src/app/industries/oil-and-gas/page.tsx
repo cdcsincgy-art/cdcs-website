@@ -19,7 +19,7 @@ import {
 import { getServiceBySlug } from "@/lib/services-data";
 import { publishedProjects } from "@/lib/projects-data";
 import { projectImageByFile } from "@/lib/project-images";
-import { localContentCertificate as cert, formatCredentialDate } from "@/lib/credentials";
+import { localContentCertificate as cert, formatCredentialDate, gcciMembership } from "@/lib/credentials";
 import { siteConfig } from "@/lib/site-config";
 import { pageLd, socialMetadata, type BreadcrumbItem } from "@/lib/seo";
 
@@ -107,6 +107,7 @@ const companyFacts = [
   { label: "Trading as", value: siteConfig.brandName },
   { label: "Country", value: "Guyana" },
   { label: "Operating since", value: siteConfig.foundingDate.slice(0, 4) },
+  { label: "Chamber membership", value: `${gcciMembership.shortName} member since ${gcciMembership.memberSince}` },
   { label: "Based in", value: siteConfig.location.display },
   { label: "Service area", value: `Georgetown, ${siteConfig.location.region}, and across Guyana` },
 ];
@@ -517,6 +518,20 @@ export default function OilAndGasPage() {
               <li className="py-3.5">
                 <span className="font-semibold text-navy-900">Quality policy and QA/QC manual</span>
                 <span className="block text-slate-600">Documented company policy · internally adopted, not ISO-certified</span>
+              </li>
+              <li className="py-3.5">
+                <span className="font-semibold text-navy-900">{gcciMembership.label}</span>
+                <span className="block text-slate-600">
+                  Member since {gcciMembership.memberSince} ·{" "}
+                  <a
+                    href={gcciMembership.listingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-brand-600 hover:underline"
+                  >
+                    View Official GCCI Listing<span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </span>
               </li>
             </ul>
             <Link

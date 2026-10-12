@@ -10,7 +10,7 @@ import { Analytics } from "@/components/Analytics";
 import { ContactLinkTracker } from "@/components/ContactLinkTracker";
 import { siteConfig, ogImage } from "@/lib/site-config";
 import { services } from "@/lib/services-data";
-import { localContentCredentialLd } from "@/lib/credentials";
+import { localContentCredentialLd, gcciMembership } from "@/lib/credentials";
 
 // Fonts via next/font: self-hosted from this site at build time (no browser
 // requests to Google, so the CSP font-src 'self' still holds), preloaded, and
@@ -121,9 +121,18 @@ const jsonLd = {
         areaServed: "GY",
         availableLanguage: "English",
       },
-      sameAs: [siteConfig.social.instagram, siteConfig.social.facebook],
+      // Includes the official GCCI member-directory listing for CDCS — an
+      // independent page about this business.
+      sameAs: [siteConfig.social.instagram, siteConfig.social.facebook, gcciMembership.listingUrl],
       // Shown in full, with a link to the official register, on /credentials/.
       hasCredential: localContentCredentialLd(),
+      // Chamber membership (a business-association membership, not a credential).
+      memberOf: {
+        "@type": "Organization",
+        name: gcciMembership.organization,
+        alternateName: gcciMembership.shortName,
+        url: gcciMembership.organizationUrl,
+      },
       hasOfferCatalog: {
         "@type": "OfferCatalog",
         name: "Cleaning & facility services",

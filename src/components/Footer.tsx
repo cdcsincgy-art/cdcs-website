@@ -101,7 +101,8 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-400 sm:flex-row">
-          <p>© {year} {siteConfig.companyName}. All rights reserved.</p>
+          {/* companyName already ends with "Inc." — no extra period. */}
+          <p>© {year} {siteConfig.companyName} All rights reserved.</p>
           <p>Based in Georgetown · Serving Demerara-Mahaica and across Guyana</p>
         </div>
       </div>

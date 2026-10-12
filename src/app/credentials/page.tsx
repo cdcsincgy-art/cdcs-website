@@ -4,8 +4,9 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CTABanner } from "@/components/CTABanner";
 import { CertificatePreview, LocalContentCredential } from "@/components/LocalContentCredential";
+import { GcciMembership } from "@/components/GcciMembership";
 import { IconExternal } from "@/components/icons";
-import { localContentCertificate as cert } from "@/lib/credentials";
+import { localContentCertificate as cert, gcciMembership } from "@/lib/credentials";
 import { siteConfig } from "@/lib/site-config";
 import { pageLd, socialMetadata, type BreadcrumbItem } from "@/lib/seo";
 
@@ -40,6 +41,7 @@ const companyFacts = [
   { label: "Registered company name", value: siteConfig.companyName },
   { label: "Trading as", value: siteConfig.brandName },
   { label: "Operating since", value: siteConfig.foundingDate.slice(0, 4) },
+  { label: "Chamber membership", value: `${gcciMembership.shortName} member since ${gcciMembership.memberSince}` },
   { label: "Based in", value: siteConfig.location.display },
   { label: "Service area", value: `Georgetown, ${siteConfig.location.region}, and across Guyana` },
 ];
@@ -124,6 +126,29 @@ export default function CredentialsPage() {
           </div>
         </section>
       )}
+
+      <section aria-labelledby="gcci-membership" className="border-t border-slate-200 bg-white py-16 sm:py-24">
+        <div className="container-page grid gap-10 lg:grid-cols-[minmax(0,26rem)_1fr] lg:gap-16">
+          <div>
+            <p className="mb-4 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">
+              <span className="h-px w-6 bg-brand-600/50" aria-hidden />
+              Chamber Membership
+            </p>
+            <h2
+              id="gcci-membership"
+              className="text-pretty text-[1.9rem] font-bold leading-[1.15] tracking-tight text-navy-900 sm:text-4xl"
+            >
+              Georgetown Chamber of Commerce &amp; Industry Membership
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-slate-600">
+              {siteConfig.companyName} has been a member of the {gcciMembership.organization} (
+              {gcciMembership.shortName}) since {gcciMembership.memberSince}. The company is listed in
+              the Chamber&apos;s official member directory.
+            </p>
+          </div>
+          <GcciMembership headingLevel="h3" />
+        </div>
+      </section>
 
       <section className="bg-slate-50 py-16 sm:py-24">
         <div className="container-page grid gap-12 lg:grid-cols-2 lg:gap-16">
