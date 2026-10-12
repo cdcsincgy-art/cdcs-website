@@ -13,7 +13,7 @@ import { pageLd } from "@/lib/seo";
 
 const OUR_WORK_TITLE = "Our Work — CDCS Cleaning Projects in Guyana";
 const OUR_WORK_DESCRIPTION =
-  "Photos and case studies from real CDCS Inc. projects across Guyana — commercial and janitorial cleaning, pressure washing, fleet and heavy equipment washing, mobile detailing, and upholstery extraction.";
+  "Photos and case studies from real CDCS Inc. projects in Guyana — commercial cleaning, pressure washing, fleet and heavy equipment washing, and detailing.";
 
 export const metadata: Metadata = {
   title: { absolute: OUR_WORK_TITLE },
@@ -157,7 +157,7 @@ export default function OurWorkPage() {
                   key={image.file}
                   className="mb-5 break-inside-avoid overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
                 >
-                  <ProjectImage image={image} className="w-full" />
+                  <ProjectImage image={image} className="w-full" sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" />
                   <figcaption className="px-4 py-3 text-sm leading-relaxed text-slate-600">
                     {image.beforeAfter && (
                       <span className="mr-2 inline-block rounded bg-brand-50 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-brand-700">

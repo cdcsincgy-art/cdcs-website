@@ -24,9 +24,15 @@
 .DS_Store
 *.pem
 
-# raw project photo originals — the optimized versions in
-# public/images/projects/ are committed; see scripts/process-project-images.mjs
+# raw project photo originals — kept OUTSIDE /public in source-photos/ so they
+# are never deployed or copied into out/; the optimized versions in
+# public/images/projects/ are committed. See scripts/process-project-images.mjs.
+/source-photos/
 /public/images/IMG_*
+
+# project photos awaiting client publication approval — kept out of /public
+# (and out of git) until approved; see scripts/pending-assets.json
+/staging/
 
 # debug
 npm-debug.log*

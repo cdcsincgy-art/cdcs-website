@@ -1,26 +1,30 @@
 import type { Metadata } from "next";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/600.css";
-import "@fontsource/inter/700.css";
+import { Inter, Manrope } from "next/font/google";
+import "./globals.css";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { WhatsAppFloat } from "@/components/WhatsAppFloat";
+import { MobileActionBar } from "@/components/MobileActionBar";
+import { industries } from "@/lib/content-data";
+import { Analytics } from "@/components/Analytics";
+import { ContactLinkTracker } from "@/components/ContactLinkTracker";
+import { siteConfig, ogImage } from "@/lib/site-config";
+import { services } from "@/lib/services-data";
+import { localContentCredentialLd } from "@/lib/credentials";
+
+// Fonts via next/font: self-hosted from this site at build time (no browser
+// requests to Google, so the CSP font-src 'self' still holds), preloaded, and
+// with metric-matched fallbacks so text doesn't shift when the font arrives.
+// Variable fonts cover every weight in one file each (was 8 separate files).
+//
 // Manrope — premium/brand typeface for headings, navigation, buttons, the
 // brand wordmark, and the estimator's/WashCare's headline figures and plan
 // names. Body copy, forms, the estimator's questions/tables, and all
 // small/legal text stay on Inter (see --font-sans / --font-heading in
 // globals.css) — Manrope is used for short, prominent text, not extended
 // reading copy.
-import "@fontsource/manrope/500.css";
-import "@fontsource/manrope/600.css";
-import "@fontsource/manrope/700.css";
-import "@fontsource/manrope/800.css";
-import "./globals.css";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { WhatsAppFloat } from "@/components/WhatsAppFloat";
-import { Analytics } from "@/components/Analytics";
-import { ContactLinkTracker } from "@/components/ContactLinkTracker";
-import { siteConfig, ogImage } from "@/lib/site-config";
-import { services } from "@/lib/services-data";
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -69,10 +73,11 @@ const jsonLd = {
       "@type": "ProfessionalService",
       "@id": `${siteConfig.url}/#business`,
       name: siteConfig.companyName,
-      alternateName: siteConfig.brandName,
+      legalName: siteConfig.companyName,
+      alternateName: [siteConfig.brandName, siteConfig.companyNameAmpersand],
       description: siteConfig.description,
       slogan: siteConfig.tagline,
-      url: siteConfig.url,
+      url: `${siteConfig.url}/`,
       foundingDate: siteConfig.foundingDate,
       logo: `${siteConfig.url}/images/cdcs-logo.png`,
       image: [
@@ -117,6 +122,8 @@ const jsonLd = {
         availableLanguage: "English",
       },
       sameAs: [siteConfig.social.instagram, siteConfig.social.facebook],
+      // Shown in full, with a link to the official register, on /credentials/.
+      hasCredential: localContentCredentialLd(),
       hasOfferCatalog: {
         "@type": "OfferCatalog",
         name: "Cleaning & facility services",
@@ -134,7 +141,7 @@ const jsonLd = {
     {
       "@type": "WebSite",
       "@id": `${siteConfig.url}/#website`,
-      url: siteConfig.url,
+      url: `${siteConfig.url}/`,
       name: siteConfig.brandName,
       alternateName: siteConfig.companyName,
       inLanguage: "en",
@@ -145,7 +152,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${manrope.variable}`}>
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
       </head>
@@ -154,10 +161,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Header />
+        {/* Only titles and links go to the client header — not full service content. */}
+        <Header
+          services={services.map((s) => ({ href: `/services/${s.slug}/`, label: s.title }))}
+          industries={industries.map((i) => ({ href: i.page ?? `/industries/#${i.id}`, label: i.name }))}
+        />
         <main>{children}</main>
         <Footer />
         <WhatsAppFloat />
+        <MobileActionBar />
         <Analytics />
         <ContactLinkTracker />
       </body>

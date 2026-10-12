@@ -57,7 +57,9 @@ export function Footer() {
           <h3 className="text-sm font-bold uppercase tracking-wider text-white">Company</h3>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li><Link href="/about/" className="text-slate-400 hover:text-accent-400">About CDCS</Link></li>
+            <li><Link href="/credentials/" className="text-slate-400 hover:text-accent-400">Credentials</Link></li>
             <li><Link href="/industries/" className="text-slate-400 hover:text-accent-400">Industries We Serve</Link></li>
+            <li><Link href="/industries/oil-and-gas/" className="text-slate-400 hover:text-accent-400">Oil &amp; Gas Support</Link></li>
             <li><Link href="/our-work/" className="text-slate-400 hover:text-accent-400">Our Work</Link></li>
             <li><Link href="/projects/" className="text-slate-400 hover:text-accent-400">Projects &amp; Case Studies</Link></li>
             <li><Link href="/insights/" className="text-slate-400 hover:text-accent-400">Cleaning &amp; Facility Insights</Link></li>
@@ -89,7 +91,7 @@ export function Footer() {
               <IconMail className="h-4 w-4 shrink-0 text-accent-500" />
               <a href={siteConfig.contact.emailHref} className="hover:text-accent-400">{siteConfig.contact.email}</a>
             </li>
-            <li className="text-slate-500">Social: {siteConfig.social.handle}</li>
+            <li className="text-slate-400">Social: {siteConfig.social.handle}</li>
           </ul>
           <Button href="/quote/" variant="accent" size="md" className="mt-5">
             Request a Quote
@@ -98,7 +100,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-500 sm:flex-row">
+        <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-400 sm:flex-row">
           <p>© {year} {siteConfig.companyName}. All rights reserved.</p>
           <p>Based in Georgetown · Serving Demerara-Mahaica and across Guyana</p>
         </div>

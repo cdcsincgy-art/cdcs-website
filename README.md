@@ -57,16 +57,32 @@ power the homepage hero and "Our Work" preview, the About photo, every service-p
 
 **To add more photos:**
 
-1. Drop the originals into `public/images/` (they are git-ignored) and add an entry for each to
+1. Drop the originals into `source-photos/` (git-ignored and outside `public/`, so raw photos —
+   unblurred badges, plates, client branding — can never be deployed; a prebuild guard fails the
+   build if any `IMG_*` original lands in `public/images/`) and add an entry for each to
    the `jobs` array in `scripts/process-project-images.mjs` — set the output path, a `maxW`, a
    `trim` if the shot has phone/Instagram UI to crop out, and `jpg: true` if it will be a page
-   hero.
-2. Run `node scripts/process-project-images.mjs` — it writes optimized `.webp` (and `.jpg`
-   fallbacks) into `public/images/projects/`. Commit those.
+   hero. Optional: `widths: [480, 960]` for smaller responsive variants, `crop` for an exact
+   pixel region, and `blur` regions for staff name badges or other identifying details.
+2. Run `node scripts/process-project-images.mjs <IMG_….jpeg …>` — it writes optimized `.webp`
+   (plus `-<w>.webp` variants and `.jpg` fallbacks) into `public/images/projects/`. Commit those.
 3. Add the images to the right category in `src/lib/project-images.ts` with a natural, accurate
    `alt` and a factual `caption` (describe only what's visible — no client names, dates, values,
-   or quantified results). Set `beforeAfter: true` for side-by-side composites and
-   `heroForService: "<slug>"` to make one the hero of a service page.
+   or quantified results). Set `beforeAfter: true` for side-by-side composites,
+   `heroForService: "<slug>"` to make one the hero of a service page, the same `widths` as the
+   script, and `focus` (CSS object-position) if a cropped hero needs to keep its subject in frame.
+
+**Content awaiting client approval** is kept **out of this repository** (it is public). Its case-study
+entries, photo captions, and image-processing jobs live in `staging/pending-content.json`, and its
+photos in `staging/` — both git-ignored, **never in `public/`** (anything in `public/` is a
+downloadable URL once deployed). `scripts/pending-assets.json` lists the held-back image folders; a
+`prebuild` guard fails any build if one of them appears in `public/`. Normal builds, including every
+Vercel preview and production build, have no pending content. To preview it locally, run
+`npm run build:preview` (reads the local file and copies the staged photos into `out/` — never
+deploy that output); pending case-study pages show an amber "Preview only" banner. When the client
+approves: move the entries into `src/lib/projects-data.ts` / `project-images.ts` /
+`scripts/process-project-images.mjs` (status `"published"`), move the folder from `staging/` to
+`public/`, and remove it from `pending-assets.json`. See `src/lib/publication.ts`.
 
 The three service pages without their own photos yet (deep cleaning, post-construction, and
 commercial facility cleaning) reuse a related commercial-cleaning shot and show a "View Our Work"
@@ -79,7 +95,7 @@ Case studies live in **`src/lib/projects-data.ts`**. Add one object per project;
 is confirmed. Published projects automatically get a page at `/projects/<slug>/`, a card on
 `/projects/`, `/our-work/`, and related service pages, and a sitemap entry. `status: "draft"`
 entries are never rendered — their `missing` list records what CDCS still needs to supply (the
-hotel carpet and government upholstery case studies are drafts for this reason). Never add client
+government upholstery case study is a draft for this reason). Never add client
 names, contract values, dates, or measured results without client approval and evidence.
 
 ### Logo

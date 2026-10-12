@@ -11,7 +11,7 @@ import { siteConfig } from "@/lib/site-config";
 import { pageLd, socialMetadata } from "@/lib/seo";
 
 const SERVICES_DESCRIPTION =
-  "Browse every CDCS Inc. service and the areas we cover across Georgetown and Guyana — commercial cleaning, pressure washing, fleet washing, deep cleaning, detailing, and more.";
+  "All CDCS Inc. cleaning services in Georgetown and across Guyana — commercial and janitorial cleaning, carpet, pressure washing, fleet washing, and detailing.";
 
 export const metadata: Metadata = {
   title: "CDCS Services & Coverage in Guyana",

@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/check-pending-assets.mjs",
     "build": "next build",
+    "build:preview": "node scripts/build-preview.mjs",
     "start": "next start",
     "lint": "eslint",
     "og:image": "node scripts/generate-og-image.mjs",

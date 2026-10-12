@@ -32,7 +32,7 @@ const faq = [
 ];
 
 export const metadata: Metadata = {
-  title: { absolute: `${article.metaTitle} | ${siteConfig.brandName}` },
+  title: { absolute: `${article.metaTitle} | CDCS` },
   description: article.metaDescription,
   keywords: article.keywords,
   alternates: { canonical: `/insights/${article.slug}/` },
@@ -167,8 +167,8 @@ export default function CommercialDeepCleaningArticle() {
       <p>
         Floor detailing into corners and along edges, and — where the finish
         allows — machine scrubbing, buildup removal, or stripping and
-        re-finishing of hard floors. Carpeted areas are addressed with hot-water
-        extraction rather than vacuuming alone.
+        re-finishing of hard floors. Carpeted areas are addressed with extraction
+        cleaning rather than vacuuming alone.
       </p>
 
       <h2>When your business needs a deep clean</h2>

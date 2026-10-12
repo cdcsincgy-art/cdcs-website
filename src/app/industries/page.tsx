@@ -14,7 +14,7 @@ import { pageLd } from "@/lib/seo";
 
 const INDUSTRIES_TITLE = "Industries We Serve in Guyana";
 const INDUSTRIES_DESCRIPTION =
-  "CDCS Inc. serves corporate offices, government agencies, hotels, logistics and oil and gas support companies, construction firms, commercial properties, and industrial facilities across Guyana.";
+  "CDCS Inc. cleaning services for offices, government agencies, hotels, logistics, oil and gas support, construction, and industrial facilities across Guyana.";
 
 export const metadata: Metadata = {
   title: INDUSTRIES_TITLE,
@@ -74,6 +74,7 @@ function IndustryPanel({ industry }: { industry: Industry }) {
   const services = industry.services
     .map((slug) => getServiceBySlug(slug))
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
+  const caseStudy = publishedProjects.find((p) => p.industryIds.includes(industry.id));
   return (
     <div
       id={industry.id}
@@ -98,6 +99,26 @@ function IndustryPanel({ industry }: { industry: Industry }) {
             </li>
           ))}
         </ul>
+        {industry.page && (
+          <Link
+            href={industry.page}
+            className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-navy-900 px-3.5 py-2 text-sm font-bold text-white hover:bg-navy-800"
+          >
+            Industry overview
+            <IconArrowRight className="h-4 w-4" />
+          </Link>
+        )}
+        {caseStudy && (
+          <p className="mt-3 border-t border-slate-100 pt-3 text-sm text-slate-600">
+            <span className="font-semibold text-slate-500">Case study: </span>
+            <Link
+              href={`/projects/${caseStudy.slug}/`}
+              className="font-semibold text-navy-900 underline decoration-slate-300 underline-offset-2 hover:text-brand-600 hover:decoration-brand-600"
+            >
+              {caseStudy.title}
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   );

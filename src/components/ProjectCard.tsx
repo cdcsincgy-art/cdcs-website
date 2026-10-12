@@ -16,6 +16,7 @@ export function ProjectCard({ project }: { project: ProjectDefinition }) {
         <div className="relative aspect-[16/10] overflow-hidden bg-navy-950">
           <ProjectImage
             image={hero}
+            sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />
           <span className="absolute left-3 top-3 rounded bg-accent-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-navy-950">

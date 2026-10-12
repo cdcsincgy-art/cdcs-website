@@ -8,6 +8,8 @@
 // Captions describe only what is visibly evident. No client names, project
 // names, dates, values, or quantified results.
 
+import { pendingContent, showPendingClientContent } from "./publication";
+
 export interface ProjectImage {
   /** Path under /public, without extension. */
   file: string;
@@ -23,6 +25,16 @@ export interface ProjectImage {
   beforeAfter?: boolean;
   /** If set, this image is the hero for that service page. */
   heroForService?: string;
+  /**
+   * Smaller responsive variants that exist as `${file}-${w}.webp` (made by
+   * scripts/process-project-images.mjs). The full-size .webp is always used too.
+   */
+  widths?: number[];
+  /**
+   * CSS object-position used where the image is cropped by object-cover
+   * (e.g. a portrait photo in a 4:3 hero), so the subject stays in frame.
+   */
+  focus?: string;
 }
 
 export interface ProjectCategory {
@@ -31,11 +43,13 @@ export interface ProjectCategory {
   service: string;       // service page slug
   blurb: string;
   images: ProjectImage[];
+  /** Held back from normal builds until the client approves (see lib/publication.ts). */
+  pendingClientApproval?: boolean;
 }
 
 const P = "/images/projects";
 
-export const projectCategories: ProjectCategory[] = [
+const committedCategories: ProjectCategory[] = [
   {
     slug: "commercial-janitorial-cleaning",
     title: "Commercial & Janitorial Cleaning",
@@ -45,6 +59,7 @@ export const projectCategories: ProjectCategory[] = [
     images: [
       {
         file: `${P}/commercial-cleaning/commercial-cleaning-facility-interior`,
+        widths: [480, 960],
         fallback: true,
         width: 1600,
         height: 900,
@@ -55,16 +70,18 @@ export const projectCategories: ProjectCategory[] = [
       },
       {
         file: `${P}/commercial-cleaning/janitorial-restroom-cleaning`,
+        widths: [480, 800],
         fallback: true,
         width: 1100,
         height: 1467,
         alt: "A CDCS worker cleaning the tiled floor of a commercial restroom",
-        caption: "Restroom cleaning during a recurring janitorial program.",
+        caption: "Cleaning a commercial restroom floor.",
         service: "commercial-janitorial-cleaning",
         heroForService: "deep-cleaning",
       },
       {
         file: `${P}/commercial-cleaning/commercial-cleaning-staircase`,
+        widths: [480, 800],
         fallback: true,
         width: 1200,
         height: 1600,
@@ -75,6 +92,7 @@ export const projectCategories: ProjectCategory[] = [
       },
       {
         file: `${P}/commercial-cleaning/commercial-window-cleaning-glass-facade`,
+        widths: [480, 800],
         fallback: true,
         width: 1100,
         height: 1956,
@@ -103,6 +121,7 @@ export const projectCategories: ProjectCategory[] = [
     images: [
       {
         file: `${P}/pressure-washing/pressure-washing-commercial-building`,
+        widths: [480, 800],
         fallback: true,
         width: 1100,
         height: 1593,
@@ -149,6 +168,7 @@ export const projectCategories: ProjectCategory[] = [
     images: [
       {
         file: `${P}/fleet-washing/fleet-washing-truck-covered-in-foam`,
+        widths: [480, 800],
         fallback: true,
         width: 1200,
         height: 1594,
@@ -213,6 +233,7 @@ export const projectCategories: ProjectCategory[] = [
     images: [
       {
         file: `${P}/mobile-detailing/mobile-detailing-vehicle-interior-seats-out`,
+        widths: [480, 800],
         fallback: true,
         width: 1200,
         height: 1730,
@@ -223,6 +244,7 @@ export const projectCategories: ProjectCategory[] = [
       },
       {
         file: `${P}/mobile-detailing/mobile-detailing-vehicle-interior-cleaned`,
+        widths: [480, 800],
         fallback: false,
         width: 1200,
         height: 1782,
@@ -268,7 +290,7 @@ export const projectCategories: ProjectCategory[] = [
     title: "Upholstery & Fabric Extraction",
     service: "upholstery-fabric-extraction",
     blurb:
-      "Hot-water extraction, often called steam cleaning, for carpets, office chairs, car seats, and fabric surfaces.",
+      "Hot-water extraction, often called steam cleaning, for office chairs, car seats, and other fabric surfaces.",
     images: [
       {
         file: `${P}/upholstery-extraction/upholstery-extraction-car-seat-before-after`,
@@ -282,6 +304,7 @@ export const projectCategories: ProjectCategory[] = [
       },
       {
         file: `${P}/upholstery-extraction/upholstery-extraction-cleaning-wand`,
+        widths: [480, 800],
         fallback: true,
         width: 1100,
         height: 1273,
@@ -302,6 +325,19 @@ export const projectCategories: ProjectCategory[] = [
     ],
   },
 ];
+
+// Content awaiting client approval is not in this repository; its categories
+// are merged in from the local, git-ignored staging/pending-content.json only
+// in a local preview build (see lib/publication.ts) — empty everywhere else.
+const allProjectCategories: ProjectCategory[] = [
+  ...committedCategories,
+  ...(pendingContent().imageCategories as ProjectCategory[]),
+];
+
+/** Categories visible in this build — pending-approval ones only in a preview build. */
+export const projectCategories: ProjectCategory[] = allProjectCategories.filter(
+  (c) => !c.pendingClientApproval || showPendingClientContent,
+);
 
 /** All project images for a given service slug (empty if none). */
 export function projectImagesForService(slug: string): ProjectImage[] {

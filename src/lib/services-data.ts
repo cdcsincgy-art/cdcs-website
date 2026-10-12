@@ -85,6 +85,11 @@ export interface ServiceDefinition {
   /** Industry ids from src/lib/content-data.ts, most relevant first. */
   industryIds?: string[];
   /**
+   * What a customer should include when requesting a quote — shown as a
+   * checklist with the page's quote / WhatsApp / call options.
+   */
+  quoteChecklist?: string[];
+  /**
    * Related authentic photos for pages without their own gallery yet. Image
    * file tails plus a heading and an honest description of what is shown.
    */
@@ -115,7 +120,7 @@ export const services: ServiceDefinition[] = [
     metaTitle: "Commercial Cleaning & Janitorial Services in Guyana | CDCS",
     seoTitleAbsolute: true,
     metaDescription:
-      "Commercial cleaning and janitorial services in Georgetown and across Guyana for offices, government buildings, and institutions — written scopes, supervised teams, flexible hours.",
+      "Janitorial and office cleaning in Georgetown and across Guyana — written scopes, supervised teams, and schedules around your hours. Request a site assessment.",
     ctaTitle: "Discuss Your Facility Requirements",
     audience: "commercial",
     estimateServiceId: "commercial-janitorial",
@@ -123,7 +128,7 @@ export const services: ServiceDefinition[] = [
     intro:
       "CDCS Inc. is a Georgetown-based cleaning company providing professional cleaning services in Guyana for offices, corporate buildings, banks, government offices, and institutions. We run structured, recurring janitorial programs built around your operating hours, foot traffic, and facility layout — from daily office cleaning to restroom and common-area upkeep — so your workplace stays consistently clean and presentable. Programs run daily, weekly, or on a custom schedule, and every team is supervised with regular quality checks.",
     overview: [
-      "Commercial cleaning and janitorial service is the day-to-day upkeep that keeps a workplace presentable between deeper cleans: reception and entrance areas, open-plan and private offices, boardrooms, restrooms, kitchens and break rooms, corridors, stairwells, and shared equipment. CDCS Inc. runs these programs for businesses and public-sector offices in Georgetown and, by arrangement, elsewhere in Guyana.",
+      "Commercial cleaning and janitorial service is the day-to-day upkeep that keeps a workplace presentable between deeper cleans: reception and entrance areas, open-plan and private offices, boardrooms, restrooms, kitchens and break rooms, corridors, stairwells, and shared equipment. CDCS Inc. offers these programs to businesses and public-sector offices in Georgetown and, by arrangement, elsewhere in Guyana.",
       "Most clients use a recurring schedule — daily, several times a week, or weekly — with the visit timed for early morning, evening, or another off-peak window so cleaning never gets in the way of staff or visitors. One-time and pre-event cleans are available too. Every program is assigned a briefed team and checked against an agreed scope so standards hold over the length of the contract.",
       "High-contact points — door handles, light switches, shared desks, lift buttons, and restroom fixtures — are part of every routine visit. Where a space needs more than routine attention, it can be paired with a deep clean, and newly fitted-out or renovated offices are handed over with post-construction cleaning first.",
       "Organizations choose CDCS Inc. as their professional commercial cleaning company because the service is delivered like a managed contract rather than an informal arrangement: a written scope of work, an assigned and supervised team, defined cleaning frequencies, and regular quality checks. CDCS Inc. is based in Georgetown and serves offices and commercial facilities across the greater Georgetown area, with service elsewhere in Guyana arranged around the site and schedule.",
@@ -173,7 +178,7 @@ export const services: ServiceDefinition[] = [
     faq: [
       {
         q: "Do you provide office and janitorial cleaning in Georgetown?",
-        a: "Yes. CDCS Inc. is based in Georgetown and provides recurring janitorial and office cleaning for businesses, institutions, and government offices there and elsewhere in Guyana.",
+        a: "Yes. CDCS Inc. is based in Georgetown and offers recurring janitorial and office cleaning to businesses, institutions, and government offices there and elsewhere in Guyana.",
       },
       {
         q: "Can cleaning be scheduled outside business hours?",
@@ -238,12 +243,20 @@ export const services: ServiceDefinition[] = [
       "office cleaning Guyana",
       "commercial cleaning Georgetown Guyana",
     ],
+    quoteChecklist: [
+      "Property type and location in Guyana",
+      "Approximate floor area, number of floors, and washrooms",
+      "Areas to include — offices, kitchens, reception, common areas",
+      "Preferred frequency and cleaning hours",
+      "Whether CDCS or your organization supplies consumables",
+      "Any access, security, or site requirements",
+    ],
   },
   {
     slug: "carpet-cleaning",
     title: "Commercial Carpet Cleaning",
     shortDescription:
-      "Hot-water extraction, spot and stain treatment, and scheduled maintenance for office, hotel, and public-building carpet.",
+      "Carpet extraction cleaning, spot and stain treatment, and scheduled maintenance for office, hotel, and public-building carpet.",
     category: "Carpet Cleaning",
     icon: "carpet",
     heroPlaceholderLabel: "Photo placeholder — commercial carpet extraction in an office or hotel corridor",
@@ -251,17 +264,17 @@ export const services: ServiceDefinition[] = [
     metaTitle: "Commercial Carpet Cleaning in Guyana | CDCS",
     seoTitleAbsolute: true,
     metaDescription:
-      "Commercial carpet cleaning in Georgetown and across Guyana — hot-water extraction, stain treatment, odour control, and maintenance programmes for offices, hotels, and public buildings.",
+      "Commercial carpet cleaning across Guyana — extraction cleaning, stain treatment, and maintenance programmes for offices, hotels, and public buildings.",
     ctaTitle: "Request a Carpet Site Assessment",
     audience: "commercial",
     estimateServiceId: "carpet-cleaning",
     h1: "Commercial Carpet Cleaning in Guyana",
     intro:
-      "CDCS Inc. provides commercial carpet cleaning in Guyana for offices, hotels, government buildings, and commercial properties. From our base in Georgetown, our teams assess the carpet, treat traffic lanes and spots, and remove embedded soil by hot-water extraction or a low-moisture method — chosen for the fibre, the level of soiling, and how quickly the area has to be back in use.",
+      "CDCS Inc. provides commercial carpet cleaning in Guyana for offices, hotels, government buildings, and commercial properties. From our base in Georgetown, our teams assess the carpet, treat traffic lanes and spots, and remove embedded soil using professional carpet extraction and rotary floor cleaning equipment — with the approach matched to the fibre, the level of soiling, and how quickly the area has to be back in use.",
     overview: [
       "Carpet in a busy building takes in far more than routine vacuuming removes. Grit tracked in from car parks and roads works down into the pile and wears the fibres; spills, body oils, and airborne dust bind to them; and in Guyana's humid climate, carpet that stays damp after a spill or a leak can start to smell. Over time traffic lanes grey out, and the carpet looks older than it is.",
       "Commercial carpet cleaning deals with that build-up in a controlled way: dry soil is removed first, spots and lanes are pre-treated according to what caused them, and the carpet is then cleaned and rinsed so that residue is not left behind to attract new soil. Done on a schedule, it keeps carpet presentable and helps it last longer before replacement.",
-      "CDCS Inc. cleans carpet in offices and boardrooms, hotel corridors, guest rooms and function rooms, government and public-sector buildings, and the common areas of commercial properties in Georgetown and, by arrangement, elsewhere in Guyana. Work is usually booked for evenings, weekends, or another quiet window so spaces can dry before they are used again.",
+      "CDCS Inc. offers carpet cleaning for offices and boardrooms, hotels, government and public-sector buildings, and the common areas of commercial properties in Georgetown and, by arrangement, elsewhere in Guyana. Work is usually booked for evenings, weekends, or another quiet window so spaces can dry before they are used again.",
     ],
     benefits: [
       {
@@ -291,12 +304,12 @@ export const services: ServiceDefinition[] = [
         ],
         items: [
           {
-            title: "Hot-water extraction",
-            text: "A heated cleaning solution is applied to the carpet and immediately extracted with the soil it has loosened. It is the main method for deep cleaning and for carpet that has not been professionally cleaned in some time.",
+            title: "Extraction cleaning",
+            text: "Professional carpet extraction equipment applies a cleaning solution and draws it straight back out of the carpet with the soil it has loosened. It is the main method for deep cleaning and for carpet that has not been professionally cleaned in some time.",
           },
           {
-            title: "Low-moisture maintenance",
-            text: "Where the fibre, the soiling, and the schedule suit it, a low-moisture method cleans the upper pile with much shorter drying times — useful between full extraction cleans in areas that must reopen quickly.",
+            title: "Rotary machine agitation",
+            text: "Rotary floor cleaning equipment works the cleaning solution into traffic lanes and soiled areas so it reaches the soil bound to the fibres before extraction.",
           },
           {
             title: "Spot and stain treatment",
@@ -339,8 +352,8 @@ export const services: ServiceDefinition[] = [
         eyebrow: "Method",
         title: "Carpet Extraction and Rinsing",
         paragraphs: [
-          "Extraction cleaning works best on carpet that has been properly prepared. Dry soil is vacuumed out first, because loose grit turns to mud once water is added. Traffic lanes and soiled areas are then pre-sprayed and, where appropriate, agitated so the solution can reach the soil bound to the fibres.",
-          "The extraction pass applies a heated cleaning solution and draws it straight back out, together with the loosened soil. A rinse pass helps remove remaining detergent — residue left in carpet is one of the main reasons it re-soils quickly after a poor clean.",
+          "Extraction cleaning works best on carpet that has been properly prepared. Dry soil is vacuumed out first, because loose grit turns to mud once water is added. Traffic lanes and soiled areas are then pre-sprayed and, where appropriate, agitated with rotary floor cleaning equipment so the solution can reach the soil bound to the fibres.",
+          "The extraction pass applies a cleaning solution and draws it straight back out, together with the loosened soil. A rinse pass helps remove remaining detergent — residue left in carpet is one of the main reasons it re-soils quickly after a poor clean.",
           "Over-wetting is avoided. Carpet is left damp rather than soaked, which matters in a humid climate where slow drying can lead to odour or damage to the backing. Drying time depends on the carpet, airflow, and humidity on the day; ventilation and air-conditioning help, and we give clear guidance on when the area can be walked on and furniture returned.",
         ],
       },
@@ -397,7 +410,7 @@ export const services: ServiceDefinition[] = [
       "Site assessment of carpet type, condition, and soiling",
       "Dry-soil removal by vacuuming before wet cleaning",
       "Pre-treatment of traffic lanes and spot-specific stain treatment",
-      "Hot-water extraction or low-moisture cleaning, matched to the carpet",
+      "Rotary machine agitation and extraction cleaning, matched to the carpet",
       "Rinsing to reduce detergent residue and re-soiling",
       "Odour treatment and optional deodorizing",
       "Drying, re-entry, and furniture-return guidance",
@@ -406,15 +419,15 @@ export const services: ServiceDefinition[] = [
     process: [
       "Assess — we look at the carpet construction, fibre, condition, traffic patterns, staining, and the times the area can be closed",
       "Test and pre-treat — colourfastness is checked where needed, traffic lanes are pre-sprayed, and spots are treated according to their likely cause",
-      "Clean — dry soil is vacuumed out, the carpet is agitated where appropriate, then cleaned by extraction or a low-moisture method",
+      "Clean — dry soil is vacuumed out, the carpet is agitated where appropriate, then cleaned with professional extraction equipment",
       "Rinse and finish — remaining residue is rinsed out, the pile is groomed, and deodorizing is applied if requested",
       "Inspect and hand back — a walk-through with drying guidance, noting any marks that did not respond to treatment",
     ],
     equipment: [
-      "Hot-water extraction equipment with floor and upholstery tools",
+      "Professional carpet extraction equipment with carpet cleaning attachments",
       "Pre-spray and spot-treatment products selected by stain type",
       "Vacuuming for dry-soil removal before any wet cleaning",
-      "Low-moisture cleaning methods where the carpet and schedule suit",
+      "Rotary floor cleaning equipment for agitating traffic lanes and soiled areas",
       "Deodorizing treatments where requested",
       "Safety-conscious working practices in occupied buildings",
     ],
@@ -440,12 +453,12 @@ export const services: ServiceDefinition[] = [
       ],
       title: "Related CDCS Extraction Work",
       description:
-        "Real CDCS Inc. jobs using the same hot-water extraction approach on fabric and vehicle interiors. Commercial carpet project photos will be added here as projects are documented.",
+        "Real CDCS Inc. jobs using extraction cleaning on fabric and vehicle interiors. Commercial carpet project photos will be added here as projects are documented.",
     },
     faq: [
       {
         q: "What method do you use for commercial carpet cleaning?",
-        a: "Most commercial carpet is cleaned by hot-water extraction, after vacuuming and pre-treatment. Where the fibre and the schedule suit it, a low-moisture method is used for maintenance cleans between full extractions because it dries faster. The method is chosen after we have seen the carpet.",
+        a: "Commercial carpet is cleaned with professional carpet extraction equipment after vacuuming and pre-treatment, with rotary floor cleaning equipment used to agitate traffic lanes and soiled areas where needed. The approach is confirmed after we have seen the carpet.",
       },
       {
         q: "Will all the stains come out?",
@@ -453,7 +466,7 @@ export const services: ServiceDefinition[] = [
       },
       {
         q: "How long does carpet take to dry after cleaning?",
-        a: "Carpet is left damp rather than wet. After hot-water extraction it usually dries within several hours, depending on the carpet, airflow, and humidity; low-moisture cleaning dries faster. We give re-entry and furniture guidance on the day and schedule around it.",
+        a: "Carpet is left damp rather than wet. After extraction cleaning it usually dries within several hours, depending on the carpet, airflow, and humidity. We give re-entry and furniture guidance on the day and schedule around it.",
       },
       {
         q: "Can you clean carpet in a hotel or office that stays open?",
@@ -485,6 +498,14 @@ export const services: ServiceDefinition[] = [
       "office carpet cleaning Georgetown",
       "carpet extraction Guyana",
     ],
+    quoteChecklist: [
+      "Location and type of premises — office, hotel, public building",
+      "Approximate carpeted area, or number of rooms and corridors",
+      "Carpet type if known, and any stains or problem areas",
+      "Whether areas will be occupied during cleaning",
+      "Preferred timing and how soon areas must be back in use",
+      "Photos of the carpet and any stains",
+    ],
   },
   {
     slug: "pressure-washing",
@@ -497,7 +518,7 @@ export const services: ServiceDefinition[] = [
     metaTitle: "Commercial Pressure Washing in Guyana | CDCS",
     seoTitleAbsolute: true,
     metaDescription:
-      "Commercial pressure washing in Georgetown and across Guyana for building exteriors, concrete, walkways, parking areas, walls, and yards. Surface-matched pressure and site assessments by CDCS Inc.",
+      "Commercial pressure washing in Georgetown and across Guyana — building exteriors, walls, concrete, walkways, and yards, with pressure matched to each surface.",
     ctaTitle: "Request a Pressure Washing Site Assessment",
     audience: "commercial",
     estimateServiceId: "pressure-washing",
@@ -588,6 +609,14 @@ export const services: ServiceDefinition[] = [
       "power washing services Guyana",
       "commercial pressure washing Guyana",
       "exterior cleaning Guyana",
+    ],
+    quoteChecklist: [
+      "Location and type of property",
+      "Surfaces to clean — walls, eaves, concrete, walkways, parking, yards",
+      "Approximate size of each area, or building height",
+      "Water supply on site and where runoff drains",
+      "Delicate finishes, signage, or planting nearby",
+      "Photos of the areas",
     ],
   },
   {
@@ -690,6 +719,13 @@ export const services: ServiceDefinition[] = [
       "interior car detailing Guyana",
       "vehicle detailing Guyana",
     ],
+    quoteChecklist: [
+      "Vehicle type and number of vehicles",
+      "Interior, exterior, or full detail",
+      "Condition — stains, odours, pet hair",
+      "Your location for the mobile service",
+      "Preferred date and time",
+    ],
   },
   {
     slug: "fleet-washing",
@@ -699,10 +735,10 @@ export const services: ServiceDefinition[] = [
     category: "Fleet Washing",
     icon: "truck",
     heroPlaceholderLabel: "Photo placeholder — fleet washing trucks or commercial vehicles on-site",
-    metaTitle: "Fleet Washing & Heavy Equipment Cleaning in Guyana | CDCS",
+    metaTitle: "Fleet & Truck Washing in Guyana | Heavy Equipment | CDCS",
     seoTitleAbsolute: true,
     metaDescription:
-      "On-site fleet washing and heavy equipment cleaning in Guyana for trucks, prime movers, trailers, and construction machinery. Scheduled programmes at your depot or yard from CDCS Inc.",
+      "On-site fleet and truck washing in Guyana for prime movers, trailers, commercial vehicles, and heavy equipment — at your yard or site, one-time or scheduled.",
     ctaTitle: "Request a Fleet Washing Assessment",
     audience: "commercial",
     estimateServiceId: "fleet-washing",
@@ -819,6 +855,14 @@ export const services: ServiceDefinition[] = [
       "commercial truck washing",
       "heavy equipment washing Guyana",
     ],
+    quoteChecklist: [
+      "Yard or site location",
+      "Number and types of vehicles or equipment",
+      "Level of soiling — road film, mud, grease",
+      "Water supply and drainage at the wash location",
+      "Preferred frequency and times that fit dispatch",
+      "Site induction, PPE, or access requirements",
+    ],
   },
   {
     slug: "car-wash-mobile-vehicle-washing",
@@ -831,7 +875,7 @@ export const services: ServiceDefinition[] = [
     metaTitle: "Car Wash Guyana | Mobile Vehicle Washing | CDCS",
     seoTitleAbsolute: true,
     metaDescription:
-      "Professional car wash and mobile vehicle washing in Guyana. CDCS Inc. washes cars, SUVs, pickups and company vehicles at your home or workplace in Georgetown, or by washbay drop-off — one-time or on a recurring WashCare plan.",
+      "Car wash and mobile vehicle washing in Guyana — at your home or workplace in Georgetown, or by washbay drop-off, one-time or on a WashCare plan.",
     ctaTitle: "Book a Vehicle Wash",
     audience: "consumer",
     estimateServiceId: "interior-exterior-wash",
@@ -905,6 +949,12 @@ export const services: ServiceDefinition[] = [
       "mobile vehicle washing Guyana",
       "on-site vehicle washing Guyana",
     ],
+    quoteChecklist: [
+      "Vehicle type and number of vehicles",
+      "Mobile at your location, or washbay drop-off",
+      "One-time wash or recurring WashCare plan",
+      "Preferred days and times",
+    ],
   },
   {
     slug: "deep-cleaning",
@@ -917,7 +967,7 @@ export const services: ServiceDefinition[] = [
     metaTitle: "Deep Cleaning Services in Guyana | Homes & Businesses | CDCS",
     seoTitleAbsolute: true,
     metaDescription:
-      "Residential and commercial deep cleaning in Georgetown and across Guyana — move-in and move-out cleans, rental turnovers, kitchens, bathrooms, floors, and fixtures by CDCS Inc.",
+      "Residential and commercial deep cleaning in Georgetown and across Guyana — move-in and move-out cleans, rental turnovers, kitchens, bathrooms, and floors.",
     ctaTitle: "Book a Deep Clean",
     audience: "consumer",
     estimateServiceId: "deep-cleaning",
@@ -1036,6 +1086,14 @@ export const services: ServiceDefinition[] = [
       "move in cleaning Guyana",
       "move out cleaning Guyana",
     ],
+    quoteChecklist: [
+      "Property type and location",
+      "Number of rooms, bathrooms, and kitchens",
+      "Occasion — move-in, move-out, rental turnover, or periodic deep clean",
+      "Specific problem areas — grease, mould, stains",
+      "Preferred date",
+      "Photos of the areas",
+    ],
   },
   {
     slug: "upholstery-fabric-extraction",
@@ -1045,10 +1103,10 @@ export const services: ServiceDefinition[] = [
     category: "Extraction Cleaning",
     icon: "chair",
     heroPlaceholderLabel: "Photo placeholder — extraction cleaning of an office chair",
-    metaTitle: "Upholstery & Office Chair Cleaning in Guyana | CDCS",
+    metaTitle: "Upholstery & Steam Cleaning in Guyana | Sofas & Chairs | CDCS",
     seoTitleAbsolute: true,
     metaDescription:
-      "Office chair and upholstery cleaning in Guyana by hot-water extraction — task and executive chairs, boardroom and reception seating, sofas, and vehicle seats. Georgetown-based CDCS Inc.",
+      "Upholstery steam cleaning (hot-water extraction) in Guyana for office chairs, boardroom and reception seating, sofas, and vehicle seats. Based in Georgetown.",
     ctaTitle: "Request an Upholstery Cleaning Quote",
     audience: "commercial",
     estimateServiceId: "upholstery-extraction",
@@ -1175,6 +1233,13 @@ export const services: ServiceDefinition[] = [
       "sofa cleaning Guyana",
       "chair cleaning Georgetown",
     ],
+    quoteChecklist: [
+      "Location — office, home, or vehicle",
+      "Number and types of items — task chairs, sofas, boardroom seating",
+      "Fabric type if known, and any stains or odours",
+      "When the items can be cleaned and left to dry",
+      "Photos of the items and any marks",
+    ],
   },
   {
     slug: "post-construction-cleaning",
@@ -1187,7 +1252,7 @@ export const services: ServiceDefinition[] = [
     metaTitle: "Post-Construction Cleaning Guyana | Final Cleaning | CDCS",
     seoTitleAbsolute: true,
     metaDescription:
-      "Professional post-construction cleaning in Guyana for contractors, developers and property owners. Dust, debris and residue removal plus final handover cleaning.",
+      "Post-construction cleaning in Guyana for contractors, developers, and property owners — construction dust, debris, and residue removed before handover.",
     ctaTitle: "Request a Site Inspection",
     audience: "commercial",
     estimateServiceId: "post-construction",
@@ -1270,6 +1335,14 @@ export const services: ServiceDefinition[] = [
       "builders cleaning Guyana",
       "post renovation cleaning Guyana",
     ],
+    quoteChecklist: [
+      "Site location and type of building",
+      "Approximate floor area and number of floors or units",
+      "Construction stage and handover date",
+      "Areas included — interiors, glass, fixtures, exterior",
+      "Power, water, and access arrangements on site",
+      "Site safety rules or induction requirements",
+    ],
   },
   {
     slug: "commercial-facility-cleaning",
@@ -1279,17 +1352,96 @@ export const services: ServiceDefinition[] = [
     category: "Commercial Cleaning",
     icon: "factory",
     heroPlaceholderLabel: "Photo placeholder — cleaning team servicing a large commercial facility",
-    metaTitle: "Commercial Facility Cleaning Programs in Guyana",
+    metaTitle: "Industrial & Facility Cleaning Services in Guyana | CDCS",
+    seoTitleAbsolute: true,
     metaDescription:
-      "Custom, structured cleaning programs for larger commercial and industrial facilities in Guyana — multi-floor sites, warehouses, and multi-building operations, with recurring teams, equipment, and on-site supervision from CDCS Inc.",
-    h1: "Commercial Facility Cleaning Programs",
+      "Industrial and commercial facility cleaning programmes in Guyana — warehouses, workshops, and large sites, with assigned teams and on-site supervision.",
+    h1: "Industrial & Commercial Facility Cleaning in Guyana",
     ctaTitle: "Discuss Your Facility Requirements",
     audience: "commercial",
     estimateServiceId: "commercial-facility",
     whyChoose: [companyBasis, writtenScope, supervised, "Teams assigned to the site so they learn its layout and requirements", oneProvider],
-    industryIds: ["industrial-facilities", "government-public-sector", "oil-gas-support", "commercial-properties"],
+    industryIds: ["industrial-facilities", "oil-gas-support", "logistics-transport", "government-public-sector", "commercial-properties"],
     intro:
-      "Larger facilities need more than a standard cleaning visit — they need a structured program. CDCS Inc. designs custom facility cleaning plans that scale to your building size, staffing needs, and operational schedule, backed by trained teams, appropriate equipment, and on-site supervision.",
+      "Larger and industrial sites need a structured cleaning programme rather than a standard visit. CDCS Inc. plans facility cleaning around the site — its areas, operating hours, and site rules — with assigned teams, professional equipment, and on-site supervision, for warehouses, workshops, industrial premises, and large commercial buildings across Guyana.",
+    benefits: [
+      {
+        title: "One managed programme",
+        text: "Interior cleaning, exterior washing, and periodic deeper work planned together instead of booked piecemeal.",
+      },
+      {
+        title: "A team that knows the site",
+        text: "The same assigned team learns the layout, access rules, and priorities of the facility.",
+      },
+      {
+        title: "Work around operations",
+        text: "Cleaning scheduled around shifts and production, including nights and off-hours service.",
+      },
+      {
+        title: "Checked against the scope",
+        text: "Supervision and inspections against the agreed scope, with deficiencies corrected.",
+      },
+    ],
+    sections: [
+      {
+        id: "programme-scope",
+        eyebrow: "Scope",
+        title: "What a Facility Cleaning Programme Can Cover",
+        paragraphs: [
+          "Each programme is scoped to the facility. Typical elements, combined as the site needs them:",
+        ],
+        items: [
+          {
+            title: "Offices and administration",
+            text: "Desks, meeting rooms, reception, and corridors, on the same routine as a janitorial contract.",
+          },
+          {
+            title: "Washrooms, kitchens, and break areas",
+            text: "Routine sanitation, restocking, and waste removal in shared staff facilities.",
+          },
+          {
+            title: "Warehouse and workshop floors",
+            text: "Floor cleaning planned around stock movement and equipment, with periodic deeper cleaning.",
+          },
+          {
+            title: "Yards, aprons, and exteriors",
+            text: "Pressure washing of concrete, walkways, walls, and compounds on a set schedule.",
+          },
+          {
+            title: "Fleet and equipment",
+            text: "On-site washing of trucks, trailers, and heavy equipment at the facility.",
+          },
+          {
+            title: "Carpets and seating",
+            text: "Periodic extraction cleaning of office carpet, chairs, and other upholstered seating.",
+          },
+        ],
+      },
+      {
+        id: "site-safety",
+        eyebrow: "Safety & Supervision",
+        title: "Site Rules, Safety, and Supervision",
+        paragraphs: [
+          "Industrial and controlled sites come with their own requirements. Before work starts, CDCS confirms the site's inductions, permits, access rules, restricted areas, and any job safety analysis or toolbox talk the client requires, and builds them into the plan.",
+          "Teams receive induction and job instruction for the site, wear PPE suited to the task, and work under supervision. Cleaning chemicals are selected, labelled, stored, and used according to manufacturer instructions and Safety Data Sheets, and incidents and near misses are reported and reviewed.",
+        ],
+        note: "These practices follow CDCS's documented HSE and quality policies — internal company policies, not third-party certifications.",
+      },
+    ],
+    process: [
+      "Site walk-through to review areas, hours, access, and site requirements",
+      "Written scope, frequencies, and schedule agreed with the facility",
+      "Team and supervisor assigned to the site, with site induction",
+      "Routine service with supervision and inspections against the scope",
+      "Regular reviews to adjust the programme as the site changes",
+    ],
+    equipment: [
+      "Commercial pressure washers and rotary surface cleaners for yards, walkways, and concrete",
+      "Foam application and pressure-rinse equipment for fleet and equipment washing",
+      "Commercial carpet and upholstery extraction equipment",
+      "Janitorial equipment and supplies matched to the site's interior routines",
+      "Cleaning chemicals handled according to manufacturer instructions and Safety Data Sheets",
+    ],
     overview: [
       "Facility cleaning is a managed program rather than a single recurring visit. It's the right fit when a site is large, runs across multiple floors or buildings, operates outside normal hours, or has areas — warehousing, production, plant rooms, high-traffic public space — that each need their own routine and standard.",
       "CDCS Inc. builds the scope around the facility: which areas are cleaned how often, which need specialized attention, how supplies and equipment are stocked, and how the work is supervised and checked. Teams are assigned to the site so the same people learn its layout and requirements.",
@@ -1309,18 +1461,48 @@ export const services: ServiceDefinition[] = [
       "On-site supervision and quality standards",
       "Scalable programs as your facility or contract grows",
     ],
-    relatedSlugs: ["commercial-janitorial-cleaning", "pressure-washing", "post-construction-cleaning"],
+    relatedSlugs: ["commercial-janitorial-cleaning", "pressure-washing", "fleet-washing", "post-construction-cleaning", "carpet-cleaning"],
     faq: [
       {
         q: "How is facility cleaning different from standard janitorial service?",
         a: "Facility cleaning is a structured program for larger or multi-floor sites — with a custom scope of work, recurring team assignments, equipment and supply planning, and on-site supervision.",
       },
       {
+        q: "Does CDCS clean industrial facilities and warehouses?",
+        a: "Yes. CDCS plans cleaning programmes for warehouses, workshops, industrial premises, and large commercial buildings, combining interior cleaning with yard pressure washing and on-site fleet and equipment washing where the site needs it.",
+      },
+      {
         q: "Can you service facilities outside normal hours?",
         a: "Yes. Programs can be built around night shifts and off-hours service so cleaning does not interrupt operations.",
       },
+      {
+        q: "Can CDCS work to our site's safety requirements?",
+        a: "Yes. Site inductions, permits, access rules, PPE, and any job safety analysis or toolbox talk the site requires are confirmed during scoping and built into the plan before work starts.",
+      },
+      {
+        q: "Does CDCS support oil and gas support companies?",
+        a: "CDCS offers facility cleaning, pressure washing, and fleet and heavy-equipment washing to companies supporting Guyana's oil and gas sector, and is registered on the Local Content Register with Industrial Cleaning services (Onshore) among its approved sectors.",
+      },
+      {
+        q: "How do I request a facility cleaning proposal?",
+        a: "Request a site assessment through the quote form, WhatsApp, or phone with the site's location, size, areas, operating hours, and any site requirements. CDCS reviews the facility — in person for larger sites — and prepares a written scope and proposal.",
+      },
     ],
-    keywords: ["facility cleaning Guyana", "industrial cleaning Guyana", "multi-site cleaning contract Guyana"],
+    keywords: [
+      "facility cleaning services Guyana",
+      "industrial facility cleaning Guyana",
+      "industrial cleaning Guyana",
+      "commercial cleaning contractors Guyana",
+      "multi-site cleaning contract Guyana",
+    ],
+    quoteChecklist: [
+      "Facility location and type — warehouse, workshop, office, mixed-use",
+      "Approximate size, floors, or number of buildings",
+      "Areas and services needed — interiors, washrooms, yards, fleet",
+      "Operating hours, shifts, and preferred cleaning times",
+      "Site rules — inductions, permits, PPE, restricted areas",
+      "Intended start date and contract term",
+    ],
   },
 ];
 

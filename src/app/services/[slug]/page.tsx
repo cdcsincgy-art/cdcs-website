@@ -23,6 +23,7 @@ import {
 } from "@/lib/project-images";
 import { serviceIconMap, IconCheck, IconArrowRight, IconWhatsapp } from "@/components/icons";
 import { siteConfig, ogImage } from "@/lib/site-config";
+import { localContentCertificate } from "@/lib/credentials";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -251,7 +252,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 className="absolute -right-3 -top-3 hidden h-16 w-16 rounded-tr-2xl border-r-2 border-t-2 border-accent-500/70 sm:block"
               />
               <div className="aspect-[4/3] overflow-hidden rounded-xl sm:aspect-[4/5] lg:aspect-[4/3]">
-                <ProjectImage image={heroImage} priority className="h-full w-full object-cover" />
+                <ProjectImage
+                  image={heroImage}
+                  priority
+                  sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, calc(100vw - 48px)"
+                  className="h-full w-full object-cover"
+                />
               </div>
             </div>
           ) : (
@@ -489,7 +495,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                       <Link href="/services/upholstery-fabric-extraction/" className="font-semibold text-brand-600 hover:underline">
                         hot-water extraction
                       </Link>{" "}
-                      — the same method used in our carpet and upholstery cleaning service.
+                      — the same method used in our upholstery cleaning service.
                       Additional work such as engine bay cleaning and headlight restoration is
                       available depending on the selected service.
                     </p>
@@ -1202,6 +1208,15 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                         </li>
                       ))}
                     </ul>
+                    {!isConsumer && (
+                      <p className="mt-6 border-t border-white/10 pt-5 text-sm leading-relaxed text-slate-300">
+                        Registered on Guyana&apos;s Local Content Register — Certificate{" "}
+                        <span className="font-mono text-slate-200">{localContentCertificate.number}</span>.{" "}
+                        <Link href="/credentials/" className="font-semibold text-accent-400 hover:text-accent-300">
+                          View company credentials
+                        </Link>
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
@@ -1214,7 +1229,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   {industriesServed.map((industry) => (
                     <li key={industry.id}>
                       <Link
-                        href={`/industries/#${industry.id}`}
+                        href={industry.page ?? `/industries/#${industry.id}`}
                         className="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-navy-800 transition-colors hover:border-brand-400 hover:text-brand-700"
                       >
                         {industry.name}
@@ -1246,7 +1261,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   key={image.file}
                   className="group relative mb-4 break-inside-avoid overflow-hidden rounded-xl border border-white/10 [&_img]:block [&_img]:w-full"
                 >
-                  <ProjectImage image={image} className="w-full" />
+                  <ProjectImage image={image} className="w-full" sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" />
                   <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950 via-navy-950/65 to-transparent p-4 pt-12">
                     {image.beforeAfter && (
                       <span className="mr-2 inline-block rounded bg-accent-500 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-navy-950">
@@ -1309,7 +1324,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
       {/* Related case studies from /projects/ */}
       {relatedProjects.length > 0 && (
-        <section className="bg-white pt-16 sm:pt-24">
+        <section className="bg-white py-16 sm:py-24">
           <div className="container-page">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <SectionHeading
@@ -1329,6 +1344,52 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               {relatedProjects.map((p) => (
                 <ProjectCard key={p.slug} project={p} />
               ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ================= QUOTE CHECKLIST (optional per-service) ================= */}
+      {service.quoteChecklist && (
+        <section aria-labelledby="quote-checklist" className="border-t border-slate-200 bg-slate-50 py-16 sm:py-20">
+          <div className="container-page grid gap-10 lg:grid-cols-[1fr_minmax(0,22rem)] lg:items-start lg:gap-16">
+            <div>
+              <p className="mb-4 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">
+                <span className="h-px w-6 bg-brand-600/50" aria-hidden />
+                Requesting a Quote
+              </p>
+              <h2
+                id="quote-checklist"
+                className="text-pretty text-[1.9rem] font-bold leading-[1.15] tracking-tight text-navy-900 sm:text-4xl"
+              >
+                What to Include in Your Quote Request
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
+                These details let CDCS scope the work accurately and come back with a firm proposal
+                {isConsumer ? "" : " or a site-assessment visit"} sooner. Photos sent by WhatsApp help.
+              </p>
+              <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                {service.quoteChecklist.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-slate-700">
+                    <IconCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <Button href={primaryCta.href} variant="primary" size="md" className="min-h-11">
+                {primaryCta.label}
+              </Button>
+              <Button href={siteConfig.contact.whatsappHrefWithMessage(whatsappMessage)} variant="ghost" size="md" external className="min-h-11" icon={<IconWhatsapp className="h-4 w-4" />}>
+                Send Details on WhatsApp
+              </Button>
+              <a
+                href={siteConfig.contact.phoneHref}
+                className="inline-flex min-h-11 items-center justify-center text-sm font-bold text-navy-900 hover:text-brand-600"
+              >
+                Call {siteConfig.contact.phoneDisplay}
+              </a>
             </div>
           </div>
         </section>

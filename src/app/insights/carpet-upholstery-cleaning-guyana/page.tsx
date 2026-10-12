@@ -13,7 +13,7 @@ const heroImage = projectImageByFile(article.heroImageFile);
 const heroImageUrl = `${siteConfig.url}${heroImage.file}${heroImage.fallback ? ".jpg" : ".webp"}`;
 
 export const metadata: Metadata = {
-  title: { absolute: `${article.metaTitle} | ${siteConfig.brandName}` },
+  title: { absolute: `${article.metaTitle} | CDCS` },
   description: article.metaDescription,
   keywords: article.keywords,
   alternates: { canonical: `/insights/${article.slug}/` },
@@ -418,11 +418,12 @@ export default function CarpetUpholsteryCleaningArticle() {
       <h2>Getting carpet and upholstery care into your maintenance plan</h2>
       <p>
         CDCS Inc. provides{" "}
-        <Link href="/services/carpet-cleaning/">commercial carpet cleaning</Link> and{" "}
+        <Link href="/services/carpet-cleaning/">commercial carpet cleaning</Link>, using
+        professional carpet extraction and rotary floor cleaning equipment, and{" "}
         <Link href="/services/upholstery-fabric-extraction/">
           upholstery and office chair cleaning
         </Link>{" "}
-        — hot-water extraction, the method commonly called steam cleaning — for
+        by hot-water extraction — the method commonly called steam cleaning — for
         offices, hospitality operators, and organizations in Georgetown and
         across Guyana. Technicians assess the fibre and condition, test first, and
         match the method to the material. The work is done as a one-off or on a

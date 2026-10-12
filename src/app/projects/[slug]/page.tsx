@@ -112,6 +112,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
+      {/* Only reachable in a local preview build — see lib/publication.ts. */}
+      {project.status === "pending-client-approval" && (
+        <div role="note" className="bg-amber-400 px-4 py-2 text-center text-sm font-bold text-navy-950">
+          Preview only — awaiting client publication approval. Do not deploy.
+        </div>
+      )}
+
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950 py-14 sm:py-20">
         <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
@@ -263,7 +270,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                   key={image.file}
                   className="mb-4 break-inside-avoid overflow-hidden rounded-xl border border-white/10 bg-navy-900 [&_img]:block [&_img]:w-full"
                 >
-                  <ProjectImage image={image} className="w-full" />
+                  <ProjectImage image={image} className="w-full" sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" />
                   <figcaption className="px-4 py-3 text-sm leading-snug text-slate-200">
                     {image.beforeAfter && (
                       <span className="mr-2 inline-block rounded bg-accent-500 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-navy-950">
@@ -282,7 +289,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {/* ================= RELATED ================= */}
       <section className="bg-slate-50 py-16 sm:py-24">
         <div className="container-page">
-          <SectionHeading eyebrow="Services" title="Services Used on This Project" />
+          {/* "Related", not "used": a service card's description lists the
+              service's general methods, not what was done on this job. */}
+          <SectionHeading eyebrow="Services" title="Related Services" />
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             {services.slice(0, 3).map((s) => (
               <ServiceCard key={s.slug} service={s} />

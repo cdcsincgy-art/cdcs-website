@@ -13,7 +13,7 @@ import { pageLd } from "@/lib/seo";
 
 const PROJECTS_TITLE = "Cleaning Projects & Case Studies in Guyana | CDCS";
 const PROJECTS_DESCRIPTION =
-  "Documented CDCS Inc. projects in Guyana — fleet and heavy equipment washing, commercial pressure washing, commercial building cleaning, and vehicle interior extraction, with photos and method.";
+  "CDCS Inc. case studies in Guyana — fleet and heavy equipment washing, pressure washing, building cleaning, and vehicle interiors, with photos and method.";
 
 export const metadata: Metadata = {
   title: { absolute: PROJECTS_TITLE },

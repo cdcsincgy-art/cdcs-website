@@ -395,7 +395,7 @@ export function QuoteForm() {
           <span className="text-sm font-semibold text-slate-600">
             {fileName || "Click to upload a photo of the space, vehicle, or issue"}
           </span>
-          <span className="text-xs text-slate-400">JPG, PNG, or PDF — up to 10MB</span>
+          <span className="text-xs text-slate-600">JPG, PNG, or PDF — up to 10MB</span>
           <input
             name="photos"
             type="file"

@@ -27,7 +27,7 @@ import {
 
 const WASHCARE_TITLE = "WashCare — Recurring Vehicle Care Plans | CDCS Inc.";
 const WASHCARE_DESCRIPTION =
-  "WashCare is CDCS Inc.'s scheduled vehicle-care programme in Guyana — Washbay, Mobile, and Fleet plans with predictable monthly pricing. Keep a vehicle or fleet clean every month, without rebooking.";
+  "WashCare by CDCS Inc.: scheduled vehicle washing plans in Guyana — Washbay, Mobile, and Fleet — with predictable monthly pricing and no rebooking.";
 
 export const metadata: Metadata = {
   title: { absolute: WASHCARE_TITLE },

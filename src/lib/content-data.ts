@@ -52,6 +52,8 @@ export interface Industry {
   description: string;
   /** Service slugs most relevant to this sector, most important first. */
   services: string[];
+  /** Dedicated industry page, if one exists (e.g. "/industries/oil-and-gas/"). */
+  page?: string;
 }
 
 // One sector list shared by the homepage, the Industries page, and the
@@ -120,6 +122,7 @@ export const industries: Industry[] = [
     description:
       "Fleet and heavy-equipment washing, yard pressure washing, and office and facility cleaning for contractors and service companies supporting the sector. Site inductions, permits, and access rules are confirmed during scoping.",
     services: ["fleet-washing", "commercial-facility-cleaning", "pressure-washing", "commercial-janitorial-cleaning"],
+    page: "/industries/oil-and-gas/",
   },
   {
     id: "construction",

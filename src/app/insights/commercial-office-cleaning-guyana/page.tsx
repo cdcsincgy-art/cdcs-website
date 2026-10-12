@@ -13,7 +13,7 @@ const heroImage = projectImageByFile(article.heroImageFile);
 const heroImageUrl = `${siteConfig.url}${heroImage.file}${heroImage.fallback ? ".jpg" : ".webp"}`;
 
 export const metadata: Metadata = {
-  title: { absolute: `${article.metaTitle} | ${siteConfig.brandName}` },
+  title: { absolute: `${article.metaTitle} | CDCS` },
   description: article.metaDescription,
   keywords: article.keywords,
   alternates: { canonical: `/insights/${article.slug}/` },
@@ -187,7 +187,7 @@ export default function OfficeCleaningFrequencyArticle() {
         oils, fine soil, and spills that build up in the pile over months.
         Carpeted commercial areas generally need{" "}
         <Link href="/services/carpet-cleaning/">
-          hot-water extraction cleaning
+          professional extraction cleaning
         </Link>{" "}
         every three to six months, sooner for entrance runners and busy walkways.
         Upholstered task chairs, reception sofas, and waiting-area seating are on
@@ -327,7 +327,7 @@ export default function OfficeCleaningFrequencyArticle() {
               <td>Weekly</td>
             </tr>
             <tr>
-              <th scope="row">Carpet &amp; upholstery hot-water extraction</th>
+              <th scope="row">Carpet &amp; upholstery extraction cleaning</th>
               <td>Twice a year</td>
               <td>Every 3&ndash;6 months</td>
               <td>Quarterly, entrances more often</td>

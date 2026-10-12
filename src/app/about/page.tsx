@@ -4,6 +4,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTABanner } from "@/components/CTABanner";
 import { DeliveryModel } from "@/components/DeliveryModel";
 import { ProjectImage } from "@/components/ProjectImage";
+import { LocalContentCredential } from "@/components/LocalContentCredential";
 import { whyChooseUs } from "@/lib/content-data";
 import { aboutImage } from "@/lib/project-images";
 import { iconMap } from "@/components/icons";
@@ -12,7 +13,7 @@ import { pageLd, socialMetadata } from "@/lib/seo";
 
 const ABOUT_TITLE = "About CDCS Inc. — Cleaning Company in Guyana";
 const ABOUT_DESCRIPTION =
-  "Capital Detailing and Cleaning Services Inc. (CDCS Inc.) — a Georgetown-based commercial cleaning, pressure washing, and facility-support company serving businesses across Guyana since 2022.";
+  "Capital Detailing and Cleaning Services Inc. (CDCS Inc.): a Georgetown-based commercial cleaning and facility-support company operating in Guyana since 2022.";
 
 export const metadata: Metadata = {
   title: { absolute: ABOUT_TITLE },
@@ -66,9 +67,9 @@ export default function AboutPage() {
               <p>
                 {siteConfig.companyName}, operating as {siteConfig.brandName}, is a
                 Georgetown-based company that has provided professional cleaning, detailing,
-                pressure washing, and facility-support services since 2022 — to businesses,
-                organizations, government agencies, commercial properties, fleets, and individual
-                clients throughout Guyana.
+                pressure washing, and facility-support services since 2022. Its services are
+                offered to businesses, organizations, government agencies, commercial properties,
+                fleet operators, and individual clients throughout Guyana.
               </p>
               <p>
                 We work with corporate offices, property managers, restaurants, retail
@@ -128,6 +129,34 @@ export default function AboutPage() {
               <ProjectImage image={aboutImage} className="w-full object-cover" />
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="border-t border-slate-200 bg-white py-16 sm:py-24">
+        <div className="container-page grid gap-10 lg:grid-cols-[minmax(0,26rem)_1fr] lg:gap-16">
+          <div>
+            <SectionHeading
+              eyebrow="Registration & Credentials"
+              title="A Registered Guyanese Company"
+            />
+            <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700">
+              <p>
+                {siteConfig.companyName} has operated as {siteConfig.brandName} since 2022 and
+                holds a Government of Guyana Local Content Certificate of Registration, issued
+                under Section 6(2) of the Local Content Act, and is listed on the public Local
+                Content Register administered by the Local Content Secretariat.
+              </p>
+              <p>
+                Procurement teams can check the certificate directly on the official register
+                using the certificate number.{" "}
+                <Link href="/credentials/" className="font-semibold text-brand-600 hover:underline">
+                  See all company credentials
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+          <LocalContentCredential headingLevel="h3" linkToCredentials={false} />
         </div>
       </section>
 

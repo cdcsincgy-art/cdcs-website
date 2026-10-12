@@ -1,6 +1,13 @@
 import Link from "next/link";
 
-export function Logo({ variant = "dark" }: { variant?: "dark" | "light" }) {
+export function Logo({
+  variant = "dark",
+  compactAtLg = false,
+}: {
+  variant?: "dark" | "light";
+  /** Hide the tagline between lg and xl, where the desktop header nav is tightest. */
+  compactAtLg?: boolean;
+}) {
   const isLight = variant === "light";
   return (
     <Link href="/" className="flex items-center gap-2.5 shrink-0">
@@ -31,6 +38,8 @@ export function Logo({ variant = "dark" }: { variant?: "dark" | "light" }) {
             crowds the phone / WhatsApp / menu controls. */}
         <span
           className={`hidden text-[10px] font-semibold uppercase tracking-[0.18em] sm:block ${
+            compactAtLg ? "lg:hidden xl:block" : ""
+          } ${
             isLight ? "text-slate-300" : "text-slate-500"
           }`}
         >

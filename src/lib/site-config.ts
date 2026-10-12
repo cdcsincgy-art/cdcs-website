@@ -2,8 +2,11 @@
 // copy toggles here and they propagate across the entire site.
 
 export const siteConfig = {
-  // Registered legal name — must match the Google Business Profile name exactly.
+  // Registered legal name — must match the Google Business Profile name and
+  // the Government of Guyana Local Content Register record exactly.
   companyName: "Capital Detailing and Cleaning Services Inc.",
+  // Ampersand form of the same name — used as a JSON-LD alternateName only.
+  companyNameAmpersand: "Capital Detailing & Cleaning Services Inc.",
   brandName: "CDCS Inc.",
   brandShort: "CDCS",
   tagline: "Professional Cleaning. Powerful Results.",
@@ -41,8 +44,8 @@ export const siteConfig = {
   },
   social: {
     handle: "@cdcsinc",
-    instagram: "https://instagram.com/cdcsinc",
-    facebook: "https://facebook.com/cdcsinc",
+    instagram: "https://www.instagram.com/cdcsinc",
+    facebook: "https://www.facebook.com/cdcsinc",
   },
   // Configure this to point at a form backend (e.g. Formspree, Web3Forms,
   // your own API route) to receive quote requests by email. Until it is

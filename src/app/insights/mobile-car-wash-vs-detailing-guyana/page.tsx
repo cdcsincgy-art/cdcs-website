@@ -36,7 +36,7 @@ const faq = [
 ];
 
 export const metadata: Metadata = {
-  title: { absolute: `${article.metaTitle} | ${siteConfig.brandName}` },
+  title: { absolute: `${article.metaTitle} | CDCS` },
   description: article.metaDescription,
   keywords: article.keywords,
   alternates: { canonical: `/insights/${article.slug}/` },

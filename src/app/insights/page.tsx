@@ -12,7 +12,7 @@ import { siteConfig, ogImage } from "@/lib/site-config";
 
 const HUB_TITLE = "Cleaning & Facility Insights";
 const HUB_DESCRIPTION =
-  "Practical cleaning and facility-management guidance from CDCS Inc. for businesses, offices, commercial facilities, and organizations in Georgetown and across Guyana.";
+  "Practical cleaning and facility-management guides from CDCS Inc. for offices, commercial facilities, and organizations in Georgetown and across Guyana.";
 
 export const metadata: Metadata = {
   title: { absolute: `${HUB_TITLE} | ${siteConfig.brandName}` },

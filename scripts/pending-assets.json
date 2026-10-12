@@ -1,0 +1,4 @@
+{
+  "_comment": "Asset folders (relative to /public URLs) awaiting client publication approval. They live in /staging (git-ignored), never in /public. scripts/check-pending-assets.mjs blocks every build if one appears under /public; scripts/build-preview.mjs copies them into out/ for local preview only. On approval: move the folder from staging/ to public/ and remove it here.",
+  "pending": ["images/projects/carpet-cleaning"]
+}

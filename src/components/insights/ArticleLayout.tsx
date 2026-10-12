@@ -63,10 +63,13 @@ export function ArticleLayout({
       datePublished: article.datePublished,
       dateModified: modified,
       inLanguage: "en-GY",
+      // Same entity as the sitewide business node (layout.tsx), by @id — never
+      // a second, unlinked company entity.
       author: {
         "@type": "Organization",
+        "@id": `${siteConfig.url}/#business`,
         name: siteConfig.companyName,
-        url: siteConfig.url,
+        url: `${siteConfig.url}/`,
       },
       publisher: {
         "@type": "Organization",

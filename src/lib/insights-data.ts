@@ -49,7 +49,7 @@ export const insightArticles: InsightArticle[] = [
     title: "How Often Should a Commercial Office Be Professionally Cleaned in Guyana?",
     metaTitle: "How Often Should a Commercial Office Be Cleaned in Guyana?",
     metaDescription:
-      "A practical guide to commercial office cleaning frequency in Guyana — how often to clean reception, workstations, washrooms, kitchens, floors, and carpets, with a sample schedule for offices in Georgetown.",
+      "How often to clean an office in Guyana — reception, workstations, washrooms, kitchens, floors, and carpets — with a sample schedule for Georgetown offices.",
     excerpt:
       "How often an office needs professional cleaning depends on how many people use it, how the public sees it, and how it is run. This guide breaks the question down area by area and gives a sample cleaning-frequency schedule you can adapt for your own facility in Guyana.",
     datePublished: "2026-09-01",
@@ -86,7 +86,7 @@ export const insightArticles: InsightArticle[] = [
     title: "How Often Should Commercial Properties Be Pressure Washed in Guyana?",
     metaTitle: "How Often to Pressure Wash Commercial Properties in Guyana",
     metaDescription:
-      "A practical guide to commercial pressure washing frequency in Guyana — how often to clean building exteriors, walkways, concrete, parking areas, walls, and loading zones, with a sample schedule.",
+      "How often to pressure wash commercial property in Guyana — exteriors, walkways, concrete, parking, walls, and loading zones — with a sample schedule.",
     excerpt:
       "How often a commercial property needs pressure washing depends on its surfaces, exposure, surroundings, and traffic. This Guyana-specific guide works through it area by area and includes a practical exterior-cleaning frequency table.",
     datePublished: "2026-09-01",
@@ -121,9 +121,9 @@ export const insightArticles: InsightArticle[] = [
     slug: "carpet-upholstery-cleaning-guyana",
     title:
       "How Often Should Commercial Carpets and Upholstery Be Professionally Cleaned in Guyana?",
-    metaTitle: "Commercial Carpet & Upholstery Cleaning Frequency in Guyana",
+    metaTitle: "Carpet & Upholstery Cleaning Frequency in Guyana",
     metaDescription:
-      "How often should commercial carpets, office chairs, and upholstered furniture be professionally cleaned in Guyana? A practical guide to extraction and steam-cleaning frequency, with a sample schedule.",
+      "How often commercial carpets, office chairs, and upholstered furniture should be professionally cleaned in Guyana, with a sample cleaning schedule.",
     excerpt:
       "How often commercial carpet and upholstered furniture need professional cleaning depends on traffic, fabric, spills, and how well routine vacuuming keeps up. This guide covers extraction and steam-cleaning frequency area by area, with a practical schedule for offices and facilities in Guyana.",
     datePublished: "2026-09-01",
@@ -159,9 +159,9 @@ export const insightArticles: InsightArticle[] = [
   {
     slug: "commercial-janitorial-contract-guyana",
     title: "What Should a Commercial Janitorial Service Agreement Include in Guyana?",
-    metaTitle: "What a Commercial Janitorial Contract Should Cover in Guyana",
+    metaTitle: "What a Janitorial Contract Should Cover in Guyana",
     metaDescription:
-      "A practical checklist for organizations evaluating a commercial janitorial service agreement in Guyana — scope of work, frequencies, staffing, supervision, quality control, pricing, and how to compare quotes fairly.",
+      "A checklist for a commercial janitorial contract in Guyana — scope, frequencies, staffing, supervision, quality control, pricing, and comparing quotes.",
     excerpt:
       "Before signing a commercial cleaning contract, it helps to know what a well-written janitorial service agreement covers. This guide walks through scope, frequencies, staffing, supervision, quality control, pricing, and how to compare quotations fairly — practical guidance for organizations in Guyana.",
     datePublished: "2026-09-01",
@@ -198,7 +198,7 @@ export const insightArticles: InsightArticle[] = [
     title: "How Much Does Commercial Cleaning Cost in Guyana? What Affects the Price",
     metaTitle: "What Affects the Cost of Commercial Cleaning in Guyana",
     metaDescription:
-      "A plain-language guide to what drives a commercial cleaning quote in Guyana — facility size, cleaning frequency, scope of work, hours, consumables, and periodic tasks — and how to get an accurate figure for your office or facility.",
+      "What drives a commercial cleaning quote in Guyana — facility size, frequency, scope, hours, and consumables — and how to get an accurate figure for your site.",
     excerpt:
       "There is no single price for commercial cleaning — a quote is built from your facility size, how often it is cleaned, the scope of work, the hours involved, and how consumables are handled. This guide explains each cost driver and how to get an accurate quote for a business in Guyana.",
     datePublished: "2026-09-01",
@@ -267,7 +267,7 @@ export const insightArticles: InsightArticle[] = [
   {
     slug: "commercial-deep-cleaning-guyana",
     title: "Commercial Deep Cleaning in Guyana: What It Is and When Your Business Needs It",
-    metaTitle: "Commercial Deep Cleaning in Guyana: What It Is & When You Need It",
+    metaTitle: "Commercial Deep Cleaning in Guyana: When You Need It",
     metaDescription:
       "How commercial deep cleaning differs from routine cleaning, what a deep clean covers, and when a business or facility in Guyana should book one.",
     excerpt:
@@ -302,7 +302,7 @@ export const insightArticles: InsightArticle[] = [
   {
     slug: "commercial-fleet-washing-guyana",
     title: "How Often Should a Commercial Vehicle Fleet Be Washed in Guyana?",
-    metaTitle: "Commercial Fleet Washing in Guyana: How Often & What's Involved",
+    metaTitle: "Commercial Fleet Washing in Guyana: Frequency & Scope",
     metaDescription:
       "How often trucks, vans, and commercial fleets should be washed in Guyana, what an on-site depot wash covers, and how to set up a scheduled washing programme.",
     excerpt:
@@ -339,7 +339,7 @@ export const insightArticles: InsightArticle[] = [
     title: "Mobile Car Wash vs Mobile Detailing in Guyana: What's the Difference?",
     metaTitle: "Mobile Car Wash vs Mobile Detailing in Guyana",
     metaDescription:
-      "The difference between a routine car wash, mobile washing, interior and exterior washing, mobile detailing, fabric extraction, and fleet washing in Guyana — and how to pick the right one for your vehicle.",
+      "Car wash, mobile washing, detailing, fabric extraction, or fleet washing? The differences in Guyana, and how to pick the right service for your vehicle.",
     excerpt:
       "“Car wash” and “detailing” get used interchangeably, but they are different services at different price points. This guide explains routine washing, mobile washing, interior and exterior washing, full detailing, fabric extraction, and fleet washing — and how to tell which one your vehicle actually needs.",
     datePublished: "2026-09-10",

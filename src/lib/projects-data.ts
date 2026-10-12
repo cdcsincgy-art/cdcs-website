@@ -4,7 +4,9 @@
 // entries get a page, a card on /projects/, a sitemap entry, and links from
 // service pages. A "draft" entry is a placeholder for a case study CDCS has
 // delivered but not yet documented — it is never rendered, and its
-// `missing` list says what is needed before it can be published.
+// `missing` list says what is needed before it can be published. A
+// "pending-client-approval" entry is finished but held back from normal
+// builds until the client approves (local preview only — lib/publication.ts).
 //
 // Content rules (same as the photo captions in project-images.ts):
 // - Describe only what the photos show or what CDCS has confirmed in writing.
@@ -12,9 +14,15 @@
 //   results unless the client has approved them and CDCS can evidence them.
 // - Describe the client by sector ("a hotel in Georgetown"), not by name.
 
+import { pendingContent, showPendingClientContent } from "./publication";
+
 export interface ProjectDefinition {
   slug: string;
-  status: "published" | "draft";
+  /**
+   * "pending-client-approval": complete, but held back from normal builds
+   * until the client approves publication (see lib/publication.ts).
+   */
+  status: "published" | "draft" | "pending-client-approval";
   /** Card title and H1. */
   title: string;
   metaTitle: string;
@@ -44,14 +52,14 @@ export interface ProjectDefinition {
   missing?: string[];
 }
 
-export const projects: ProjectDefinition[] = [
+const committedProjects: ProjectDefinition[] = [
   {
     slug: "fleet-heavy-equipment-washing-guyana",
     status: "published",
     title: "Fleet and Heavy Equipment Washing — Guyana",
     metaTitle: "Fleet & Heavy Equipment Washing Project in Guyana | CDCS",
     metaDescription:
-      "Photos and method from CDCS on-site fleet washing in Guyana — prime movers, truck cabs, trailers, lifting equipment, and an excavator operator cab, washed at the client's yard or site.",
+      "CDCS on-site fleet washing in Guyana — prime movers, truck cabs, trailers, lifting equipment, and an excavator cab, washed at the client's yard or site.",
     serviceCategory: "Fleet & Heavy Equipment Washing",
     serviceSlugs: ["fleet-washing", "pressure-washing", "mobile-detailing"],
     location: "Guyana",
@@ -98,7 +106,7 @@ export const projects: ProjectDefinition[] = [
     title: "Commercial Pressure Washing — Building Exteriors, Walls & Concrete",
     metaTitle: "Commercial Pressure Washing Project in Guyana | CDCS",
     metaDescription:
-      "Photos and method from CDCS commercial pressure washing in Guyana — a two-storey building exterior, a boundary wall, and a concrete slab cleaned with a rotary surface cleaner.",
+      "CDCS commercial pressure washing in Guyana — a two-storey building exterior, a boundary wall, and a concrete slab cleaned with a rotary surface cleaner.",
     serviceCategory: "Commercial Pressure Washing",
     serviceSlugs: ["pressure-washing", "commercial-facility-cleaning", "post-construction-cleaning"],
     location: "Guyana",
@@ -141,7 +149,7 @@ export const projects: ProjectDefinition[] = [
     title: "Commercial Building Cleaning — Floors, Stairwells & Glass",
     metaTitle: "Commercial Building Cleaning Project in Guyana | CDCS",
     metaDescription:
-      "Photos and method from CDCS commercial building cleaning in Guyana — floor care, stairwell and handrail cleaning, and interior and exterior glass on a newly finished commercial space.",
+      "CDCS commercial building cleaning in Guyana — floors, stairwell and handrails, and interior and exterior glass on a newly finished commercial space.",
     serviceCategory: "Commercial Cleaning",
     serviceSlugs: ["commercial-janitorial-cleaning", "post-construction-cleaning", "commercial-facility-cleaning"],
     location: "Guyana",
@@ -185,7 +193,7 @@ export const projects: ProjectDefinition[] = [
     title: "Vehicle Interior Extraction & Detailing",
     metaTitle: "Vehicle Interior Extraction & Detailing Project | CDCS",
     metaDescription:
-      "Photos and method from CDCS vehicle interior detailing in Guyana — seats removed for a full interior clean, and hot-water extraction of heavily soiled fabric car seats, with before and after results.",
+      "CDCS vehicle interior detailing in Guyana — seats removed for a full interior clean and extraction cleaning of soiled car seats, with before and after photos.",
     serviceCategory: "Mobile Vehicle Detailing",
     serviceSlugs: ["mobile-detailing", "upholstery-fabric-extraction", "car-wash-mobile-vehicle-washing"],
     location: "Guyana",
@@ -225,29 +233,6 @@ export const projects: ProjectDefinition[] = [
 
   // ---- Drafts: delivered work awaiting photos and confirmed details ----
   {
-    slug: "commercial-hotel-carpet-cleaning-georgetown",
-    status: "draft",
-    title: "Commercial Hotel Carpet Cleaning — Georgetown",
-    metaTitle: "Hotel Carpet Cleaning Project in Georgetown | CDCS",
-    metaDescription: "",
-    serviceCategory: "Commercial Carpet Cleaning",
-    serviceSlugs: ["carpet-cleaning", "upholstery-fabric-extraction"],
-    location: "Georgetown",
-    clientType: "Hotel",
-    industryIds: ["hotels-hospitality"],
-    summary: "",
-    scope: [],
-    images: [],
-    evidenceNote: "",
-    missing: [
-      "Photos: before / during / after of corridors, rooms, or function spaces (no guest or staff faces without consent)",
-      "Confirmation the hotel can be described as 'a hotel in Georgetown' (or approval to name it)",
-      "Areas cleaned (e.g. corridors, guest rooms, function rooms) and approximate scale, if publishable",
-      "Method used (hot-water extraction, low-moisture, spot treatment) and any scheduling constraints (occupied rooms, night work)",
-      "What the client asked for and what was delivered — only outcomes CDCS can stand behind",
-    ],
-  },
-  {
     slug: "government-upholstery-cleaning-guyana",
     status: "draft",
     title: "Government Facility Upholstery Cleaning — Guyana",
@@ -272,7 +257,27 @@ export const projects: ProjectDefinition[] = [
   },
 ];
 
-export const publishedProjects = projects.filter((p) => p.status === "published");
+/**
+ * All projects. Content awaiting client approval is not in this repository; it
+ * is merged in from the local, git-ignored staging/pending-content.json only in
+ * a local preview build (see lib/publication.ts) — empty everywhere else.
+ */
+export const projects: ProjectDefinition[] = [
+  ...committedProjects,
+  ...(pendingContent().projects as ProjectDefinition[]),
+];
+
+/** Pending projects to feature first on the homepage (local preview builds only). */
+export const pendingHomepageProjectSlugs: string[] = pendingContent().homepageProjectSlugs;
+
+/**
+ * Projects with a live page in this build. Pending-approval projects appear
+ * only in a local preview build (CDCS_PREVIEW_PENDING=1, see lib/publication.ts).
+ */
+export const publishedProjects = projects.filter(
+  (p) =>
+    p.status === "published" || (p.status === "pending-client-approval" && showPendingClientContent),
+);
 
 export function getPublishedProject(slug: string) {
   return publishedProjects.find((p) => p.slug === slug);

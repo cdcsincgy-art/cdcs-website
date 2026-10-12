@@ -7,22 +7,38 @@ import { CTABanner } from "@/components/CTABanner";
 import { DeliveryModel } from "@/components/DeliveryModel";
 import { ProjectImage } from "@/components/ProjectImage";
 import { ProjectCard } from "@/components/ProjectCard";
+import { LocalContentCredential } from "@/components/LocalContentCredential";
+import { Faq } from "@/components/Faq";
 import { services } from "@/lib/services-data";
-import { publishedProjects } from "@/lib/projects-data";
-import { trustPoints, whyChooseUs, industries, processSteps } from "@/lib/content-data";
+import { publishedProjects, pendingHomepageProjectSlugs } from "@/lib/projects-data";
+import { trustPoints, industries, processSteps } from "@/lib/content-data";
 import {
   homepageHeroImage,
   homepageProjectImages,
   operatingStandardsImage,
   categoryLabel,
 } from "@/lib/project-images";
-import { iconMap, IconArrowRight, IconWhatsapp, IconCheck } from "@/components/icons";
+import { localContentCertificate as cert, formatCredentialDate } from "@/lib/credentials";
+import {
+  iconMap,
+  IconArrowRight,
+  IconWhatsapp,
+  IconCheck,
+  IconPhone,
+  IconFlame,
+} from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 import { socialMetadata } from "@/lib/seo";
 
+// Homepage content rules: every statement must be supportable — no rankings
+// ("best", "#1"), statistics, client names, contracts, or certifications
+// beyond the Local Content registration. HSE/quality statements summarise
+// CDCS's own adopted policies; internal document numbers are NOT published.
+
+// Title kept stable (it is the indexed homepage title); description refreshed.
 const HOME_TITLE = "Commercial Cleaning Company in Guyana | CDCS Inc.";
 const HOME_DESCRIPTION =
-  "CDCS Inc. provides professional cleaning services in Guyana, including commercial and janitorial cleaning, carpet and upholstery cleaning, pressure washing, fleet washing, deep cleaning and mobile detailing. Serving Georgetown and clients across Guyana.";
+  "Local Content-registered cleaning company in Georgetown, Guyana — commercial, janitorial and office cleaning, carpet, pressure washing, and fleet washing.";
 
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
@@ -31,55 +47,208 @@ export const metadata: Metadata = {
   ...socialMetadata({ title: HOME_TITLE, description: HOME_DESCRIPTION, path: "/" }),
 };
 
-// The two commercial case studies lead on the homepage.
-const homepageProjects = publishedProjects
-  .filter((p) => p.slug === "fleet-heavy-equipment-washing-guyana" || p.slug === "commercial-pressure-washing-guyana")
-  .slice(0, 2);
+// Commercial case studies featured on the homepage, in this order. Any that
+// aren't published in this build (e.g. pending client approval) drop out, so
+// the first three published ones show — never an empty card.
+const HOMEPAGE_PROJECT_SLUGS = [
+  // Pending projects (local preview builds only) lead when present.
+  ...pendingHomepageProjectSlugs,
+  "fleet-heavy-equipment-washing-guyana",
+  "commercial-building-cleaning-guyana",
+  "commercial-pressure-washing-guyana",
+];
+const homepageProjects = HOMEPAGE_PROJECT_SLUGS.map((slug) =>
+  publishedProjects.find((p) => p.slug === slug),
+)
+  .filter((p): p is NonNullable<typeof p> => Boolean(p))
+  .slice(0, 3);
+
+// Service order for the homepage: commercial and facility work first.
+const HOMEPAGE_SERVICE_ORDER = [
+  "commercial-janitorial-cleaning",
+  "commercial-facility-cleaning",
+  "carpet-cleaning",
+  "upholstery-fabric-extraction",
+  "pressure-washing",
+  "fleet-washing",
+  "post-construction-cleaning",
+  "deep-cleaning",
+  "mobile-detailing",
+  "car-wash-mobile-vehicle-washing",
+];
+const homepageServices = [
+  ...HOMEPAGE_SERVICE_ORDER.map((slug) => services.find((s) => s.slug === slug)),
+  // Any service added later still appears, after the ordered ones.
+  ...services.filter((s) => !HOMEPAGE_SERVICE_ORDER.includes(s.slug)),
+].filter((s): s is NonNullable<typeof s> => Boolean(s));
+
+const companyFacts = [
+  { label: "Registered company", value: siteConfig.companyName },
+  { label: "Trading as", value: siteConfig.brandName },
+  { label: "Operating since", value: siteConfig.foundingDate.slice(0, 4) },
+  { label: "Based in", value: siteConfig.location.display },
+  { label: "Service area", value: `Georgetown, ${siteConfig.location.region} & across Guyana` },
+  { label: "Local Content Certificate", value: cert.number, mono: true },
+];
+
+/** Verified credentials and operating standards — see the content rules above. */
+const credibility = [
+  {
+    icon: "building",
+    title: "Registered Guyanese company",
+    text: `${siteConfig.companyName}, based in Georgetown and operating since 2022.`,
+    href: "/about/",
+    linkLabel: "About CDCS",
+  },
+  {
+    icon: "shield",
+    title: "Local Content registered",
+    text: `Certificate ${cert.number}, valid to ${formatCredentialDate(cert.validTo)}, verifiable on the government register.`,
+    href: "/credentials/",
+    linkLabel: "View credentials",
+  },
+  {
+    icon: "clipboard",
+    title: "Documented commercial work",
+    text: "Case studies of fleet and heavy-equipment washing, commercial building cleaning, and pressure washing in Guyana.",
+    href: "/projects/",
+    linkLabel: "View case studies",
+  },
+  {
+    icon: "tools",
+    title: "Professional equipment",
+    text: "Commercial pressure washers, rotary surface cleaners, foam application for fleet washing, and carpet and upholstery cleaning equipment.",
+  },
+  {
+    icon: "target",
+    title: "Supervision & quality checks",
+    text: "A defined scope agreed in advance, supervised teams, and completed work inspected against it under CDCS's documented quality policy.",
+  },
+  {
+    icon: "users",
+    title: "Workplace safety",
+    text: "Under CDCS's documented HSE policy: hazards identified before work, induction and PPE for every task, and client site rules built in.",
+  },
+];
+
+// Visible on the page AND emitted as FAQPage structured data — keep them identical.
+const homeFaqs = [
+  {
+    q: "What is CDCS Inc.?",
+    a: `CDCS Inc. is the trading name of ${siteConfig.companyName}, a Guyanese cleaning company based in Georgetown and operating since 2022. It provides commercial and janitorial cleaning, carpet and upholstery cleaning, pressure washing, fleet washing, and vehicle detailing for businesses, organizations, and individuals.`,
+  },
+  {
+    q: "Where does CDCS operate?",
+    a: `CDCS is based in Georgetown and serves clients in Georgetown, the ${siteConfig.location.region} region, and across Guyana.`,
+  },
+  {
+    q: "Does CDCS provide commercial cleaning and janitorial services?",
+    a: "Yes. CDCS provides recurring janitorial and office cleaning programmes for offices, commercial facilities, and institutions, as well as one-time commercial, deep, and post-construction cleaning.",
+  },
+  {
+    q: "Does CDCS clean commercial carpets and upholstery?",
+    a: "Yes. CDCS provides commercial carpet cleaning for offices, hotels, and public buildings, and upholstery and office chair cleaning by hot-water extraction, often called steam cleaning.",
+  },
+  {
+    q: "Does CDCS provide pressure washing and fleet washing?",
+    a: "Yes. CDCS pressure washes building exteriors, walls, walkways, and concrete areas, and washes trucks, prime movers, trailers, and heavy equipment on site at the client's yard or work site.",
+  },
+  {
+    q: "Does CDCS serve industrial facilities?",
+    a: "Yes. CDCS provides facility cleaning, yard pressure washing, and fleet and heavy-equipment washing for industrial and commercial operations, and offers these services to companies supporting Guyana's oil and gas sector.",
+  },
+  {
+    q: "Is CDCS registered under Guyana's Local Content framework?",
+    a: `Yes. ${siteConfig.companyName} holds Local Content Certificate of Registration ${cert.number}, valid from ${formatCredentialDate(cert.validFrom)} to ${formatCredentialDate(cert.validTo)}. Registration is not prequalification or the award of any contract.`,
+  },
+  {
+    q: "What project experience can CDCS show?",
+    a: "CDCS publishes case studies with photographs of its work in Guyana, including fleet and heavy-equipment washing, commercial building cleaning, commercial pressure washing, and vehicle interior extraction and detailing.",
+  },
+];
+
+const homeJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${siteConfig.url}/#webpage`,
+    url: `${siteConfig.url}/`,
+    name: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    isPartOf: { "@id": `${siteConfig.url}/#website` },
+    about: { "@id": `${siteConfig.url}/#business` },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: `${siteConfig.url}${homepageHeroImage.file}.jpg`,
+    },
+    inLanguage: "en",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: homeFaqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  },
+];
+
+const linkCls = "font-semibold text-brand-600 hover:underline";
 
 export default function HomePage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }} />
+
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950">
         <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-[0.6]" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-90" aria-hidden />
         <div className="container-page relative grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-28">
-          <div className="animate-fade-up">
+          <div>
             <p className="mb-5 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent-400">
               Commercial Cleaning &amp; Facility Services · Georgetown, Guyana
             </p>
             <h1 className="text-pretty text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.25rem]">
-              Commercial Cleaning Company in Guyana for Businesses &amp; Organizations
+              Professional Commercial Cleaning Services in Guyana
             </h1>
             <p className="mt-4 text-lg font-bold text-accent-500 sm:text-xl">
               Professional Cleaning. Powerful Results.
             </p>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
-              CDCS Inc. is a Georgetown-based company providing professional cleaning services in
-              Guyana — commercial and janitorial cleaning, deep cleaning, pressure washing, fleet
-              washing, and mobile detailing for businesses, government agencies, and organizations
-              across Guyana.
+              CDCS Inc. is a Georgetown-based cleaning company, operating since 2022, providing
+              janitorial and office cleaning, commercial carpet and upholstery cleaning, pressure
+              washing, fleet washing, and facility support for businesses, government agencies, and
+              organizations across Guyana — delivered by supervised teams with professional
+              equipment.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button href="/quote/" variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>
                 Request a Quote
               </Button>
-              <Button href="/estimate/" variant="outline" size="lg">
-                Get an Estimate
+              <Button href="/services/" variant="outline" size="lg">
+                Explore Our Services
               </Button>
             </div>
-            <a
-              href={siteConfig.contact.whatsappHrefWithMessage("Hello CDCS, I'd like to request a quote.")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-accent-400"
-            >
-              <IconWhatsapp className="h-5 w-5 text-[#25D366]" />
-              Or message us directly on WhatsApp: {siteConfig.contact.phoneDisplay}
-            </a>
+            <div className="mt-6 hidden flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-slate-300 lg:flex">
+              <a
+                href={siteConfig.contact.whatsappHrefWithMessage("Hello CDCS, I'd like to request a quote.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center gap-2 hover:text-accent-400"
+              >
+                <IconWhatsapp className="h-5 w-5 text-[#25D366]" />
+                WhatsApp {siteConfig.contact.phoneDisplay}
+              </a>
+              <a href={siteConfig.contact.phoneHref} className="inline-flex min-h-11 items-center gap-2 hover:text-accent-400">
+                <IconPhone className="h-5 w-5 text-accent-400" />
+                Call {siteConfig.contact.phoneDisplay}
+              </a>
+            </div>
           </div>
 
-          <div className="animate-fade-up delay-200">
+          <div>
             <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-2 shadow-2xl shadow-black/40">
               <span
                 aria-hidden
@@ -89,6 +258,7 @@ export default function HomePage() {
                 <ProjectImage
                   image={homepageHeroImage}
                   priority
+                  sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, calc(100vw - 48px)"
                   className="w-full object-cover"
                 />
               </div>
@@ -117,54 +287,65 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ================= LOCAL CONTENT REGISTRATION ================= */}
+      <LocalContentCredential variant="strip" />
+
       {/* ================= WHAT WE DO / SERVICES ================= */}
       <section className="bg-white py-20 sm:py-28">
         <div className="container-page">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,34rem)_1fr] lg:items-end lg:gap-16">
             <SectionHeading
               eyebrow="What We Do"
-              title="Full-Scope Commercial Cleaning & Facility Services in Guyana"
+              title="Commercial Cleaning Services in Guyana"
             />
-            <p className="text-base leading-relaxed text-slate-600 lg:pb-1">
-              Based in Georgetown, CDCS Inc. serves businesses, government agencies, and
-              organizations across Guyana — handling{" "}
-              <Link href="/services/commercial-janitorial-cleaning/" className="font-semibold text-brand-600 hover:underline">
-                commercial cleaning services
-              </Link>
-              ,{" "}
-              <Link href="/services/deep-cleaning/" className="font-semibold text-brand-600 hover:underline">
-                deep cleaning
-              </Link>
-              ,{" "}
-              <Link href="/services/pressure-washing/" className="font-semibold text-brand-600 hover:underline">
-                pressure washing
-              </Link>
-              ,{" "}
-              <Link href="/services/fleet-washing/" className="font-semibold text-brand-600 hover:underline">
-                fleet and heavy equipment washing
-              </Link>
-              ,{" "}
-              <Link href="/services/carpet-cleaning/" className="font-semibold text-brand-600 hover:underline">
-                commercial carpet cleaning
-              </Link>
-              ,{" "}
-              <Link href="/services/upholstery-fabric-extraction/" className="font-semibold text-brand-600 hover:underline">
-                upholstery and office chair cleaning
-              </Link>
-              ,{" "}
-              <Link href="/services/post-construction-cleaning/" className="font-semibold text-brand-600 hover:underline">
-                post-construction cleaning
-              </Link>
-              , and{" "}
-              <Link href="/services/mobile-detailing/" className="font-semibold text-brand-600 hover:underline">
-                mobile detailing
-              </Link>{" "}
-              as one-time projects or recurring contracts.
-            </p>
+            <div className="space-y-4 text-base leading-relaxed text-slate-600 lg:pb-1">
+              <p>
+                For offices and facilities, CDCS provides{" "}
+                <Link href="/services/commercial-janitorial-cleaning/" className={linkCls}>
+                  janitorial and office cleaning
+                </Link>{" "}
+                programmes,{" "}
+                <Link href="/services/commercial-facility-cleaning/" className={linkCls}>
+                  commercial facility cleaning
+                </Link>
+                ,{" "}
+                <Link href="/services/carpet-cleaning/" className={linkCls}>
+                  commercial carpet cleaning
+                </Link>
+                , and{" "}
+                <Link href="/services/upholstery-fabric-extraction/" className={linkCls}>
+                  upholstery and office chair steam cleaning
+                </Link>{" "}
+                (hot-water extraction).
+              </p>
+              <p>
+                For exteriors, fleets, and new buildings, CDCS handles{" "}
+                <Link href="/services/pressure-washing/" className={linkCls}>
+                  pressure washing
+                </Link>
+                ,{" "}
+                <Link href="/services/fleet-washing/" className={linkCls}>
+                  fleet and heavy equipment washing
+                </Link>
+                , and{" "}
+                <Link href="/services/post-construction-cleaning/" className={linkCls}>
+                  post-construction cleaning
+                </Link>{" "}
+                — alongside{" "}
+                <Link href="/services/deep-cleaning/" className={linkCls}>
+                  deep cleaning
+                </Link>{" "}
+                and{" "}
+                <Link href="/services/mobile-detailing/" className={linkCls}>
+                  vehicle detailing
+                </Link>
+                , as one-time projects or recurring contracts.
+              </p>
+            </div>
           </div>
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map((service) => (
+          <div className="mt-10 grid gap-3 sm:mt-14 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+            {homepageServices.map((service) => (
               <ServiceCard key={service.slug} service={service} />
             ))}
           </div>
@@ -186,43 +367,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= OPERATING STANDARDS (reputation / why clients stay) ================= */}
+      {/* ================= COMPANY PROFILE & CREDIBILITY ================= */}
       <section className="bg-slate-50 py-20 sm:py-28">
         <div className="container-page">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div>
-              <SectionHeading
-                eyebrow="Why Clients Stay"
-                title="Built for Clients Who Depend on Consistent Results"
-              />
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-600">
-                Corporate facilities, government offices, and property managers keep CDCS Inc. on
-                contract for{" "}
-                <Link
-                  href="/services/commercial-janitorial-cleaning/"
-                  className="font-semibold text-brand-600 hover:underline"
-                >
-                  professional janitorial services
-                </Link>{" "}
-                because every visit is organized the same way — a defined scope, a trained team, and
-                supervision that holds the standard.
-              </p>
-              <dl className="mt-8 divide-y divide-slate-200 border-y border-slate-200">
-                {whyChooseUs.map((item) => {
-                  const Icon = iconMap[item.icon];
-                  return (
-                    <div key={item.title} className="flex gap-4 py-4">
-                      <span className="mt-0.5 shrink-0 text-brand-600">
-                        {Icon && <Icon className="h-5 w-5" />}
-                      </span>
-                      <div>
-                        <dt className="font-bold text-navy-900">{item.title}</dt>
-                        <dd className="mt-1 text-sm leading-relaxed text-slate-600">{item.description}</dd>
-                      </div>
-                    </div>
-                  );
-                })}
+              <SectionHeading eyebrow="About CDCS" title="A Registered Guyanese Cleaning Company" />
+              <div className="mt-5 max-w-xl space-y-4 text-base leading-relaxed text-slate-600">
+                <p>
+                  {siteConfig.companyName}, trading as {siteConfig.brandName}, has provided
+                  professional cleaning, pressure washing, fleet washing, and facility-support
+                  services in Guyana since 2022. Its services are offered to corporate offices,
+                  commercial properties, hotels, public-sector facilities, fleet operators, and
+                  industrial sites.
+                </p>
+                <p>
+                  Every job is organized the same way: a scope agreed in advance, a trained and
+                  supervised team, and work checked against that scope before it is signed off.
+                </p>
+              </div>
+              <dl className="mt-8 grid gap-x-6 border-t border-slate-200 sm:grid-cols-2">
+                {companyFacts.map((f) => (
+                  <div key={f.label} className="border-b border-slate-200 py-3">
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">{f.label}</dt>
+                    <dd className={`mt-0.5 text-sm font-semibold text-navy-900 ${f.mono ? "font-mono" : ""}`}>
+                      {f.value}
+                    </dd>
+                  </div>
+                ))}
               </dl>
+              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                <Link href="/about/" className="inline-flex min-h-11 items-center gap-1.5 font-bold text-brand-600 hover:text-brand-700">
+                  About CDCS <IconArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href="/credentials/" className="inline-flex min-h-11 items-center gap-1.5 font-bold text-brand-600 hover:text-brand-700">
+                  Company credentials <IconArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
 
             <div className="relative isolate">
@@ -234,6 +415,7 @@ export default function HomePage() {
                 <div className="aspect-[4/5] overflow-hidden rounded-lg">
                   <ProjectImage
                     image={operatingStandardsImage}
+                    sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, calc(100vw - 64px)"
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -244,7 +426,34 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-16 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:mt-24 sm:p-8">
+          <div className="mt-16 sm:mt-24">
+            <h3 className="text-xl font-bold tracking-tight text-navy-900 sm:text-2xl">
+              Verified Credentials &amp; Operating Standards
+            </h3>
+            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {credibility.map((c) => {
+                const Icon = iconMap[c.icon];
+                return (
+                  <li key={c.title} className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <span className="text-brand-600">{Icon && <Icon className="h-6 w-6" />}</span>
+                    <p className="mt-3 font-bold text-navy-900">{c.title}</p>
+                    <p className="mt-1.5 flex-1 text-sm leading-relaxed text-slate-600">{c.text}</p>
+                    {c.href && (
+                      <Link
+                        href={c.href}
+                        className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
+                      >
+                        {c.linkLabel}
+                        <IconArrowRight className="h-4 w-4" />
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <DeliveryModel />
           </div>
         </div>
@@ -276,7 +485,7 @@ export default function HomePage() {
               return (
                 <Link
                   key={industry.id}
-                  href={`/industries/#${industry.id}`}
+                  href={industry.page ?? `/industries/#${industry.id}`}
                   className="group flex flex-col gap-4 bg-navy-950 p-6 transition-colors duration-300 hover:bg-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-500"
                 >
                   <span className="text-accent-400">{Icon && <Icon className="h-6 w-6" />}</span>
@@ -288,6 +497,33 @@ export default function HomePage() {
                 </Link>
               );
             })}
+          </div>
+
+          {/* Featured: oil & gas support (Stage 3 page). No contracts or approvals claimed. */}
+          <div className="mt-8 grid gap-6 rounded-xl border border-accent-500/30 bg-white/[0.04] p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="flex gap-4">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-accent-500/10 text-accent-400">
+                <IconFlame className="h-6 w-6" />
+              </span>
+              <div>
+                <h3 className="text-lg font-bold text-white">Oil &amp; Gas Support Operations</h3>
+                <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-300">
+                  Janitorial, facility cleaning, pressure washing, and fleet and heavy-equipment
+                  washing for companies working in and supporting Guyana&apos;s oil and gas sector —
+                  from a Local Content-registered Guyanese contractor with documented HSE and
+                  quality policies.
+                </p>
+              </div>
+            </div>
+            <Button
+              href="/industries/oil-and-gas/"
+              variant="accent"
+              size="md"
+              className="min-h-11"
+              icon={<IconArrowRight className="h-4 w-4" />}
+            >
+              Oil &amp; Gas Services
+            </Button>
           </div>
         </div>
       </section>
@@ -321,6 +557,7 @@ export default function HomePage() {
                 <div className="aspect-[4/5] overflow-hidden">
                   <ProjectImage
                     image={image}
+                    sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, calc(100vw - 32px)"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                   />
                 </div>
@@ -336,9 +573,10 @@ export default function HomePage() {
 
           <div className="mt-16 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div className="max-w-2xl">
-              <h3 className="text-xl font-bold tracking-tight text-navy-900 sm:text-2xl">Project Case Studies</h3>
+              <h3 className="text-xl font-bold tracking-tight text-navy-900 sm:text-2xl">Commercial Project Case Studies</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Scope, method, and equipment from selected commercial jobs.
+                Scope, method, and equipment from selected commercial jobs, documented with
+                photographs from site.
               </p>
             </div>
             <Link
@@ -349,7 +587,9 @@ export default function HomePage() {
               <IconArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2">
+          <div
+            className={`mt-8 grid gap-6 sm:grid-cols-2 ${homepageProjects.length >= 3 ? "lg:grid-cols-3" : ""}`}
+          >
             {homepageProjects.map((p) => (
               <ProjectCard key={p.slug} project={p} />
             ))}
@@ -398,6 +638,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Plain-language answers about the company (also FAQPage JSON-LD above). */}
+      <Faq items={homeFaqs} title="About CDCS: Common Questions" />
 
       <CTABanner />
     </>
