@@ -96,7 +96,7 @@ export default function ProjectsPage() {
 
       <section className="bg-white py-16 sm:py-24">
         <div className="container-page">
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div data-reveal="stagger" className="grid gap-6 sm:grid-cols-2">
             {publishedProjects.map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}

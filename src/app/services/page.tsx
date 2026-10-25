@@ -189,7 +189,7 @@ export default function ServicesPage() {
             description="Commercial cleaning is where most clients start. These are the other programs we run across Guyana — book any of them on its own or alongside a cleaning contract."
             light
           />
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div data-reveal="stagger" className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {gridServices.map((service) => {
               const img =
                 serviceHeroImage(service.slug) ??
@@ -240,7 +240,7 @@ export default function ServicesPage() {
             title="Not Sure Which Service You Need?"
             description="Most clients combine two or three of our services. A few common pairings — tell us your situation and we'll confirm the right scope."
           />
-          <div className="mt-12 grid gap-5 lg:grid-cols-3">
+          <div data-reveal="stagger" className="mt-12 grid gap-5 lg:grid-cols-3">
             {combinations.map((combo) => (
               <div
                 key={combo.title}

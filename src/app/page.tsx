@@ -23,6 +23,7 @@ import { localContentCertificate as cert, formatCredentialDate, gcciMembership }
 import {
   iconMap,
   IconArrowRight,
+  IconChevronDown,
   IconWhatsapp,
   IconCheck,
   IconPhone,
@@ -208,13 +209,13 @@ export default function HomePage() {
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-90" aria-hidden />
         <div className="container-page relative grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-28">
           <div>
-            <p className="mb-5 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent-400">
+            <p className="hero-fade-rise mb-5 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent-400">
               Commercial Cleaning &amp; Facility Services · Georgetown, Guyana
             </p>
             <h1 className="text-pretty text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.25rem]">
               Professional Commercial Cleaning Services in Guyana
             </h1>
-            <p className="mt-4 text-lg font-bold text-accent-500 sm:text-xl">
+            <p className="hero-fade-rise mt-4 text-lg font-bold text-accent-500 [--hero-delay:80ms] sm:text-xl">
               Professional Cleaning. Powerful Results.
             </p>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
@@ -224,7 +225,7 @@ export default function HomePage() {
               organizations across Guyana — delivered by supervised teams with professional
               equipment.
             </p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="hero-fade-rise mt-9 flex flex-col gap-3 [--hero-delay:180ms] sm:flex-row">
               <Button href="/quote/" variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>
                 Request a Quote
               </Button>
@@ -232,7 +233,7 @@ export default function HomePage() {
                 Explore Our Services
               </Button>
             </div>
-            <div className="mt-6 hidden flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-slate-300 lg:flex">
+            <div className="hero-fade-rise mt-6 hidden flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-slate-300 [--hero-delay:240ms] lg:flex">
               <a
                 href={siteConfig.contact.whatsappHrefWithMessage("Hello CDCS, I'd like to request a quote.")}
                 target="_blank"
@@ -249,7 +250,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div>
+          <div className="hero-media">
             <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-2 shadow-2xl shadow-black/40">
               <span
                 aria-hidden
@@ -266,12 +267,19 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+        <a
+          href="#what-we-do"
+          className="hero-fade-rise absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 rounded-md px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 [--hero-delay:600ms] hover:text-accent-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-400 lg:flex"
+        >
+          See what we do
+          <IconChevronDown aria-hidden className="scroll-cue-icon h-4 w-4" />
+        </a>
       </section>
 
       {/* ============ CAPABILITY RIBBON (dark continuation of the masthead) ============ */}
       <section className="border-y border-white/10 bg-navy-900">
         <div className="container-page py-6 sm:py-7">
-          <ul className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3 lg:grid-cols-6 lg:divide-x lg:divide-white/10">
+          <ul data-reveal="stagger" className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3 lg:grid-cols-6 lg:divide-x lg:divide-white/10">
             {trustPoints.map((point) => {
               const Icon = iconMap[point.icon];
               return (
@@ -293,7 +301,7 @@ export default function HomePage() {
       <GcciMembership variant="strip" />
 
       {/* ================= WHAT WE DO / SERVICES ================= */}
-      <section className="bg-white py-20 sm:py-28">
+      <section id="what-we-do" className="bg-white py-20 sm:py-28">
         <div className="container-page">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,34rem)_1fr] lg:items-end lg:gap-16">
             <SectionHeading
@@ -346,7 +354,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-10 grid gap-3 sm:mt-14 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+          <div data-reveal="stagger" className="mt-10 grid gap-3 sm:mt-14 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {homepageServices.map((service) => (
               <ServiceCard key={service.slug} service={service} />
             ))}
@@ -408,7 +416,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="relative isolate">
+            <div data-reveal className="relative isolate">
               <div
                 aria-hidden
                 className="absolute -inset-4 -z-10 hidden rounded-2xl bg-navy-950 sm:block"
@@ -432,7 +440,7 @@ export default function HomePage() {
             <h3 className="text-xl font-bold tracking-tight text-navy-900 sm:text-2xl">
               Verified Credentials &amp; Operating Standards
             </h3>
-            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul data-reveal="stagger" className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {credibility.map((c) => {
                 const Icon = iconMap[c.icon];
                 return (
@@ -481,7 +489,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 lg:grid-cols-5">
+          <div data-reveal="stagger" className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 lg:grid-cols-5">
             {industries.map((industry) => {
               const Icon = iconMap[industry.icon];
               return (
@@ -550,7 +558,7 @@ export default function HomePage() {
             </Button>
           </div>
 
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div data-reveal="stagger" className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {homepageProjectImages.map((image) => (
               <figure
                 key={image.file}
@@ -590,6 +598,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div
+            data-reveal="stagger"
             className={`mt-8 grid gap-6 sm:grid-cols-2 ${homepageProjects.length >= 3 ? "lg:grid-cols-3" : ""}`}
           >
             {homepageProjects.map((p) => (
@@ -608,7 +617,7 @@ export default function HomePage() {
             description="From first contact to a maintained contract, the steps are the same for a one-time project or an ongoing program."
             align="center"
           />
-          <ol className="mx-auto mt-14 grid max-w-6xl gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
+          <ol data-reveal="stagger" className="mx-auto mt-14 grid max-w-6xl gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
             {processSteps.map((step, i) => (
               <li key={step.step} className="relative flex flex-col">
                 <div className="flex items-center gap-3">

@@ -1080,7 +1080,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
       {/* ================= ADDITIONAL BODY SECTIONS (optional per-service) ================= */}
       {service.sections?.map((section) => (
-        <section key={section.title} id={section.id} className="scroll-mt-24 bg-white pt-16 sm:pt-20">
+        <section key={section.title} id={section.id} className="bg-white pt-16 sm:pt-20">
           <div className="container-page">
             <div className="max-w-4xl border-t border-slate-200 pt-10">
               <SectionHeading eyebrow={section.eyebrow} title={section.title} />

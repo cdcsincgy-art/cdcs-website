@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CTABanner } from "@/components/CTABanner";
 import { Button } from "@/components/ui/Button";
-import { ProjectImage } from "@/components/ProjectImage";
+import { ProjectGallery } from "@/components/gallery/ProjectGallery";
 import { ProjectCard } from "@/components/ProjectCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { IconArrowRight, IconCheck } from "@/components/icons";
@@ -99,7 +99,7 @@ export default function OurWorkPage() {
       </section>
 
       {publishedProjects.length > 0 && (
-        <section id="case-studies" className="scroll-mt-24 bg-slate-50 py-16 sm:py-20">
+        <section id="case-studies" className="bg-slate-50 py-16 sm:py-20">
           <div className="container-page">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <SectionHeading
@@ -115,7 +115,7 @@ export default function OurWorkPage() {
                 <IconArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            <div data-reveal="stagger" className="mt-10 grid gap-6 sm:grid-cols-2">
               {publishedProjects.map((p) => (
                 <ProjectCard key={p.slug} project={p} />
               ))}
@@ -124,54 +124,7 @@ export default function OurWorkPage() {
         </section>
       )}
 
-      {projectCategories.map((category, i) => (
-        <section
-          key={category.slug}
-          id={category.slug}
-          className={`scroll-mt-24 py-16 sm:py-20 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
-        >
-          <div className="container-page">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-              <div className="max-w-2xl">
-                <p className="mb-3 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">
-                  <span className="h-px w-6 bg-brand-600/50" aria-hidden />
-                  {`0${i + 1}`.slice(-2)} · Project Category
-                </p>
-                <h2 className="text-2xl font-bold tracking-tight text-navy-900 sm:text-3xl">
-                  {category.title}
-                </h2>
-                <p className="mt-3 text-base leading-relaxed text-slate-600">{category.blurb}</p>
-              </div>
-              <Link
-                href={`/services/${category.service}/`}
-                className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
-              >
-                View the {category.title.toLowerCase()} service
-                <IconArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-
-            <div className="mt-10 gap-5 [column-fill:_balance] sm:columns-2 lg:columns-3">
-              {category.images.map((image) => (
-                <figure
-                  key={image.file}
-                  className="mb-5 break-inside-avoid overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
-                >
-                  <ProjectImage image={image} className="w-full" sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" />
-                  <figcaption className="px-4 py-3 text-sm leading-relaxed text-slate-600">
-                    {image.beforeAfter && (
-                      <span className="mr-2 inline-block rounded bg-brand-50 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-brand-700">
-                        Before / After
-                      </span>
-                    )}
-                    {image.caption}
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
-        </section>
-      ))}
+      <ProjectGallery categories={projectCategories} />
 
       <section className="bg-slate-50 py-14">
         <div className="container-page">

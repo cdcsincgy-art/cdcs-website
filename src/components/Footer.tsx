@@ -100,7 +100,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-400 sm:flex-row">
+        <div className="container-page flex flex-col items-center justify-between gap-3 pb-16 pt-5 text-xs text-slate-400 sm:flex-row lg:py-5">
           {/* companyName already ends with "Inc." — no extra period. */}
           <p>© {year} {siteConfig.companyName} All rights reserved.</p>
           <p>Based in Georgetown · Serving Demerara-Mahaica and across Guyana</p>

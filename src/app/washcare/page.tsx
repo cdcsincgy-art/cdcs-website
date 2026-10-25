@@ -292,7 +292,7 @@ export default function WashCarePage() {
       </section>
 
       {/* ================= WASHCARE BAY ================= */}
-      <section id="bay" className="scroll-mt-24 bg-white py-16 sm:py-24">
+      <section id="bay" className="bg-white py-16 sm:py-24">
         <div className="container-page">
           <SectionHeading
             eyebrow="WashCare Bay"
@@ -346,7 +346,7 @@ export default function WashCarePage() {
       </section>
 
       {/* ================= WASHCARE MOBILE ================= */}
-      <section id="mobile" className="scroll-mt-24 bg-slate-50 py-16 sm:py-24">
+      <section id="mobile" className="bg-slate-50 py-16 sm:py-24">
         <div className="container-page">
           <SectionHeading
             eyebrow="WashCare Mobile"
@@ -393,7 +393,7 @@ export default function WashCarePage() {
       </section>
 
       {/* ================= WASHCARE FLEET ================= */}
-      <section id="fleet" className="scroll-mt-24 relative overflow-hidden bg-navy-950 py-16 sm:py-24">
+      <section id="fleet" className="relative overflow-hidden bg-navy-950 py-16 sm:py-24">
         <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
         <div className="container-page relative">
           <SectionHeading

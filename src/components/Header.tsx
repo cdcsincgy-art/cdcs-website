@@ -131,7 +131,8 @@ export function Header({ services, industries }: { services: NavLink[]; industri
     };
   }, [openMenu]);
 
-  // Mobile menu: lock body scroll; focus into the panel; Escape / back closes.
+  // Mobile menu: lock body scroll; focus into the panel; keep Tab inside the
+  // panel and its toggle button (it is a modal dialog); Escape / back closes.
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     if (!mobileOpen) return;
@@ -139,6 +140,25 @@ export function Header({ services, industries }: { services: NavLink[]; industri
       if (e.key === "Escape") {
         setMobileOpen(false);
         triggerRef.current?.focus();
+        return;
+      }
+      if (e.key !== "Tab" || !panelRef.current || !triggerRef.current) return;
+      const focusable = [
+        triggerRef.current,
+        ...panelRef.current.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
+      ];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (!active || !focusable.includes(active)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
       }
     };
     const onPop = () => setMobileOpen(false);
@@ -169,7 +189,7 @@ export function Header({ services, industries }: { services: NavLink[]; industri
     }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200">
+    <header className="site-header sticky top-0 z-40 border-b border-slate-200">
       {/* This inner wrapper carries the blur/translucency. backdrop-filter
           establishes a CSS containing block for fixed descendants, so it
           must NOT wrap the mobile menu panel below — otherwise the panel

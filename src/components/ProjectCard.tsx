@@ -10,14 +10,14 @@ export function ProjectCard({ project }: { project: ProjectDefinition }) {
   return (
     <Link
       href={`/projects/${project.slug}/`}
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-navy-900/20 hover:shadow-lg hover:shadow-navy-900/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-navy-900/20 hover:shadow-lg hover:shadow-navy-900/10 focus-visible:-translate-y-1 focus-visible:shadow-lg focus-visible:shadow-navy-900/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
     >
       {hero && (
         <div className="relative aspect-[16/10] overflow-hidden bg-navy-950">
           <ProjectImage
             image={hero}
             sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] group-focus-visible:scale-[1.04]"
           />
           <span className="absolute left-3 top-3 rounded bg-accent-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-navy-950">
             {project.serviceCategory}
@@ -33,7 +33,7 @@ export function ProjectCard({ project }: { project: ProjectDefinition }) {
         <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-600">{project.summary}</p>
         <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 transition-colors group-hover:text-brand-700">
           View project
-          <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          <IconArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-focus-visible:translate-x-1" />
         </span>
       </div>
     </Link>

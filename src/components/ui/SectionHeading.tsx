@@ -17,7 +17,7 @@ export function SectionHeading({
 }: SectionHeadingProps) {
   const centered = align === "center";
   return (
-    <div className={`max-w-2xl ${centered ? "mx-auto text-center" : ""} ${className}`}>
+    <div data-reveal className={`max-w-2xl ${centered ? "mx-auto text-center" : ""} ${className}`}>
       {eyebrow && (
         <p
           className={`mb-4 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] ${

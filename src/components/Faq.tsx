@@ -15,8 +15,8 @@ export function Faq({ items, title = "Frequently Asked Questions" }: {
         <SectionHeading eyebrow="Good to Know" title={title} />
         <div className="mx-auto mt-8 max-w-3xl divide-y divide-slate-200 border-y border-slate-200">
           {items.map((item) => (
-            <details key={item.q} className="group py-4">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-bold text-navy-900 [&::-webkit-details-marker]:hidden">
+            <details key={item.q} className="faq-item group py-4">
+              <summary className="faq-summary flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-base font-bold text-navy-900 [&::-webkit-details-marker]:hidden">
                 {item.q}
                 <span
                   aria-hidden="true"
@@ -25,7 +25,7 @@ export function Faq({ items, title = "Frequently Asked Questions" }: {
                   +
                 </span>
               </summary>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">{item.a}</p>
+              <p className="pt-3 text-sm leading-relaxed text-slate-600 sm:text-base">{item.a}</p>
             </details>
           ))}
         </div>

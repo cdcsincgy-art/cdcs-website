@@ -8,6 +8,8 @@ import { MobileActionBar } from "@/components/MobileActionBar";
 import { industries } from "@/lib/content-data";
 import { Analytics } from "@/components/Analytics";
 import { ContactLinkTracker } from "@/components/ContactLinkTracker";
+import { RevealObserver } from "@/components/motion/RevealObserver";
+import { ScrollEffects } from "@/components/motion/ScrollEffects";
 import { siteConfig, ogImage } from "@/lib/site-config";
 import { services } from "@/lib/services-data";
 import { localContentCredentialLd, gcciMembership } from "@/lib/credentials";
@@ -161,11 +163,17 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${manrope.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${manrope.variable}`}>
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
       </head>
       <body className="antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-md focus:bg-navy-900 focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-white"
+        >
+          Skip to main content
+        </a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -175,12 +183,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           services={services.map((s) => ({ href: `/services/${s.slug}/`, label: s.title }))}
           industries={industries.map((i) => ({ href: i.page ?? `/industries/#${i.id}`, label: i.name }))}
         />
-        <main>{children}</main>
+        <main id="main-content" tabIndex={-1} className="focus:outline-none">
+          {children}
+        </main>
         <Footer />
         <WhatsAppFloat />
         <MobileActionBar />
         <Analytics />
         <ContactLinkTracker />
+        <RevealObserver />
+        <ScrollEffects />
       </body>
     </html>
   );
