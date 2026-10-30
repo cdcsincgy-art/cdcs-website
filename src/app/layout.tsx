@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Barlow, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -17,16 +17,21 @@ import { localContentCredentialLd, gcciMembership } from "@/lib/credentials";
 // Fonts via next/font: self-hosted from this site at build time (no browser
 // requests to Google, so the CSP font-src 'self' still holds), preloaded, and
 // with metric-matched fallbacks so text doesn't shift when the font arrives.
-// Variable fonts cover every weight in one file each (was 8 separate files).
 //
-// Manrope — premium/brand typeface for headings, navigation, buttons, the
-// brand wordmark, and the estimator's/WashCare's headline figures and plan
-// names. Body copy, forms, the estimator's questions/tables, and all
-// small/legal text stay on Inter (see --font-sans / --font-heading in
-// globals.css) — Manrope is used for short, prominent text, not extended
-// reading copy.
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
+// Barlow — corporate/industrial typeface for headings, the brand wordmark,
+// and the estimator's/WashCare's headline figures. Loaded in medium
+// and semibold only, for a measured hierarchy: globals.css turns off faux
+// bold, so a heading marked bold renders in true semibold.
+// Source Sans 3 — body copy, navigation, buttons (semibold), descriptions,
+// forms, and all small/legal text; one variable file covers every weight.
+// (See --font-sans / --font-heading in globals.css.)
+const barlow = Barlow({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-barlow",
+  display: "swap",
+});
+const sourceSans = Source_Sans_3({ subsets: ["latin"], variable: "--font-source-sans", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -163,7 +168,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${manrope.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${barlow.variable} ${sourceSans.variable}`}>
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
       </head>

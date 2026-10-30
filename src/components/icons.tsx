@@ -323,3 +323,11 @@ export const iconMap: Record<string, (props: IconProps) => ReactElement> = {
   home: IconHome,
   flame: IconFlame,
 };
+
+export function IconRefresh(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 12a8 8 0 0 1 13.66-5.66L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.66 5.66L4 15.5M4 20v-4.5h4.5" />
+    </svg>
+  );
+}

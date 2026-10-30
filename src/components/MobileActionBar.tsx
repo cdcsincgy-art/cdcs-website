@@ -23,7 +23,7 @@ export function MobileActionBar() {
   const onQuotePage = pathname.startsWith("/quote");
 
   const cell =
-    "font-heading flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-bold focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2";
+    "flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2";
 
   return (
     <>

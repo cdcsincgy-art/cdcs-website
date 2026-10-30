@@ -89,8 +89,16 @@ export const localContentCertificate = {
  * reference: the official GCCI member directory listing (no certificate on
  * file). Member since March 2025; CDCS management confirmed on 2026-10-12 that
  * the membership is active with dues up to date. Re-confirm it is current
- * before future publications. Do not use the GCCI logo unless GCCI's usage
- * permission is confirmed.
+ * before future publications.
+ *
+ * Logo: NOT published until GCCI's permission for member use is confirmed
+ * (no member logo policy found on gcci.gy as of 2026-10-30). The prepared
+ * files — the Chamber's own high-resolution logo
+ * (https://gcci.gy/wp-content/uploads/2019/07/GCCIs-logo-High-Resolution.png),
+ * trimmed of transparent margin and resized, never redrawn or recoloured —
+ * wait in git-ignored staging/gcci-logo/. To publish once permission is
+ * confirmed: copy them to public/images/credentials/ and set `logoApproved`
+ * to true. Until then the membership card shows a neutral emblem.
  */
 export const gcciMembership = {
   label: "Georgetown Chamber of Commerce & Industry (GCCI) Member",
@@ -99,6 +107,10 @@ export const gcciMembership = {
   organizationUrl: "https://gcci.gy/",
   memberSince: "March 2025",
   listingUrl: "https://gcci.gy/capital-detailing-cleaning-services-inc/",
+  /** Set true only once GCCI's permission to display its logo is confirmed. */
+  logoApproved: false,
+  /** Files: `${base}-160.webp`, `${base}-320.webp`, `${base}-320.png` (intrinsic 311×320). */
+  logo: { base: "/images/credentials/gcci-logo", width: 311, height: 320 },
 };
 
 export const gcciDisclaimer =

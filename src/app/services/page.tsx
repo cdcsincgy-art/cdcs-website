@@ -198,13 +198,13 @@ export default function ServicesPage() {
                 <Link
                   key={service.slug}
                   href={`/services/${service.slug}/`}
-                  className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-navy-900 transition-colors duration-300 hover:border-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+                  className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-navy-900 transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-white/25 hover:shadow-xl hover:shadow-black/40 focus-visible:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 active:translate-y-0"
                 >
                   {img && (
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <ProjectImage
                         image={img}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06] group-focus-visible:scale-[1.06]"
                       />
                       <div
                         className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950/70 via-transparent to-navy-950/50"

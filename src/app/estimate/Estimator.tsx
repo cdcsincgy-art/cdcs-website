@@ -11,7 +11,7 @@ import {
 } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { IconArrowRight, IconCheck, IconUpload, IconPhone, IconWhatsapp } from "@/components/icons";
+import { IconArrowRight, IconCheck, IconUpload, IconPhone, IconWhatsapp, IconRefresh } from "@/components/icons";
 import { siteConfig } from "@/lib/site-config";
 import { trackEvent } from "@/lib/analytics";
 import {
@@ -120,6 +120,8 @@ export function Estimator() {
   const startedRef = useRef(false);
   const urlPrefillRef = useRef(false);
   const topRef = useRef<HTMLDivElement>(null);
+  const stepRef = useRef<HTMLDivElement>(null);
+  const shownStepRef = useRef<number | null>(null);
   const washcareViewedRef = useRef<string | null>(null);
   const washcareSelectedRef = useRef<string | null>(null);
   const washcareCompletedRef = useRef(false);
@@ -223,6 +225,21 @@ export function Estimator() {
       selectedAddOnIds: state.addOns,
     });
   }, [service, group, state.answers, state.addOns]);
+
+  // When the step changes (not on first render or a restored session), move
+  // keyboard and screen-reader focus to the new step's heading so the
+  // visitor starts reading at the top of the step rather than on a button
+  // that has just disappeared.
+  useEffect(() => {
+    if (!mounted) return;
+    const prev = shownStepRef.current;
+    shownStepRef.current = state.step;
+    if (prev === null || prev === state.step) return;
+    const heading = stepRef.current?.querySelector<HTMLElement>("h2, h3");
+    if (!heading) return;
+    heading.tabIndex = -1;
+    heading.focus({ preventScroll: true });
+  }, [mounted, state.step]);
 
   // WashCare funnel — viewed (a subscription-eligible service is chosen) and
   // selected (a recurring plan / frequency is picked). No PII in params.
@@ -473,6 +490,8 @@ export function Estimator() {
       <ProgressBar current={state.step} />
 
       <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+        {/* Keyed by step so each step slides in; focus moves to its heading (see effect above). */}
+        <div key={state.step} ref={stepRef} className="step-panel">
         {state.step === 1 && (
           <StepShell title="Who is this estimate for?" subtitle="This helps us frame the estimate the right way.">
             <div className="grid gap-3 sm:grid-cols-2">
@@ -618,6 +637,23 @@ export function Estimator() {
                 placeholder="Access constraints, deadlines, specific problem areas, or anything unusual about the job."
               />
             </label>
+
+            {/* Live preview of the same result Step 5 shows; updates as add-ons change. */}
+            {result && (
+              <div
+                aria-live="polite"
+                className="mt-6 flex flex-col gap-1 rounded-xl border border-navy-900/10 bg-navy-950 px-5 py-4 text-white sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+              >
+                <span className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
+                  {result.kind === "estimated_range" || result.kind === "estimated_price"
+                    ? "Current estimate"
+                    : "Current outcome"}
+                </span>
+                <span className="font-heading text-lg font-semibold text-accent-400 sm:text-xl">
+                  {describeOutcome(result)}
+                </span>
+              </div>
+            )}
           </StepShell>
         )}
 
@@ -666,6 +702,8 @@ export function Estimator() {
           />
         )}
 
+        </div>
+
         {stepError && (
           <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
             {stepError}
@@ -680,7 +718,7 @@ export function Estimator() {
                 <button
                   type="button"
                   onClick={goBack}
-                  className="font-heading rounded-md border-2 border-navy-800 px-5 py-2.5 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+                  className="rounded-md border-2 border-navy-800 px-5 py-2.5 text-sm font-semibold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
                 >
                   Back
                 </button>
@@ -688,8 +726,9 @@ export function Estimator() {
               <button
                 type="button"
                 onClick={handleReset}
-                className="font-heading rounded-md px-3 py-2.5 text-sm font-semibold text-slate-500 hover:text-red-600 hover:underline"
+                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
               >
+                <IconRefresh className="h-4 w-4" />
                 Reset estimate
               </button>
             </div>
@@ -698,7 +737,7 @@ export function Estimator() {
               <button
                 type="button"
                 onClick={goNext}
-                className="font-heading inline-flex items-center gap-2 rounded-md bg-accent-500 px-6 py-3 text-sm font-bold text-navy-950 transition-colors hover:bg-accent-600"
+                className="inline-flex items-center gap-2 rounded-md bg-accent-500 px-6 py-3 text-sm font-semibold text-navy-950 transition-colors hover:bg-accent-600"
               >
                 Continue
                 <IconArrowRight className="h-4 w-4" />
@@ -1160,7 +1199,7 @@ function ResultScreen(
         <button
           type="button"
           onClick={onRequestQuote}
-          className="font-heading inline-flex items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-bold text-navy-950 transition-colors hover:bg-accent-600"
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-semibold text-navy-950 transition-colors hover:bg-accent-600"
         >
           {result.washcare ? "Request WashCare Enrollment" : "Request Official Quotation"}
           <IconArrowRight className="h-5 w-5" />
@@ -1173,7 +1212,7 @@ function ResultScreen(
             onClick={() =>
               trackEvent("estimator_whatsapp_clicked", { service_category: service.category, transport_type: "beacon" })
             }
-            className="font-heading inline-flex items-center justify-center gap-2 rounded-md border-2 border-[#25D366] px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-[#25D366] hover:text-white"
+            className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-[#25D366] px-5 py-3 text-sm font-semibold text-navy-900 transition-colors hover:bg-[#25D366] hover:text-white"
           >
             <IconWhatsapp className="h-5 w-5" />
             Send Details on WhatsApp
@@ -1183,7 +1222,7 @@ function ResultScreen(
             onClick={() =>
               trackEvent("estimator_call_clicked", { service_category: service.category, transport_type: "beacon" })
             }
-            className="font-heading inline-flex items-center justify-center gap-2 rounded-md border-2 border-navy-800 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+            className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-navy-800 px-5 py-3 text-sm font-semibold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
           >
             <IconPhone className="h-5 w-5" />
             Call CDCS
@@ -1192,7 +1231,7 @@ function ResultScreen(
         <button
           type="button"
           onClick={onStartNew}
-          className="font-heading mt-1 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:border-slate-400 hover:text-navy-900"
+          className="mt-1 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:border-slate-400 hover:text-navy-900"
         >
           Start New Estimate
         </button>
@@ -1559,14 +1598,14 @@ function LeadForm(
         <button
           type="button"
           onClick={onBackToEstimate}
-          className="font-heading inline-flex min-h-[44px] items-center gap-1.5 font-semibold text-brand-600 hover:underline"
+          className="inline-flex min-h-[44px] items-center gap-1.5 font-semibold text-brand-600 hover:underline"
         >
           <span aria-hidden>&larr;</span> Back to estimate
         </button>
         <button
           type="button"
           onClick={onStartNew}
-          className="font-heading inline-flex min-h-[44px] items-center font-semibold text-slate-500 hover:text-navy-900 hover:underline"
+          className="inline-flex min-h-[44px] items-center font-semibold text-slate-500 hover:text-navy-900 hover:underline"
         >
           Start new estimate
         </button>
@@ -1619,7 +1658,7 @@ function LeadForm(
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="font-heading flex w-full items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-bold text-navy-950 transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-semibold text-navy-950 transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {status === "submitting" ? "Sending…" : "Submit Quote Request"}
           {status !== "submitting" && <IconArrowRight className="h-5 w-5" />}
@@ -1688,7 +1727,7 @@ function ConfirmationPanel({
         <button
           type="button"
           onClick={onStartNew}
-          className="font-heading mx-auto mt-6 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-3.5 text-sm font-bold text-navy-950 transition-colors hover:bg-accent-600"
+          className="mx-auto mt-6 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-3.5 text-sm font-semibold text-navy-950 transition-colors hover:bg-accent-600"
         >
           Start Another Estimate
           <IconArrowRight className="h-5 w-5" />
@@ -1700,7 +1739,7 @@ function ConfirmationPanel({
           <button
             type="button"
             onClick={onBackToEstimate}
-            className="font-heading inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-semibold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
           >
             Back to Estimate
           </button>
@@ -1708,7 +1747,7 @@ function ConfirmationPanel({
         {showHomeLink && (
           <Link
             href="/"
-            className="font-heading inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-semibold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
           >
             Return to Home
           </Link>
@@ -1717,14 +1756,14 @@ function ConfirmationPanel({
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-heading inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-[#25D366] px-5 py-3 text-sm font-bold text-white"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-[#25D366] px-5 py-3 text-sm font-semibold text-white"
         >
           <IconWhatsapp className="h-5 w-5" />
           WhatsApp CDCS
         </a>
         <a
           href={siteConfig.contact.phoneHref}
-          className="font-heading inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-bold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md border-2 border-navy-900 px-5 py-3 text-sm font-semibold text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
         >
           <IconPhone className="h-4 w-4" />
           Call CDCS

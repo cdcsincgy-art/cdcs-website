@@ -412,7 +412,7 @@ export function QuoteForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="font-heading flex w-full items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-bold text-navy-950 transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-md bg-accent-500 px-6 py-4 text-base font-semibold text-navy-950 transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {status === "submitting" ? "Sending…" : "Request My Quote"}
         {status !== "submitting" && <IconArrowRight className="h-5 w-5" />}
@@ -487,7 +487,7 @@ function Panel({
       <button
         type="button"
         onClick={onReset}
-        className="font-heading mt-6 text-sm font-bold text-brand-600 hover:underline"
+        className="mt-6 text-sm font-semibold text-brand-600 hover:underline"
       >
         {resetLabel}
       </button>

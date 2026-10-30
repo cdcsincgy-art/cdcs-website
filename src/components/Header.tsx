@@ -183,10 +183,14 @@ export function Header({ services, industries }: { services: NavLink[]; industri
     hoverTimer.current = setTimeout(() => setOpenMenu(null), 180);
   };
 
+  // Navigation is set in Source Sans 3 (the body font). `nav-item` draws the
+  // active-page rule (globals.css) when `data-active` is present.
   const linkCls = (active: boolean) =>
-    `font-heading whitespace-nowrap text-sm font-semibold transition-colors hover:text-brand-600 ${
-      active ? "text-brand-600" : "text-slate-700"
+    `nav-item whitespace-nowrap py-2 text-[0.95rem] font-semibold transition-colors hover:text-brand-600 ${
+      active ? "text-navy-900" : "text-slate-700"
     }`;
+  // Mobile: the current page is tinted with an accent rule on its left edge.
+  const mobileActiveCls = "bg-brand-50 text-brand-700 shadow-[inset_3px_0_0_var(--color-accent-500)]";
 
   return (
     <header className="site-header sticky top-0 z-40 border-b border-slate-200">
@@ -227,6 +231,7 @@ export function Header({ services, industries }: { services: NavLink[]; industri
                     key={item.link.href}
                     href={item.link.href}
                     aria-current={active ? "page" : undefined}
+                    data-active={active || undefined}
                     className={linkCls(active)}
                   >
                     {item.link.label}
@@ -251,7 +256,8 @@ export function Header({ services, industries }: { services: NavLink[]; industri
                     aria-expanded={expanded}
                     aria-controls={`menu-${m.id}`}
                     onClick={() => setOpenMenu(expanded ? null : m.id)}
-                    className={`${linkCls(menuIsActive(m))} flex items-center gap-1 py-2`}
+                    data-active={menuIsActive(m) || undefined}
+                    className={`${linkCls(menuIsActive(m))} flex items-center gap-1`}
                   >
                     {m.label}
                     <IconChevronDown
@@ -265,7 +271,7 @@ export function Header({ services, industries }: { services: NavLink[]; industri
                       className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3"
                     >
                       <div
-                        className={`rounded-xl border border-slate-200 bg-white p-3 shadow-xl shadow-navy-900/15 ${
+                        className={`menu-panel rounded-xl border border-slate-200 bg-white p-3 shadow-xl shadow-navy-900/15 ${
                           m.columns === 2 ? "w-[36rem]" : "w-80"
                         }`}
                       >
@@ -325,12 +331,12 @@ export function Header({ services, industries }: { services: NavLink[]; industri
           <div className="hidden items-center gap-4 lg:flex">
             <a
               href={siteConfig.contact.phoneHref}
-              className="font-heading hidden items-center gap-2 text-sm font-bold text-navy-900 hover:text-brand-600 xl:flex"
+              className="hidden items-center gap-2 text-sm font-semibold text-navy-900 hover:text-brand-600 xl:flex"
             >
               <IconPhone className="h-4 w-4" />
               {siteConfig.contact.phoneDisplay}
             </a>
-            <Button href="/quote/" size="md" className="whitespace-nowrap">
+            <Button href="/quote/" size="md" className="whitespace-nowrap" icon={<IconArrowRight className="h-4 w-4" />}>
               Request a Quote
             </Button>
           </div>
@@ -361,7 +367,7 @@ export function Header({ services, industries }: { services: NavLink[]; industri
           aria-modal="true"
           aria-label="Site menu"
           data-analytics-location="mobile_nav"
-          className="fixed top-[65px] right-0 bottom-0 left-0 z-50 flex flex-col bg-white lg:hidden"
+          className="mobile-sheet fixed top-[65px] right-0 bottom-0 left-0 z-50 flex flex-col bg-white lg:hidden"
         >
           <nav aria-label="Mobile" className="flex flex-1 flex-col overflow-y-auto px-4 py-4">
             {navItems.map((item) => {
@@ -372,8 +378,8 @@ export function Header({ services, industries }: { services: NavLink[]; industri
                     key={item.link.href}
                     href={item.link.href}
                     aria-current={active ? "page" : undefined}
-                    className={`font-heading flex min-h-12 items-center rounded-md px-3 text-base font-semibold hover:bg-slate-50 ${
-                      active ? "text-brand-600" : "text-navy-900"
+                    className={`flex min-h-12 items-center rounded-md px-3 text-[1.05rem] font-semibold ${
+                      active ? mobileActiveCls : "text-navy-900 hover:bg-slate-50"
                     }`}
                   >
                     {item.link.label}
@@ -389,21 +395,27 @@ export function Header({ services, industries }: { services: NavLink[]; industri
                     aria-expanded={expanded}
                     aria-controls={`mobile-${m.id}`}
                     onClick={() => setMobileSection(expanded ? null : m.id)}
-                    className="font-heading flex min-h-12 w-full items-center justify-between rounded-md px-3 text-left text-base font-semibold text-navy-900 hover:bg-slate-50"
+                    className={`flex min-h-12 w-full items-center justify-between rounded-md px-3 text-left text-[1.05rem] font-semibold text-navy-900 hover:bg-slate-50 ${
+                      menuIsActive(m) ? "shadow-[inset_3px_0_0_var(--color-accent-500)]" : ""
+                    }`}
                   >
                     {m.label}
                     <IconChevronDown className={`h-5 w-5 transition-transform ${expanded ? "rotate-180" : ""}`} />
                   </button>
                   {expanded && (
-                    <ul id={`mobile-${m.id}`} className="mb-2 ml-3 border-l-2 border-slate-100 pl-2">
+                    <ul id={`mobile-${m.id}`} className="menu-section mb-2 ml-3 border-l-2 border-slate-100 pl-2">
                       {[...(m.featured ? [m.featured] : []), ...m.links, ...m.footer].map((l) => (
                         <li key={l.href}>
                           <Link
                             href={l.href}
                             aria-current={isCurrent(l.href) ? "page" : undefined}
-                            className={`flex min-h-11 items-center rounded-md px-3 text-[0.95rem] hover:bg-slate-50 ${
-                              l === m.featured ? "font-bold text-navy-900" : "text-slate-700"
-                            } ${isCurrent(l.href) ? "text-brand-600" : ""}`}
+                            className={`flex min-h-11 items-center rounded-md px-3 text-[0.95rem] ${
+                              isCurrent(l.href)
+                                ? `font-semibold ${mobileActiveCls}`
+                                : l === m.featured
+                                  ? "font-bold text-navy-900 hover:bg-slate-50"
+                                  : "text-slate-700 hover:bg-slate-50"
+                            }`}
                           >
                             {l.label}
                           </Link>
@@ -421,7 +433,7 @@ export function Header({ services, industries }: { services: NavLink[]; industri
             </Button>
             <a
               href={siteConfig.contact.phoneHref}
-              className="font-heading flex min-h-12 items-center justify-center gap-2 rounded-md border-2 border-navy-900 text-sm font-bold text-navy-900"
+              className="flex min-h-12 items-center justify-center gap-2 rounded-md border-2 border-navy-900 text-sm font-semibold text-navy-900"
             >
               <IconPhone className="h-4 w-4" />
               Call
@@ -430,7 +442,7 @@ export function Header({ services, industries }: { services: NavLink[]; industri
               href={siteConfig.contact.whatsappHrefWithMessage(QUOTE_MESSAGE)}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-heading flex min-h-12 items-center justify-center gap-2 rounded-md bg-[#25D366] text-sm font-bold text-navy-950"
+              className="flex min-h-12 items-center justify-center gap-2 rounded-md bg-[#25D366] text-sm font-semibold text-navy-950"
             >
               <IconWhatsapp className="h-4 w-4" />
               WhatsApp

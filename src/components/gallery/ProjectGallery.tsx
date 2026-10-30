@@ -25,6 +25,8 @@ interface Item {
  */
 export function ProjectGallery({ categories }: { categories: ProjectCategory[] }) {
   const [filter, setFilter] = useState("all");
+  // Sections fade in when a filter reveals them, but not on first load.
+  const [filtered, setFiltered] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -84,7 +86,10 @@ export function ProjectGallery({ categories }: { categories: ProjectCategory[] }
                   key={c.slug}
                   type="button"
                   aria-pressed={active}
-                  onClick={() => setFilter(c.slug)}
+                  onClick={() => {
+                    setFilter(c.slug);
+                    setFiltered(true);
+                  }}
                   className={`min-h-10 rounded-full border px-4 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 ${
                     active
                       ? "border-navy-900 bg-navy-900 text-white"
@@ -110,6 +115,7 @@ export function ProjectGallery({ categories }: { categories: ProjectCategory[] }
             key={category.slug}
             id={category.slug}
             hidden={!shown}
+            data-filter-anim={filtered || undefined}
             className={`py-16 sm:py-20 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
           >
             <div className="container-page">
@@ -209,7 +215,7 @@ export function ProjectGallery({ categories }: { categories: ProjectCategory[] }
                 ref={closeRef}
                 type="button"
                 onClick={() => dialogRef.current?.close()}
-                className="font-heading inline-flex min-h-11 items-center gap-2 rounded-md border border-white/30 px-4 text-sm font-bold text-white hover:bg-white hover:text-navy-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/30 px-4 text-sm font-semibold text-white hover:bg-white hover:text-navy-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 Close
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4" aria-hidden>

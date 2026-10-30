@@ -7,8 +7,7 @@ import { CTABanner } from "@/components/CTABanner";
 import { DeliveryModel } from "@/components/DeliveryModel";
 import { ProjectImage } from "@/components/ProjectImage";
 import { ProjectCard } from "@/components/ProjectCard";
-import { LocalContentCredential } from "@/components/LocalContentCredential";
-import { GcciMembership } from "@/components/GcciMembership";
+import { CredentialsShowcase } from "@/components/CredentialsShowcase";
 import { Faq } from "@/components/Faq";
 import { services } from "@/lib/services-data";
 import { publishedProjects, pendingHomepageProjectSlugs } from "@/lib/projects-data";
@@ -22,6 +21,7 @@ import {
 import { localContentCertificate as cert, formatCredentialDate, gcciMembership } from "@/lib/credentials";
 import {
   iconMap,
+  serviceIconMap,
   IconArrowRight,
   IconChevronDown,
   IconWhatsapp,
@@ -65,23 +65,29 @@ const homepageProjects = HOMEPAGE_PROJECT_SLUGS.map((slug) =>
   .filter((p): p is NonNullable<typeof p> => Boolean(p))
   .slice(0, 3);
 
-// Service order for the homepage: commercial and facility work first.
-const HOMEPAGE_SERVICE_ORDER = [
+// Core commercial and industrial services, featured with photos in this
+// order; every other service (including any added later) follows as a
+// compact list.
+const CORE_SERVICE_SLUGS = [
   "commercial-janitorial-cleaning",
-  "commercial-facility-cleaning",
-  "carpet-cleaning",
-  "upholstery-fabric-extraction",
   "pressure-washing",
   "fleet-washing",
+  "carpet-cleaning",
+  "commercial-facility-cleaning",
+];
+const OTHER_SERVICE_ORDER = [
   "post-construction-cleaning",
   "deep-cleaning",
+  "upholstery-fabric-extraction",
   "mobile-detailing",
   "car-wash-mobile-vehicle-washing",
 ];
-const homepageServices = [
-  ...HOMEPAGE_SERVICE_ORDER.map((slug) => services.find((s) => s.slug === slug)),
-  // Any service added later still appears, after the ordered ones.
-  ...services.filter((s) => !HOMEPAGE_SERVICE_ORDER.includes(s.slug)),
+const coreServices = CORE_SERVICE_SLUGS.map((slug) => services.find((s) => s.slug === slug)).filter(
+  (s): s is NonNullable<typeof s> => Boolean(s),
+);
+const otherServices = [
+  ...OTHER_SERVICE_ORDER.map((slug) => services.find((s) => s.slug === slug)),
+  ...services.filter((s) => !CORE_SERVICE_SLUGS.includes(s.slug) && !OTHER_SERVICE_ORDER.includes(s.slug)),
 ].filter((s): s is NonNullable<typeof s> => Boolean(s));
 
 const companyFacts = [
@@ -196,8 +202,6 @@ const homeJsonLd = [
   },
 ];
 
-const linkCls = "font-semibold text-brand-600 hover:underline";
-
 export default function HomePage() {
   return (
     <>
@@ -212,18 +216,16 @@ export default function HomePage() {
             <p className="hero-fade-rise mb-5 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent-400">
               Commercial Cleaning &amp; Facility Services · Georgetown, Guyana
             </p>
-            <h1 className="text-pretty text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.25rem]">
+            <h1 className="hero-text-rise text-pretty text-[2.15rem] font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.2rem]">
               Professional Commercial Cleaning Services in Guyana
             </h1>
-            <p className="hero-fade-rise mt-4 text-lg font-bold text-accent-500 [--hero-delay:80ms] sm:text-xl">
+            <p className="hero-fade-rise mt-4 font-heading text-lg font-medium text-accent-400 [--hero-delay:80ms] sm:text-xl">
               Professional Cleaning. Powerful Results.
             </p>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
-              CDCS Inc. is a Georgetown-based cleaning company, operating since 2022, providing
-              janitorial and office cleaning, commercial carpet and upholstery cleaning, pressure
-              washing, fleet washing, and facility support for businesses, government agencies, and
-              organizations across Guyana — delivered by supervised teams with professional
-              equipment.
+            <p className="hero-text-rise mt-5 max-w-xl text-base leading-relaxed text-slate-300 [--hero-delay:120ms] sm:text-lg">
+              Janitorial and facility cleaning, industrial pressure washing, fleet washing, and
+              commercial carpet cleaning for businesses, institutions, and industrial sites across
+              Guyana — delivered by supervised CDCS teams with professional equipment.
             </p>
             <div className="hero-fade-rise mt-9 flex flex-col gap-3 [--hero-delay:180ms] sm:flex-row">
               <Button href="/quote/" variant="accent" size="lg" icon={<IconArrowRight className="h-5 w-5" />}>
@@ -296,83 +298,102 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= LOCAL CONTENT REGISTRATION ================= */}
-      <LocalContentCredential variant="strip" />
-      <GcciMembership variant="strip" />
+      {/* ================= CREDENTIALS (GCCI · Local Content · since 2022) ================= */}
+      <section aria-labelledby="home-credentials" className="border-b border-slate-200 bg-slate-50 py-12 sm:py-16">
+        <div className="container-page">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">
+                <span className="h-px w-6 bg-brand-600/50" aria-hidden />
+                Corporate Credentials
+              </p>
+              <h2 id="home-credentials" className="mt-3 text-2xl font-semibold tracking-tight text-navy-900 sm:text-[1.75rem]">
+                Credentials Procurement Teams Can Verify
+              </h2>
+            </div>
+            <Link
+              href="/credentials/"
+              className="inline-flex min-h-11 shrink-0 items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
+            >
+              View company credentials
+              <IconArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <CredentialsShowcase className="mt-8" headingLevel="h3" />
+        </div>
+      </section>
 
       {/* ================= WHAT WE DO / SERVICES ================= */}
       <section id="what-we-do" className="bg-white py-20 sm:py-28">
         <div className="container-page">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,34rem)_1fr] lg:items-end lg:gap-16">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,34rem)_1fr] lg:items-end lg:gap-16">
             <SectionHeading
               eyebrow="What We Do"
               title="Commercial Cleaning Services in Guyana"
             />
-            <div className="space-y-4 text-base leading-relaxed text-slate-600 lg:pb-1">
-              <p>
-                For offices and facilities, CDCS provides{" "}
-                <Link href="/services/commercial-janitorial-cleaning/" className={linkCls}>
-                  janitorial and office cleaning
-                </Link>{" "}
-                programmes,{" "}
-                <Link href="/services/commercial-facility-cleaning/" className={linkCls}>
-                  commercial facility cleaning
-                </Link>
-                ,{" "}
-                <Link href="/services/carpet-cleaning/" className={linkCls}>
-                  commercial carpet cleaning
-                </Link>
-                , and{" "}
-                <Link href="/services/upholstery-fabric-extraction/" className={linkCls}>
-                  upholstery and office chair steam cleaning
-                </Link>{" "}
-                (hot-water extraction).
-              </p>
-              <p>
-                For exteriors, fleets, and new buildings, CDCS handles{" "}
-                <Link href="/services/pressure-washing/" className={linkCls}>
-                  pressure washing
-                </Link>
-                ,{" "}
-                <Link href="/services/fleet-washing/" className={linkCls}>
-                  fleet and heavy equipment washing
-                </Link>
-                , and{" "}
-                <Link href="/services/post-construction-cleaning/" className={linkCls}>
-                  post-construction cleaning
-                </Link>{" "}
-                — alongside{" "}
-                <Link href="/services/deep-cleaning/" className={linkCls}>
-                  deep cleaning
-                </Link>{" "}
-                and{" "}
-                <Link href="/services/mobile-detailing/" className={linkCls}>
-                  vehicle detailing
-                </Link>
-                , as one-time projects or recurring contracts.
-              </p>
-            </div>
+            <p className="max-w-2xl text-base leading-relaxed text-slate-600 lg:pb-1">
+              Core programmes for offices, facilities, fleets, and industrial sites — as one-time
+              projects or recurring contracts, each with a scope agreed in advance and a supervised
+              team on site.
+            </p>
           </div>
 
-          <div data-reveal="stagger" className="mt-10 grid gap-3 sm:mt-14 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-            {homepageServices.map((service) => (
-              <ServiceCard key={service.slug} service={service} />
+          {/* Core services: the commercial and industrial lines, given the most room. */}
+          <div data-reveal="stagger" className="mt-10 grid gap-3 sm:mt-14 sm:grid-cols-2 sm:gap-6 lg:grid-cols-6">
+            {coreServices.map((service, i) => (
+              <div
+                key={service.slug}
+                className={`${i < 2 ? "lg:col-span-3" : "lg:col-span-2"} ${
+                  i === coreServices.length - 1 && coreServices.length % 2 === 1 ? "sm:col-span-2 lg:col-span-2" : ""
+                }`}
+              >
+                <ServiceCard service={service} feature wide={i < 2} />
+              </div>
             ))}
           </div>
-          <div className="mt-10">
-            <Button href="/services/" variant="ghost" size="md" icon={<IconArrowRight className="h-4 w-4" />}>
-              View All Services
-            </Button>
-          </div>
 
-          <div className="mt-6 flex flex-col items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-slate-600">
-              <span className="font-bold text-navy-900">Prefer a recurring plan?</span>{" "}
-              WashCare keeps a vehicle or fleet clean every month, on a set schedule.
-            </p>
-            <Link href="/washcare/" className="shrink-0 text-sm font-bold text-brand-600 hover:underline">
-              Explore WashCare →
-            </Link>
+          {/* Everything else, as a compact list of links. */}
+          <div className="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-7">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+              <h3 className="text-lg font-semibold text-navy-900">Also from CDCS</h3>
+              <Link
+                href="/services/"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700"
+              >
+                View all services
+                <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {otherServices.map((service) => {
+                const Icon = serviceIconMap[service.icon];
+                return (
+                  <li key={service.slug}>
+                    <Link
+                      href={`/services/${service.slug}/`}
+                      className="group flex min-h-14 items-center gap-3 rounded-lg border border-transparent bg-white px-4 py-3 shadow-sm transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-slate-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                    >
+                      <span aria-hidden className="text-brand-600">{Icon && <Icon className="h-5 w-5" />}</span>
+                      <span className="flex-1 text-sm font-semibold text-navy-900">{service.title}</span>
+                      <IconArrowRight aria-hidden className="h-4 w-4 text-slate-400 transition-[transform,color] group-hover:translate-x-0.5 group-hover:text-brand-600" />
+                    </Link>
+                  </li>
+                );
+              })}
+              <li>
+                <Link
+                  href="/washcare/"
+                  className="group flex min-h-14 items-center gap-3 rounded-lg border border-transparent bg-white px-4 py-3 shadow-sm transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-slate-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                >
+                  <span aria-hidden className="text-brand-600"><IconCheck className="h-5 w-5" /></span>
+                  <span className="flex-1 text-sm">
+                    <span className="block font-semibold text-navy-900">WashCare recurring plans</span>
+                    <span className="block text-xs text-slate-500">Monthly vehicle and fleet washing on a set schedule</span>
+                  </span>
+                  <IconArrowRight aria-hidden className="h-4 w-4 text-slate-400 transition-[transform,color] group-hover:translate-x-0.5 group-hover:text-brand-600" />
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
       </section>

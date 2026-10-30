@@ -249,7 +249,7 @@ export function CertificatePreview() {
   const doc = cert.document;
   if (!doc) return null;
   const btn =
-    "font-heading inline-flex w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold tracking-wide transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto";
+    "inline-flex w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-auto";
   return (
     <div className="mx-auto max-w-4xl">
       <figure className="rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-navy-900/10 sm:p-3">

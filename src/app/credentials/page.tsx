@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CTABanner } from "@/components/CTABanner";
 import { CertificatePreview, LocalContentCredential } from "@/components/LocalContentCredential";
 import { GcciMembership } from "@/components/GcciMembership";
+import { CredentialsShowcase } from "@/components/CredentialsShowcase";
 import { IconExternal } from "@/components/icons";
 import { localContentCertificate as cert, gcciMembership } from "@/lib/credentials";
 import { siteConfig } from "@/lib/site-config";
@@ -70,6 +71,15 @@ export default function CredentialsPage() {
             Registration details for {siteConfig.companyName}, for procurement teams, facility
             managers, and contractors evaluating CDCS as a cleaning services provider in Guyana.
           </p>
+        </div>
+      </section>
+
+      <section aria-labelledby="credentials-overview" className="border-b border-slate-200 bg-slate-50 py-12 sm:py-16">
+        <div className="container-page">
+          <h2 id="credentials-overview" className="sr-only">
+            Credentials at a glance
+          </h2>
+          <CredentialsShowcase />
         </div>
       </section>
 
