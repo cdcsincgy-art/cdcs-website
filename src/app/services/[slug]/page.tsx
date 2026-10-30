@@ -189,7 +189,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950 py-14 sm:py-20">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
         <div className="container-page relative grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
@@ -1193,7 +1193,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               )}
               {service.whyChoose && (
                 <div className="relative overflow-hidden rounded-2xl bg-navy-950 p-6 sm:p-8">
-                  <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" aria-hidden />
+                  <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-40" aria-hidden />
                   <div className="relative">
                     <SectionHeading
                       eyebrow="Why CDCS"
@@ -1247,7 +1247,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
       {/* ================= RECENT WORK ================= */}
       {gallery.length > 0 ? (
         <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-24">
-          <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" aria-hidden />
+          <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-40" aria-hidden />
           <div className="container-page relative">
             <SectionHeading
               eyebrow="Our Work"
@@ -1287,7 +1287,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         </section>
       ) : (
         <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-24">
-          <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" aria-hidden />
+          <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-40" aria-hidden />
           <div className="container-page relative">
             <SectionHeading
               eyebrow="Our Work"

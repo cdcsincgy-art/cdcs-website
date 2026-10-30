@@ -90,7 +90,7 @@ export default function ContactPage() {
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-20">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
         <div className="container-page relative">
           <nav className="mb-5 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
@@ -174,7 +174,7 @@ export default function ContactPage() {
 
           {/* Branded quote panel */}
           <div className="relative overflow-hidden rounded-2xl bg-navy-950 p-7 shadow-xl shadow-navy-900/20 sm:p-9">
-            <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" aria-hidden />
+            <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-40" aria-hidden />
             <div className="pointer-events-none absolute inset-0 brand-glow opacity-70" aria-hidden />
             <div className="relative">
               <p className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-accent-400">

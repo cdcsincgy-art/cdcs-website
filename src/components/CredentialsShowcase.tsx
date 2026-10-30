@@ -145,7 +145,7 @@ export function CredentialsShowcase({
       {/* Years of operation — plain typography, no badge. */}
       <li className="md:col-span-2 lg:col-span-1">
         <div className={`${cardCls} overflow-hidden border-navy-900 bg-navy-950 text-white`}>
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" />
+          <div aria-hidden className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" />
           <div className="relative flex flex-1 flex-col">
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-accent-400">Company Experience</p>
             <Heading className="mt-1.5 text-lg font-semibold leading-snug">

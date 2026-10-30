@@ -48,7 +48,7 @@ export function ServiceCard({
         }`}
       >
         {image ? (
-          <div aria-hidden className="h-full w-full">
+          <div aria-hidden className="parallax-media">
             <ProjectImage
               image={{ ...image, alt: "" }}
               sizes={feature ? "(min-width: 1024px) 400px, (min-width: 640px) 50vw, 80px" : "(min-width: 1024px) 300px, (min-width: 640px) 50vw, 64px"}

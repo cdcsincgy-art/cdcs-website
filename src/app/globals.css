@@ -580,3 +580,113 @@ html[data-scrolled] .site-header {
     animation: panel-in 0.35s cubic-bezier(0.22, 0.7, 0.24, 1) backwards;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Scroll-linked motion. These effects follow the scroll position (CSS
+   scroll-driven animations — no JavaScript, no scroll listeners, off the
+   main thread). Browsers without scroll timelines, and visitors who prefer
+   reduced motion, see the static layout: every "from" state below is only
+   applied by the animation itself.
+
+   - .hero-scroll-text / .hero-scroll-media: as the hero scrolls away, the
+     copy eases up and fades back while the photo drifts down and settles.
+   - .parallax-bg: the grid texture in dark sections drifts against the
+     scroll (overscanned so its edges never show).
+   - .parallax-media: photos move slightly inside their frames. The wrapper
+     is overscanned 9% top and bottom; the frame must be `relative` with a
+     definite height (aspect-ratio) and `overflow-hidden`.
+   - .scroll-rule: section-heading accent rules draw in as they arrive.
+   - .process-track: the How It Works connectors fill one after another.
+--------------------------------------------------------------------------- */
+.parallax-media {
+  position: absolute;
+  inset: -9% 0;
+}
+
+@keyframes hero-text-out {
+  to {
+    opacity: 0.35;
+    translate: 0 -48px;
+  }
+}
+
+@keyframes hero-media-out {
+  to {
+    translate: 0 72px;
+    scale: 0.95;
+  }
+}
+
+@keyframes bg-drift {
+  from { translate: 0 -56px; }
+  to { translate: 0 56px; }
+}
+
+@keyframes media-drift {
+  from { translate: 0 -7%; }
+  to { translate: 0 7%; }
+}
+
+@keyframes rule-draw {
+  from { scale: 0 1; }
+}
+
+@keyframes fill-x {
+  from { scale: 0 1; }
+  to { scale: 1 1; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Desktop only: on phones the hero copy and buttons fill the first
+       screen, so they stay fully legible while scrolling. */
+    @media (min-width: 1024px) {
+      .hero-scroll-text {
+        animation: hero-text-out linear both;
+        animation-timeline: scroll(root block);
+        animation-range: 0 85vh;
+      }
+    }
+
+    .hero-scroll-media {
+      animation: hero-media-out linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 90vh;
+    }
+
+    /* overflow: hidden makes an element a scroll container, which would
+       capture view() timelines; clip looks identical but doesn't. */
+    .overflow-hidden:has(.parallax-bg, .parallax-media) {
+      overflow: clip;
+    }
+
+    .parallax-bg {
+      inset-block: -64px;
+      animation: bg-drift linear both;
+      animation-timeline: view();
+    }
+
+    .parallax-media {
+      animation: media-drift linear both;
+      animation-timeline: view();
+    }
+
+    .scroll-rule {
+      transform-origin: 0 50%;
+      animation: rule-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 40%;
+    }
+
+    .process-track {
+      view-timeline: --process block;
+    }
+
+    .process-fill {
+      transform-origin: 0 50%;
+      animation: fill-x linear both;
+      animation-timeline: --process;
+      animation-range: contain calc(var(--i, 0) * 18%) contain calc(var(--i, 0) * 18% + 22%);
+    }
+  }
+}

@@ -121,7 +121,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950 py-14 sm:py-20">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
         <div className="container-page relative grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
@@ -261,7 +261,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {/* ================= PHOTOS ================= */}
       {gallery.length > 0 && (
         <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-24">
-          <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" aria-hidden />
+          <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-40" aria-hidden />
           <div className="container-page relative">
             <SectionHeading eyebrow="Photos" title="Project Photos" description="Photographs from the job, as taken on site." light />
             <div className="mt-10 gap-4 sm:columns-2 lg:columns-3">

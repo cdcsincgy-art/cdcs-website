@@ -191,7 +191,7 @@ export default function WashCarePage() {
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950 py-14 sm:py-20">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
         <div className="container-page relative">
           <nav className="mb-5 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
@@ -394,7 +394,7 @@ export default function WashCarePage() {
 
       {/* ================= WASHCARE FLEET ================= */}
       <section id="fleet" className="relative overflow-hidden bg-navy-950 py-16 sm:py-24">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="container-page relative">
           <SectionHeading
             eyebrow="WashCare Fleet"
@@ -501,7 +501,7 @@ export default function WashCarePage() {
 
       {/* ================= FINAL CTA ================= */}
       <section className="relative overflow-hidden bg-navy-900">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-40" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
         <div className="container-page relative py-16 sm:py-20">
           <div className="mx-auto max-w-2xl text-center">

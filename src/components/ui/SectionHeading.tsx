@@ -24,7 +24,7 @@ export function SectionHeading({
             centered ? "justify-center" : ""
           } ${light ? "text-accent-400" : "text-brand-600"}`}
         >
-          <span className={`h-px w-6 ${light ? "bg-accent-400/60" : "bg-brand-600/50"}`} aria-hidden />
+          <span className={`scroll-rule h-px w-6 ${light ? "bg-accent-400/60" : "bg-brand-600/50"}`} aria-hidden />
           {eyebrow}
         </p>
       )}

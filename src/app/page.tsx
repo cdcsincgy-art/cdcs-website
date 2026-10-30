@@ -209,10 +209,10 @@ export default function HomePage() {
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-[0.6]" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-[0.6]" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-90" aria-hidden />
         <div className="container-page relative grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-28">
-          <div>
+          <div className="hero-scroll-text">
             <p className="hero-fade-rise mb-5 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-accent-400">
               Commercial Cleaning &amp; Facility Services · Georgetown, Guyana
             </p>
@@ -253,7 +253,7 @@ export default function HomePage() {
           </div>
 
           <div className="hero-media">
-            <div className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-2 shadow-2xl shadow-black/40">
+            <div className="hero-scroll-media relative rounded-2xl border border-white/10 bg-white/[0.04] p-2 shadow-2xl shadow-black/40">
               <span
                 aria-hidden
                 className="absolute -left-3 -top-3 hidden h-16 w-16 rounded-tl-2xl border-l-2 border-t-2 border-accent-500/70 sm:block"
@@ -443,12 +443,14 @@ export default function HomePage() {
                 className="absolute -inset-4 -z-10 hidden rounded-2xl bg-navy-950 sm:block"
               />
               <div className="relative rounded-xl border border-navy-900/10 bg-white p-2 shadow-xl shadow-navy-900/15">
-                <div className="aspect-[4/5] overflow-hidden rounded-lg">
-                  <ProjectImage
-                    image={operatingStandardsImage}
-                    sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, calc(100vw - 64px)"
-                    className="h-full w-full object-cover"
-                  />
+                <div className="relative aspect-[4/5] overflow-hidden rounded-lg">
+                  <div className="parallax-media">
+                    <ProjectImage
+                      image={operatingStandardsImage}
+                      sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, calc(100vw - 64px)"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 </div>
               </div>
               <p className="mt-3 text-center text-xs text-slate-600 sm:absolute sm:-bottom-9 sm:left-0 sm:right-0">
@@ -492,7 +494,7 @@ export default function HomePage() {
 
       {/* ================= INDUSTRIES (dark, textured) ================= */}
       <section className="relative overflow-hidden bg-navy-950 py-20 sm:py-28">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="container-page relative">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <SectionHeading
@@ -585,12 +587,14 @@ export default function HomePage() {
                 key={image.file}
                 className="group relative overflow-hidden rounded-xl border border-slate-200 bg-navy-950"
               >
-                <div className="aspect-[4/5] overflow-hidden">
-                  <ProjectImage
-                    image={image}
-                    sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, calc(100vw - 32px)"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
+                <div className="relative aspect-[4/5] overflow-hidden">
+                  <div className="parallax-media">
+                    <ProjectImage
+                      image={image}
+                      sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, calc(100vw - 32px)"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  </div>
                 </div>
                 <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950 via-navy-950/70 to-transparent p-4 pt-12">
                   <span className="inline-block rounded bg-accent-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-navy-950">
@@ -638,15 +642,17 @@ export default function HomePage() {
             description="From first contact to a maintained contract, the steps are the same for a one-time project or an ongoing program."
             align="center"
           />
-          <ol data-reveal="stagger" className="mx-auto mt-14 grid max-w-6xl gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
+          <ol data-reveal="stagger" className="process-track mx-auto mt-14 grid max-w-6xl gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
             {processSteps.map((step, i) => (
-              <li key={step.step} className="relative flex flex-col">
+              <li key={step.step} className="relative flex flex-col" style={{ "--i": i } as React.CSSProperties}>
                 <div className="flex items-center gap-3">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy-900 text-sm font-black text-white">
+                  <span className="process-dot flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy-900 text-sm font-black text-white">
                     {step.step}
                   </span>
                   {i < processSteps.length - 1 && (
-                    <span className="hidden h-px flex-1 bg-slate-300 lg:block" aria-hidden />
+                    <span className="relative hidden h-0.5 flex-1 overflow-hidden rounded-full bg-slate-300 lg:block" aria-hidden>
+                      <span className="process-fill absolute inset-0 bg-accent-500" />
+                    </span>
                   )}
                 </div>
                 <h3 className="mt-4 text-sm font-bold text-navy-900">{step.title}</h3>

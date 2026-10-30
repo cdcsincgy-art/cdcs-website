@@ -75,7 +75,7 @@ export default function ProjectsPage() {
       />
 
       <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-20">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
         <div className="container-page relative">
           <Breadcrumbs trail={trail} />

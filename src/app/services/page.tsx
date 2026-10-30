@@ -100,7 +100,7 @@ export default function ServicesPage() {
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950 py-16 sm:py-20">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
         <div className="container-page relative">
           <nav className="mb-5 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
@@ -181,7 +181,7 @@ export default function ServicesPage() {
 
       {/* ================= FULL RANGE (editorial photo grid, dark) ================= */}
       <section className="relative overflow-hidden bg-navy-950 py-20 sm:py-28">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="container-page relative">
           <SectionHeading
             eyebrow="What We Offer"
@@ -202,10 +202,12 @@ export default function ServicesPage() {
                 >
                   {img && (
                     <div className="relative aspect-[16/10] overflow-hidden">
-                      <ProjectImage
-                        image={img}
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06] group-focus-visible:scale-[1.06]"
-                      />
+                      <div className="parallax-media">
+                        <ProjectImage
+                          image={img}
+                          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06] group-focus-visible:scale-[1.06]"
+                        />
+                      </div>
                       <div
                         className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950/70 via-transparent to-navy-950/50"
                         aria-hidden

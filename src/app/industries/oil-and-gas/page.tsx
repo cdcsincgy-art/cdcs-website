@@ -247,7 +247,7 @@ export default function OilAndGasPage() {
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-navy-950 py-14 sm:py-20">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-50" aria-hidden />
         <div className="pointer-events-none absolute inset-0 brand-glow opacity-80" aria-hidden />
         <div className="container-page relative grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div>
@@ -376,7 +376,7 @@ export default function OilAndGasPage() {
 
       {/* ================= LOCAL CONTENT ================= */}
       <section aria-labelledby="local-content" className="relative overflow-hidden bg-navy-950 py-16 sm:py-24">
-        <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-40" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 parallax-bg bg-grid-dark opacity-40" aria-hidden />
         <div className="container-page relative grid gap-10 lg:grid-cols-[minmax(0,26rem)_1fr] lg:gap-16">
           <div>
             <p className="mb-4 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.22em] text-accent-400">
